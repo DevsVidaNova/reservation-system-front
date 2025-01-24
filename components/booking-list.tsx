@@ -33,11 +33,11 @@ export function BookingList() {
         queryFn: async () => {
             const res = await fetch("https://backagenda.onrender.com/bookings");
             return res.json();
-        }
+        },
     });
 
     if (isLoading) {
-        return <div>Loading...</div>
+        return <div>Carregando reservas aguarde...</div>
     }
     if (error) {
         return <div>Error: {error.message}</div>
