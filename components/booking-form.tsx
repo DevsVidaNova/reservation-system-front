@@ -8,8 +8,8 @@ import { format } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Dialog,
@@ -43,7 +43,7 @@ const formSchema = z.object({
 
 })
 
-export function BookingForm() {
+export function BookingForm({refetch }: { refetch: () => void }) {
   const [open, setOpen] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -75,6 +75,7 @@ export function BookingForm() {
         })
         setOpen(false)
         form.reset()
+        refetch()
       } else if (response.status === 409) {
         toast({
           title: "Conflito de horários",
@@ -96,8 +97,8 @@ export function BookingForm() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="default">Fazer Reserva</Button>
+      <DialogTrigger asChild >
+        <Button variant="default" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Fazer Reserva</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[455px]">
 

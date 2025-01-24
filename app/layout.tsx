@@ -59,6 +59,8 @@ const sfpro = localFont({
   ],
   variable: '--font-sfpro'
 })
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/sidebar"
 
 export default function RootLayout({
   children,
@@ -69,9 +71,15 @@ export default function RootLayout({
     <html lang="pt-br">
       <body className={`${sfpro.variable}`}>
         <ReactQueryProvider>
-        {children}
-          </ReactQueryProvider>
+          <SidebarProvider>
+            {children}
+          </SidebarProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   )
 }
+/* SIDEBAR DENTRO DO PROVIDER
+  <AppSidebar />
+            <SidebarTrigger />
+*/
