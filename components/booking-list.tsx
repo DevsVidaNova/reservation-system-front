@@ -145,20 +145,20 @@ const AvaliableDays = (data: any) => {
                 const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
 
                 return (
-                    <Card className="p-2 flex-row flex align-center justify-between items-center w-full my-4">
-                        <div className='flex-col flex px-6 py-2 justify-center items-center border-r-2'>
-                            <span className='text-[18px] leading-[24px] uppercase'>{dayOfWeek.slice(0, 3)}</span>
-                            <span className='text-[36px] leading-[36px] font-medium'>{day}</span>
+                    <Card className="md:p-2 p-0 flex-row flex align-center justify-between items-center w-full my-4">
+                        <div className='flex-col w-[80px] flex md:px-6 md:py-2 px-4 py-2 justify-center items-center border-r-2'>
+                            <span className='md:text-[18px] md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
+                            <span className='md:text-[36px] md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
                         </div>
 
-                        <div className='flex-col flex px-2 py-4 gap-2 '>
+                        <div className='flex-col flex px-2 py-4 gap-2 sm:px-0 sm:py-0'>
                             <div className='flex-row flex gap-2 items-center'>
                                 <Clock size={18} />
-                                <span className='text-[18px] leading-[24px]'>{startTime} - {endTime}</span>
+                                <span className='text-[12px] md:text-[18px] md:leading-[24px] leading-[12px]'>{startTime} - {endTime}</span>
                             </div>
                             <div className='flex-row flex gap-2 items-center'>
                                 <MapPin size={18} />
-                                <span className='text-[18px] leading-[24px]'>{room}</span>
+                                <span className='text-[12px] md:text-[18px] md:leading-[24px]  leading-[12px]'>{room}</span>
                             </div>
                         </div>
 
