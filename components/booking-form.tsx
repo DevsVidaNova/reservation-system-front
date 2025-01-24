@@ -249,7 +249,7 @@ export function BookingForm({refetch }: { refetch: () => void }) {
               />
             </div>
             <DialogFooter>
-              <Button type="submit" style={{ flexGrow: 1, }}>Reservar</Button>
+              <Button type="submit" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Concluir reserva</Button>
             </DialogFooter>
           </form>
         </Form>
