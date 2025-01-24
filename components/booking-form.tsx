@@ -33,7 +33,7 @@ const formSchema = z.object({
   room: z.string({
     required_error: "Por favor, selecione uma sala.",
   }),
-  date: z.date({
+  date: z.string({
     required_error: "Por favor, selecione uma data.",
   }).refine((val) => val !== null, {
     message: "Por favor, selecione uma data válida.",
@@ -52,7 +52,7 @@ export function BookingForm() {
       name: "",
       phone: "",
       room: "",
-      date: new Date(),
+      date: "",
       startTime: "",
       endTime: "",
     },
@@ -92,14 +92,15 @@ export function BookingForm() {
       })
     }
   }
+  const [openCalendar, setOpenCalendar] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Fazer Reserva</Button>
+        <Button variant="default">Fazer Reserva</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <ScrollArea className="h-[860px]">
+      <DialogContent className="sm:max-w-[455px]">
+
         <DialogHeader>
           <DialogTitle>Reserva de Sala</DialogTitle>
           <DialogDescription>Preencha os detalhes para fazer sua reserva.</DialogDescription>
@@ -175,13 +176,45 @@ export function BookingForm() {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Data</FormLabel>
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) => date < new Date() || date.getDay() === 0}
-                    initialFocus
-                  />
+                  <div className="flex items-center space-x-2">
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="dd/mm/yyyy"
+                        value={field.value || ''}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9/]/g, ""); // Permite apenas números e "/"
+                          const formattedValue = value
+                            .replace(/^(\d{2})$/g, "$1/") // Adiciona "/" após o dia
+                            .replace(/^(\d{2}\/\d{2})$/g, "$1/"); // Adiciona "/" após o mês
+                          if (formattedValue.length <= 10) {
+                            field.onChange(formattedValue); // Atualiza o valor apenas se estiver no limite
+                          }
+                        }}
+                        maxLength={10} // Limita o tamanho do input a "dd/mm/yyyy"
+                      />
+                    </FormControl>
+
+                    <Button type="button" onClick={() => setOpenCalendar(!openCalendar)}>
+                      {openCalendar ? 'Fechar calendário' : 'Mostrar calendário'}
+                    </Button>
+                  </div>
+                  {openCalendar && (
+                    <div className="absolute z-10 mt-2 bg-white shadow-md rounded">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          if (date) {
+                            const formattedDate = format(date, "dd/MM/yyyy"); // Formata a data no padrão desejado
+                            field.onChange(formattedDate); // Define o valor formatado
+                          }
+                          setOpenCalendar(false); // Fecha o calendário após seleção
+                        }}
+                        initialFocus
+                      />
+                    </div>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -218,8 +251,7 @@ export function BookingForm() {
               <Button type="submit" style={{ flexGrow: 1, }}>Reservar</Button>
             </DialogFooter>
           </form>
-          </Form>
-          </ScrollArea>
+        </Form>
       </DialogContent>
     </Dialog>
   )
