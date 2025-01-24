@@ -12,47 +12,47 @@ import localFont from '@next/font/local'
 const sfpro = localFont({
   src: [
     {
-      path: '../public/fonts/SFPRODISPLAYBLACKITALIC.OTF',
+      path: '../public/fonts/SFPRODISPLAYBLACKITALIC.otf',
       weight: '900',
       style: 'italic'
     },
     {
-      path: '../public/fonts/SFPRODISPLAYBOLD.OTF',
+      path: '../public/fonts/SFPRODISPLAYBOLD.otf',
       weight: '700',
       style: 'normal'
     },
     {
-      path: '../public/fonts/SFPRODISPLAYHEAVYITALIC.OTF',
+      path: '../public/fonts/SFPRODISPLAYHEAVYITALIC.otf',
       weight: '800',
       style: 'italic'
     },
     {
-      path: '../public/fonts/SFPRODISPLAYLIGHTITALIC.OTF',
+      path: '../public/fonts/SFPRODISPLAYLIGHTITALIC.otf',
       weight: '300',
       style: 'italic'
     },
     {
-      path: '../public/fonts/SFPRODISPLAYMEDIUM.OTF',
+      path: '../public/fonts/SFPRODISPLAYMEDIUM.otf',
       weight: '500',
       style: 'normal'
     },
     {
-      path: '../public/fonts/SFPRODISPLAYREGULAR.OTF',
+      path: '../public/fonts/SFPRODISPLAYREGULAR.otf',
       weight: '400',
       style: 'normal'
     },
     {
-      path: '../public/fonts/SFPRODISPLAYSEMIBOLDITALIC.OTF',
+      path: '../public/fonts/SFPRODISPLAYSEMIBOLDITALIC.otf',
       weight: '600',
       style: 'italic'
     },
     {
-      path: '../public/fonts/SFPRODISPLAYTHINITALIC.OTF',
+      path: '../public/fonts/SFPRODISPLAYTHINITALIC.otf',
       weight: '100',
       style: 'italic'
     },
     {
-      path: '../public/fonts/SFPRODISPLAYULTRALIGHTITALIC.OTF',
+      path: '../public/fonts/SFPRODISPLAYULTRALIGHTITALIC.otf',
       weight: '200',
       style: 'italic'
     },
