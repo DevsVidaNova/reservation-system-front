@@ -15,11 +15,10 @@ const apiClient = axios.create({
   baseURL: baseURL,
   headers: { "Content-Type": "application/json" },
 });
-
 export async function fetchApi<T = unknown>(
   url: string,
   options: FetchApiOptions = {}
-): Promise<ApiResponse<T>> {
+): Promise<T> {
   try {
     const method = options.method?.toUpperCase() || "GET";
     if (method !== "GET" && !options.data) {
@@ -35,14 +34,14 @@ export async function fetchApi<T = unknown>(
     return response.data;
   } catch (error) {
     console.error(`Error fetching ${url}:`, error);
-    return null;
+    throw error;
   }
 }
 
 export async function fetchWithAuth<T = unknown>(
   url: string,
   options: FetchApiOptions = {}
-): Promise<ApiResponse<T>> {
+): Promise<T> {
   try {
     const token = await getToken();
     if (!token) {

@@ -26,15 +26,16 @@ import {
 import { Button } from "@/components/ui/button"
 import { useQuery } from '@tanstack/react-query'
 import { BookingForm } from './booking-form';
-
+import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { listBookings } from '@/app/api/booking';
 
-export function BookingList() {
+export function BookingList({ logged }: { logged: boolean }) {
     const { data: bookings, error, isLoading, refetch } = useQuery({
-        queryKey: ['bookings'],
+        queryKey: ['bookings list'],
         queryFn: async () => {
-            const res = await fetch("https://backagenda.onrender.com/bookings");
-            return res.json();
+            const res = await listBookings();
+            return res;
         },
     });
     const [local, setLocal] = useState(false);
@@ -45,7 +46,7 @@ export function BookingList() {
     //FILTERS 
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
     const selectBookings = bookings?.filter((booking: Booking) => booking.date === selectData);
-    const currentWeekBookings = bookings?.filter((booking: Booking) => { const now = new Date(), startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())), endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); const [day, month, year] = booking.date.split('/').map(Number); const bookingDate = new Date(year, month - 1, day); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; });
+    const currentWeekBookings = bookings ? bookings?.filter((booking: Booking) => { const now = new Date(), startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())), endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); const [day, month, year] = booking?.date?.split('/').map(Number); const bookingDate = new Date(year, month - 1, day); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
     const locateBookings = bookings?.filter((booking: Booking) => booking.room === selectLocate);
 
     if (isLoading) {
@@ -84,7 +85,12 @@ export function BookingList() {
                             </div>}
                     </div>
                     <div className='md:block hidden'>
-                        <BookingForm refetch={refetch} />
+                        {logged ?
+                            <BookingForm refetch={refetch} /> :
+                            <Link href="/auth/login">
+                             <Button variant="default" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Fazer Reserva</Button>
+                          </Link>
+                         }
                     </div>
                 </div>
                 <TabsContent value="hoje">

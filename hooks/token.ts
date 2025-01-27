@@ -16,6 +16,8 @@ export const getToken = async () => {
 export const deleteToken = async () => {
   localStorage.removeItem('authToken')
   sessionStorage.removeItem('authToken');
+  sessionStorage.removeItem('user');
+  localStorage.removeItem('user');
   return true;
 }
 

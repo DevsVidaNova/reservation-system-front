@@ -4,10 +4,10 @@ import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { loginUser } from '@/hooks/user'
+import { loginUser } from '@/app/api/user'
 import { Checkbox } from "@/components/ui/checkbox"
 
-export default function Auth() {
+export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -25,8 +25,13 @@ export default function Auth() {
       return
     }
     try {
-      await loginUser(email, password, session)
-      router.push('/stores')
+      const res = await loginUser(email, password, session)
+      console.log(res)
+      if (res?.user.isAdmin) {
+        router.push('/dashboard')
+      } else {
+        router.push('/')
+      }
     } catch (error: any) {
       setError('E-mail ou senha incorretos.')
     } finally {
@@ -82,11 +87,10 @@ export default function Auth() {
           </div>
         </CardContent>
         <CardFooter className='flex-col'>
-          
           <Button onClick={handleSubmit} disabled={isLoading} className="w-full bg-[#000] text-[16px] font-semibold py-6 rounded-full">
             {isLoading ? 'Enviando' : 'Entrar'}
           </Button>
-          {error && <div className='bg-red-200  mt-2 py-2 px-4 w-max  rounded-md'><p className="text-red-500">{error}</p></div>}
+          {error && <div className='bg-red-200  mt-2 py-2 px-4 w-max rounded-md'><p className="text-red-500">{error}</p></div>}
         </CardFooter>
       </Card>
       <p className="mt-8 text-gray-500 w-[300px] text-center">

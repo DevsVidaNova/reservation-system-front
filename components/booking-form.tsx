@@ -21,7 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "@/components/ui/use-toast"
-import { ScrollArea } from "./ui/scroll-area"
+import { addBooking } from "@/app/api/booking"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -60,15 +60,8 @@ export function BookingForm({refetch }: { refetch: () => void }) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch("https://backagenda.onrender.com/bookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      })
-
-      if (response.ok) {
+      const response = await addBooking(values)
+      if (response) {
         toast({
           title: "Reserva realizada com sucesso!",
           description: "Sua reserva foi confirmada.",
@@ -113,9 +106,9 @@ export function BookingForm({refetch }: { refetch: () => void }) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome Completo</FormLabel>
+                  <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input placeholder="Seu nome completo" {...field} />
+                    <Input placeholder="Descrição da reserva" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
