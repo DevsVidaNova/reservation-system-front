@@ -27,5 +27,6 @@
         "**/app/global.css": true,
         "**/app/layout.tsx": false,
         "**/app/page.js": true,
+        "**/lib": true,
     }
 }
