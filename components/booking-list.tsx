@@ -124,7 +124,7 @@ const AvaliableDays = (data: any) => {
     return (
         <div className='gap-8'>
             {data.data.map((booking: Booking) => {
-                const { endTime, startTime, phone, room, name, date } = booking
+                const { endTime, startTime, phone, room, name, date, id } = booking
                 const colorsAvatar = [
                     { text: '#fff', bg: '#AF34BF' },
                     { text: '#fff', bg: '#DA541E' },
@@ -145,10 +145,10 @@ const AvaliableDays = (data: any) => {
                 const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
 
                 return (
-                    <Card className="md:p-2 p-0 flex-row flex align-center justify-between items-center w-full my-4">
+                    <Card key={id} className="md:p-2 p-0 flex-row flex align-center justify-between items-center w-full my-4">
                         <div className='flex-col w-[80px] flex md:px-6 md:py-2 px-4 py-2 justify-center items-center border-r-2'>
-                            <span className='md:text-[18px] md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
-                            <span className='md:text-[36px] md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
+                            <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
+                            <span className='md:text-[36px] font-bold md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
                         </div>
 
                         <div className='flex-col flex px-2 py-4 gap-2 sm:px-0 sm:py-0'>

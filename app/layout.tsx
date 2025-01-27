@@ -4,8 +4,8 @@ import './font.css'
 import ReactQueryProvider from '../lib/provider';
 
 export const metadata: Metadata = {
-  title: 'Agendar Consulta',
-  description: 'Created with v0',
+  title: 'Vida Nova | Reservar Espaço',
+  description: 'Reserve um horário para atendimento no Espaço Vida Nova',
 }
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className='font-sfpro'>
+      <body className='font-mundial'>
         <ReactQueryProvider>
           <SidebarProvider>
             {children}
@@ -28,7 +28,3 @@ export default function RootLayout({
     </html>
   )
 }
-/* SIDEBAR DENTRO DO PROVIDER
-  <AppSidebar />
-            <SidebarTrigger />
-*/
