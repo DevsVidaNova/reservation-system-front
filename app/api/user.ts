@@ -23,7 +23,7 @@ export const loginUser = async (email: string, password: string, session: boolea
     }
 };
 
-export const listUsers = async (): Promise<UserList[]> => {
+export const listUsers = async (page: number): Promise<UserList[]> => {
     try {
         const res: UserList[] = await fetchWithAuth("/users", { method: "GET" });
         return res;

@@ -13,12 +13,14 @@ import { UserList } from '../api/types'
 import { Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { excludeUser } from '@/app/api/user';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function Dashboard() {
+  const [page, setpage] = useState(1);
   const { data: users, error, isLoading, refetch } = useQuery<UserList[]>({
     queryKey: ['bookings'],
     queryFn: async () => {
-      const res = await listUsers();
+      const res = await listUsers(page);
       return res;
     },
   });
@@ -27,6 +29,29 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col w-full  px-4 py-4">
+
+
+      <Tabs defaultValue="users" >
+        <TabsList>
+          <TabsTrigger value="users">Usuários</TabsTrigger>
+          <TabsTrigger value="cameras">Câmeras</TabsTrigger>
+        </TabsList>
+        <TabsContent value="users">
+          <ListUsers users={users || []} refetch={refetch} />
+        </TabsContent>
+        <TabsContent value="cameras">
+
+        </TabsContent>
+      </Tabs>
+
+
+    </div>
+  )
+}
+
+const ListUsers = ({ users, refetch }: { users: UserList[], refetch: () => void }) => {
+  return (
+    <>
       <div className=' flex flex-col self-center gap-4'>
         <div className='flex flex-row justify-between items-center'>
           <h2 className='text-[24px] font-bold'>Usuários cadastrados</h2>
@@ -41,7 +66,7 @@ export default function Dashboard() {
       <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
         <UserAddForm refetch={refetch} />
       </div>
-    </div>
+    </>
   )
 }
 
@@ -77,7 +102,7 @@ const TableUsers = ({ users, refetch }: { users: UserList[], refetch: () => void
           <TableRow className='bg-neutral-50'>
             <TableHead >Nome</TableHead>
             <TableHead >Telefone</TableHead>
-            <TableHead >Email</TableHead>
+            <TableHead className='text-wrap min-w-[60px] '>Email</TableHead>
             <TableHead >Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -86,7 +111,7 @@ const TableUsers = ({ users, refetch }: { users: UserList[], refetch: () => void
             <TableRow key={user.email}>
               <TableCell>{user.name}</TableCell>
               <TableCell>{user.phone}</TableCell>
-              <TableCell>{user.email}</TableCell>
+              <TableCell className='text-wrap min-w-[60px] ' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
               <TableCell>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild >

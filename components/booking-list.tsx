@@ -88,9 +88,9 @@ export function BookingList({ logged }: { logged: boolean }) {
                         {logged ?
                             <BookingForm refetch={refetch} /> :
                             <Link href="/auth/login">
-                             <Button variant="default" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Fazer Reserva</Button>
-                          </Link>
-                         }
+                                <Button variant="default" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Fazer Reserva</Button>
+                            </Link>
+                        }
                     </div>
                 </div>
                 <TabsContent value="hoje">
@@ -108,7 +108,12 @@ export function BookingList({ logged }: { logged: boolean }) {
             </Tabs>
 
             <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
-                <BookingForm refetch={refetch} />
+                {logged ?
+                    <BookingForm refetch={refetch} /> :
+                    <Link href="/auth/login">
+                        <Button variant="default" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Fazer Reserva</Button>
+                    </Link>
+                }
             </div>
         </div>
     )

@@ -18,7 +18,6 @@ export default function DashLayout({ children }: { children: ReactNode }) {
         }
     }
     const [user, setuser] = useState();
-
     useEffect(() => {
         const verify = async () => {
             const res: any = await getUser();
@@ -34,11 +33,11 @@ export default function DashLayout({ children }: { children: ReactNode }) {
 
 
     return (
-        <div className='bg-[#F7F7F7] w-full flex'>
-            <nav className=" text-white p-2 fixed w-full z-10" style={{ backgroundColor: '#000', }}>
+        <div className='bg-[#fff] w-full flex'>
+            <nav className=" text-white p-2 px-4 fixed w-full z-10" style={{ backgroundColor: '#000', }}>
                 <div className="container mx-auto flex justify-between items-center">
                     <div className='flex-row flex'>
-                        <Link href="/stores" className="text-xl font-bold ml-2">
+                        <Link href="/" className="text-xl font-bold ml-2">
                             <div className='flex-row flex align-center justify-center items-center'>
                                 <img src="/imgs/logo_white.svg" alt="ProStock" className="w-[180px]" />
                             </div>

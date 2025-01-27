@@ -5,19 +5,24 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { getUser } from "@/hooks/user";
 export default function Home() {
-  const [user, setuser] = useState();
+  const [user, setuser] = useState({ isAdmin: false });
   useEffect(() => {
     const verify = async () => {
       const res: any = await getUser();
-      console.log(res)
       setuser(res);
     }
     verify();
   }, []);
   return (
-    <div className="container mx-auto py-10 px-4 sm:px-2">
-      <div className="flex flex-row justify-between">
-        <h1 className="text-3xl font-bold mb-6">Reservar Espaço</h1>
+    <div className="container mx-auto py-2 px-4 sm:px-2">
+       <img src="/imgs/logo_black.png" alt="Vida Nova" className="w-[180px] md:hidden block self-center items-center mx-auto" />
+
+      <div className="flex flex-row justify-between border-b-2 mb-6 align-center items-center pb-4">
+        <img src="/imgs/logo_black.png" alt="Vida Nova" className="w-[180px] md:block hidden" />
+
+        <h1 className="text-[24px] font-bold " style={{lineHeight: 1,}}>Reservar Espaço</h1>
+
+        <div>
           {user?.isAdmin &&
             <Link href="/dashboard">
               <Button variant='outline' >
@@ -32,8 +37,10 @@ export default function Home() {
             </Link>
           }
         </div>
-      <BookingList logged={user ? true : false} />
+
       </div>
-      )
+      <BookingList logged={user ? true : false} />
+    </div>
+  )
 }
 
