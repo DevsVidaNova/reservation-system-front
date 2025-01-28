@@ -8,13 +8,8 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { Booking } from "./types";
-import { Calendar, Clock, MapPin, Phone } from 'lucide-react';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { Calendar, Clock, MapPin, Phone, Trash } from 'lucide-react';
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -28,9 +23,9 @@ import { useQuery } from '@tanstack/react-query'
 import { BookingForm } from './booking-form';
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { listBookings } from '@/app/api/booking';
+import { deleteBooking, listBookings } from '@/app/api/booking';
 
-export function BookingList({ logged }: { logged: boolean }) {
+export function BookingList({ logged, admin = false }: { logged: boolean, admin: boolean }) {
     const { data: bookings, error, isLoading, refetch } = useQuery({
         queryKey: ['bookings list'],
         queryFn: async () => {
@@ -44,15 +39,7 @@ export function BookingList({ logged }: { logged: boolean }) {
     const todayDate = new Date().toISOString().split('T')[0];
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
 
-    const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => {
-        const now = new Date();
-        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        if (!booking.date) return false;
-        const bookingDate = new Date(booking.date);
-        return bookingDate >= startOfWeek && bookingDate <= endOfWeek;
-    }) : [];
+    const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
 
     const locateBookings = bookings?.filter((booking: Booking) => booking.room === selectLocate);
 
@@ -114,20 +101,20 @@ export function BookingList({ logged }: { logged: boolean }) {
                     </div>
                 </div>
                 <TabsContent value="hoje">
-                    <AvaliableDays data={todayBookings} />
+                    <AvaliableDays data={todayBookings} refetch={refetch} admin={admin} />
                 </TabsContent>
                 <TabsContent value="semana">
-                    <AvaliableDays data={currentWeekBookings} />
+                    <AvaliableDays data={currentWeekBookings} refetch={refetch} admin={admin} />
                 </TabsContent>
                 <TabsContent value="tudo">
-                    <AvaliableDays data={bookings} />
+                    <AvaliableDays data={bookings} refetch={refetch} admin />
                 </TabsContent>
                 <TabsContent value="local">
-                    <AvaliableDays data={locateBookings} />
+                    <AvaliableDays data={locateBookings} refetch={refetch} admin={admin} />
                 </TabsContent>
             </Tabs>
             <div style={{ height: 150, }}></div>
-            
+
             <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
                 {logged ?
                     <BookingForm refetch={refetch} /> :
@@ -140,8 +127,9 @@ export function BookingList({ logged }: { logged: boolean }) {
     )
 }
 
-const AvaliableDays = (data: any) => {
-    if (data?.data?.length === 0) return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
+const AvaliableDays = ({ data, refetch, admin }: { data: any, refetch: () => void, admin: boolean }) => {
+
+    if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
         <div className='hidden md:block'>
             <div className='w-[124px] h-[124px] bg-gray-200 flex-col justify-center items-center rounded-full flex'>
                 <Calendar size={46} />
@@ -152,11 +140,22 @@ const AvaliableDays = (data: any) => {
             <span className='opacity-70 text-[18px]'>Sem reservas por enquanto...</span>
         </div>
     </div>
+
+    const handleExcludeBooking = async (id: string) => {
+        console.log(id)
+        try {
+            const res = await deleteBooking(id);
+            refetch()
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     if (!data) return <div>Carregando...</div>
     return (
         <div className='gap-8'>
-            {data?.data?.map((booking: Booking) => {
-                const { endTime, startTime, room, user, date, id, description } = booking
+            {data?.map((booking: Booking) => { 
+                const { endTime, startTime, room, user, date, _id, description } = booking
                 const colorsAvatar = [
                     { text: '#fff', bg: '#AF34BF' },
                     { text: '#fff', bg: '#DA541E' },
@@ -180,7 +179,7 @@ const AvaliableDays = (data: any) => {
                 const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
 
                 return (
-                    <Card key={id} className="md:p-2 p-0 flex-row flex align-center justify-between items-center w-full my-4">
+                    <Card key={_id} className="md:p-2 p-0 flex-row flex align-center justify-between items-center w-full my-4">
                         <div className='flex-col w-[80px] flex md:px-6 md:py-2 px-4 py-2 justify-center items-center border-r-2'>
                             <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
                             <span className='md:text-[36px] font-bold md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
@@ -201,7 +200,7 @@ const AvaliableDays = (data: any) => {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <div style={{ backgroundColor: randomColor?.bg, width: 46, height: 46, justifyContent: 'center', alignItems: 'center', borderRadius: 100, flexDirection: 'column', display: 'flex' }}>
-                                        <span style={{ color: randomColor?.text, }} className='font-bold uppercase'>{user?.name?.slice(0,2)}</span>
+                                        <span style={{ color: randomColor?.text, }} className='font-bold uppercase'>{user?.name?.slice(0, 2)}</span>
                                     </div>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
@@ -236,6 +235,10 @@ const AvaliableDays = (data: any) => {
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
+                            {admin &&
+                                <Button variant="outline" className="h-12 w-12" onClick={() => handleExcludeBooking(_id)}>
+                                    <Trash className="h-16 w-16" />
+                                </Button>}
                         </div>
                     </Card >
                 )

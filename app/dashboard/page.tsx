@@ -14,6 +14,7 @@ import { Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { excludeUser } from '@/app/api/user';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { BookingList } from '@/components/booking-list'
 
 export default function Dashboard() {
   const [page, setpage] = useState(1);
@@ -29,8 +30,6 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col w-full  px-4 py-4">
-
-
       <Tabs defaultValue="users" >
         <TabsList>
           <TabsTrigger value="users">Usuários</TabsTrigger>
@@ -40,14 +39,13 @@ export default function Dashboard() {
           <ListUsers users={users || []} refetch={refetch} />
         </TabsContent>
         <TabsContent value="bookings">
-
+          <BookingList logged={true} admin={true} />
         </TabsContent>
       </Tabs>
-
-
     </div>
   )
 }
+
 
 const ListUsers = ({ users, refetch }: { users: UserList[], refetch: () => void }) => {
   return (
@@ -69,7 +67,6 @@ const ListUsers = ({ users, refetch }: { users: UserList[], refetch: () => void 
     </>
   )
 }
-
 
 const TableUsers = ({ users, refetch }: { users: UserList[], refetch: () => void }) => {
   if (!users) return <p>Carregando...</p>

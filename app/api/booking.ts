@@ -30,3 +30,11 @@ export const userBookings = async (id: string) => {
         throw new Error(error.message);
     }
 };
+export const deleteBooking = async (id: string) => {
+    try {
+        const res: any = await fetchWithAuth("/bookings/deleteBooking/"+id, { method: "DELETE" });
+        return res;
+    } catch (error: any) {
+        throw new Error(error.message);
+    }
+};

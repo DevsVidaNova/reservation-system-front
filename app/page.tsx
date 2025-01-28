@@ -41,7 +41,7 @@ export default function Home() {
         </div>
 
       </div>
-      <BookingList logged={user ? true : false} />
+      <BookingList logged={user ? true : false} admin={false} />
     </div>
   )
 }
