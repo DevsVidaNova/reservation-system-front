@@ -29,3 +29,21 @@ export type Booking = {
     startTime: string,
     endTime: string,
 }
+
+
+
+export type Room = {
+    id: string, //id da sala
+    name: string, //nome da sala
+    size: number, //quantidade de pessoas
+    description: string, //ex: sala de reunião
+    exclusive: boolean, //exclusivo ou não
+    status: boolean,  //ativo ou não
+}
+
+export type Stats = {
+    rooms: number, //quantidade de salas
+    bookings: number, //quantidade de reservas
+    users: number, //quantidade de usuários
+    week: number, //quantidade de reservas para a semana
+}

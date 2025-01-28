@@ -3,147 +3,127 @@ import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { UserAddForm } from '@/components/user_add'
-import { useQuery } from '@tanstack/react-query'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { toast } from "@/components/ui/use-toast"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { listUsers } from '../api/user'
-import { UserList } from '../api/types'
-import { Trash } from 'lucide-react'
+import { BookMarked, BookPlus, Calendar1, MapPin, Trash, UserPlus, Users } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { excludeUser } from '@/app/api/user';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BookingList } from '@/components/booking-list'
+
+import { Stats } from '../api/types'
+import { useQuery } from '@tanstack/react-query'
+import { listDash } from '@/app/api/dashboard'
+import Link from 'next/link'
 
 export default function Dashboard() {
-  const [page, setpage] = useState(1);
-  const { data: users, error, isLoading, refetch } = useQuery<UserList[]>({
-    queryKey: ['bookings'],
+
+  const { data, error, isLoading } = useQuery<Stats>({
+    queryKey: ['stats'],
     queryFn: async () => {
-      const res = await listUsers(page);
+      const res = await listDash();
       return res;
     },
   });
+
+  const { rooms, bookings, users, week } = data || {};
+
   if (isLoading) return <p>Carregando...</p>
   if (error) return <p>Erro ao carregar usuários</p>
 
+
   return (
     <div className="flex flex-col w-full  px-4 py-4">
-      <Tabs defaultValue="users" >
-        <TabsList>
-          <TabsTrigger value="users">Usuários</TabsTrigger>
-          <TabsTrigger value="bookings">Reservas</TabsTrigger>
-        </TabsList>
-        <TabsContent value="users">
-          <ListUsers users={users || []} refetch={refetch} />
-        </TabsContent>
-        <TabsContent value="bookings">
-          <BookingList logged={true} admin={true} />
-        </TabsContent>
-      </Tabs>
+      <div className='container justify-center px-2 gap-2 flex flex-col self-center '>
+        <h2 className='text-[32px] font-bold'>Dashboard</h2>
+        <div className="flex flex-row gap-4 flex-wrap align-center ">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-row justify-between align-center items-center">
+                <Users size={32} />
+                <span className='text-[32px] font-bold'>{users}</span>
+              </div>
+              <CardTitle className='opacity-70 text-[20px]'>Usuários ativos</CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader>
+              <div className="flex flex-row justify-between align-center items-center">
+                <MapPin size={32} />
+                <span className='text-[32px] font-bold'>{rooms}</span>
+              </div>
+              <CardTitle className='opacity-70 text-[20px]'>Salas criadas</CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader>
+              <div className="flex flex-row justify-between align-center items-center">
+                <BookMarked size={32} />
+                <span className='text-[32px] font-bold'>{bookings}</span>
+              </div>
+              <CardTitle className='opacity-70 text-[20px]'>Reservas feitas</CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader>
+              <div className="flex flex-row justify-between align-center items-center">
+                <Calendar1 size={32} />
+                <span className='text-[32px] font-bold'>{week}</span>
+              </div>
+              <CardTitle className='opacity-70 text-[20px]'>Para semana</CardTitle>
+            </CardHeader>
+          </Card>
+        </div>
+
+        
+        <h2 className='text-[32px] font-bold'>Ações</h2>
+        <div className="flex flex-row gap-4 flex-wrap align-center ">
+          <Card className='max-w-[300px]'>
+            <CardHeader>
+              <div className="flex flex-row justify-between align-center items-center">
+                <UserPlus size={42} />
+              </div>
+              <CardTitle >Adicionar novo usuário</CardTitle>
+              <CardDescription className='text-[16px] font-normal' style={{ lineHeight: 1, }}>Usuários podem criar reservas sozinhos. Para um novo usuário você precisará do seguintes dados: nome, telefone, e-mail e senha.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href='/dashboard/user'>
+                <Button className='w-full'>Criar usuário</Button>
+              </Link>
+            </CardContent>
+          </Card>
+          <Card className='max-w-[300px]'>
+            <CardHeader>
+              <div className="flex flex-row justify-between align-center items-center">
+                <BookPlus size={42} />
+              </div>
+              <CardTitle >Adicionar nova sala</CardTitle>
+              <CardDescription className='text-[16px] font-normal' style={{ lineHeight: 1, }}>Salas servem para serem reservadas. Para uma nova sala você precisará do seguintes dados: nome, quantidade de pessoas, descrição e exclusividade.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href='/dashboard/rooms'>
+                <Button className='w-full'>Criar sala</Button>
+              </Link>
+            </CardContent>
+          </Card>
+          <Card className='max-w-[300px]'>
+            <CardHeader>
+              <div className="flex flex-row justify-between align-center items-center">
+                <BookMarked size={42} />
+              </div>
+              <CardTitle >Reservar sala</CardTitle>
+              <CardDescription className='text-[16px] font-normal' style={{ lineHeight: 1, }}>Quando reservada a sala ficará disponível para realizar atividades. Para reserver uma sala você precisará do seguintes dados: sala, descrição, dia, hora de inicio e hora de fim.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href='/dashboard/rooms'>
+                <Button className='w-full'>Reservar sala</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
-  )
-}
-
-
-const ListUsers = ({ users, refetch }: { users: UserList[], refetch: () => void }) => {
-  return (
-    <>
-      <div className=' flex flex-col self-center gap-4'>
-        <div className='flex flex-row justify-between items-center'>
-          <h2 className='text-[24px] font-bold'>Usuários cadastrados</h2>
-          <div className='md:block hidden'>
-            <UserAddForm refetch={refetch} />
-          </div>
-        </div>
-        <div>
-          <TableUsers users={users || []} refetch={refetch} />
-        </div>
-      </div>
-      <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
-        <UserAddForm refetch={refetch} />
-      </div>
-    </>
-  )
-}
-
-const TableUsers = ({ users, refetch }: { users: UserList[], refetch: () => void }) => {
-  if (!users) return <p>Carregando...</p>
-
-  const [confirmation, setconfirmation] = useState('');
-  const [open, setOpen] = useState(false)
-
-  const handleExcludeUser = async (id: string, confirmation: string) => {
-    console.log(id, confirmation)
-    if (confirmation !== 'sim') {
-      toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao processar sua reserva. Tente novamente.",
-        variant: "destructive",
-      })
-      return
-    }
-    try {
-      await excludeUser(id)
-      refetch()
-    } catch (error: any) {
-      console.log(error)
-    }
-  }
-
-  return (
-    <Card className='overflow-hidden'>
-      <Table>
-        <TableHeader >
-          <TableRow className='bg-neutral-50'>
-            <TableHead >Nome</TableHead>
-            <TableHead >Telefone</TableHead>
-            <TableHead className='text-wrap min-w-[60px] '>Email</TableHead>
-            <TableHead >Ações</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users?.map(user => (
-            <TableRow key={user.email}>
-              <TableCell>{user.name}</TableCell>
-              <TableCell>{user.phone}</TableCell>
-              <TableCell className='text-wrap min-w-[60px] ' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
-              <TableCell>
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger asChild >
-                    <Button variant='outline'>
-                      <Trash />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[455px]">
-
-                    <DialogHeader>
-                      <DialogTitle>Excluir usuário</DialogTitle>
-                      <DialogDescription>Tem certeza que quer excluir o usuário? Digite "sim" para confirmar</DialogDescription>
-                      <Input
-                        id='confirmation'
-                        label='Confirmação'
-                        placeholder='Leia a mensagem acima'
-                        value={confirmation}
-                        onChange={(e) => setconfirmation(e.target.value)}
-                      />
-
-                    </DialogHeader>
-                    <DialogFooter className="border-t-2 pt-[16px]">
-                      <DialogClose asChild>
-                        <Button onClick={() => handleExcludeUser(user._id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir usuário</Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-
-
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
   )
 }
