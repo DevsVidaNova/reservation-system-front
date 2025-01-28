@@ -39,16 +39,36 @@ export function BookingList({ logged }: { logged: boolean }) {
         },
     });
     const [local, setLocal] = useState(false);
-    const [selectData, setselectData] = useState('25/01/2025');
     const [selectLocate, setselectLocate] = useState();
 
-    const todayDate = new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: '2-digit', year: 'numeric' }).split('/').join('/');
-    //FILTERS 
+    const todayDate = new Date().toISOString().split('T')[0];
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
-    const selectBookings = bookings?.filter((booking: Booking) => booking.date === selectData);
-    const currentWeekBookings = bookings ? bookings?.filter((booking: Booking) => { const now = new Date(), startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())), endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); const [day, month, year] = booking?.date?.split('/').map(Number); const bookingDate = new Date(year, month - 1, day); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
+
+    const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => {
+        const now = new Date();
+        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        if (!booking.date) return false;
+        const bookingDate = new Date(booking.date);
+        return bookingDate >= startOfWeek && bookingDate <= endOfWeek;
+    }) : [];
+
     const locateBookings = bookings?.filter((booking: Booking) => booking.room === selectLocate);
 
+    if (!logged) {
+        return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
+            <div className='hidden md:block'>
+                <div className='w-[124px] h-[124px] bg-gray-200 flex-col justify-center items-center rounded-full flex'>
+                    <Calendar size={46} />
+                </div>
+            </div>
+            <div className='flex flex-col'>
+                <h2 className='text-[24px]  font-bold' style={{ lineHeight: 1, }}>Faça login para reservar</h2>
+                <span className='opacity-70 text-[18px]'>Faça login para fazer uma reserva</span>
+            </div>
+        </div>
+    }
     if (isLoading) {
         return <div>Carregando reservas aguarde...</div>
     }
@@ -106,7 +126,8 @@ export function BookingList({ logged }: { logged: boolean }) {
                     <AvaliableDays data={locateBookings} />
                 </TabsContent>
             </Tabs>
-
+            <div style={{ height: 150, }}></div>
+            
             <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
                 {logged ?
                     <BookingForm refetch={refetch} /> :
@@ -134,8 +155,8 @@ const AvaliableDays = (data: any) => {
     if (!data) return <div>Carregando...</div>
     return (
         <div className='gap-8'>
-            {data.data.map((booking: Booking) => {
-                const { endTime, startTime, phone, room, name, date, id } = booking
+            {data?.data?.map((booking: Booking) => {
+                const { endTime, startTime, room, user, date, id, description } = booking
                 const colorsAvatar = [
                     { text: '#fff', bg: '#AF34BF' },
                     { text: '#fff', bg: '#DA541E' },
@@ -151,8 +172,11 @@ const AvaliableDays = (data: any) => {
                     { text: '#fff', bg: '#ed9db0' },
                 ]
                 const randomColor = colorsAvatar[Math.floor(Math.random() * colorsAvatar.length)];
-                const [day, month, year] = date.split('/');
+                const [year, month, day] = (date?.split('-') || ['0000', '00', '00']);
                 const formattedDate = `${year}-${month}-${day}`;
+
+                const timeStart = new Date(startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                const timeEnd = new Date(endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
 
                 return (
@@ -161,32 +185,29 @@ const AvaliableDays = (data: any) => {
                             <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
                             <span className='md:text-[36px] font-bold md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
                         </div>
-
                         <div className='flex-col flex px-2 py-4 gap-2 sm:px-0 sm:py-0'>
                             <div className='flex-row flex gap-2 items-center'>
                                 <Clock size={18} />
-                                <span className='text-[12px] md:text-[18px] md:leading-[24px] leading-[12px]'>{startTime} - {endTime}</span>
+                                <span className='text-[12px] md:text-[18px] md:leading-[24px] leading-[12px]'>{timeStart} - {timeEnd}</span>
                             </div>
                             <div className='flex-row flex gap-2 items-center'>
                                 <MapPin size={18} />
-                                <span className='text-[12px] md:text-[18px] md:leading-[24px]  leading-[12px]'>{room}</span>
+                                <span className='text-[12px] md:text-[18px] md:leading-[24px] leading-[12px]'>{room} - {description?.length > 24 ? description?.slice(0, 21) + '...' : description}</span>
                             </div>
                         </div>
 
 
                         <div className='flex-row flex px-4 py-4 gap-4 align-center items-center border-l-2'>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger>
-                                        <div style={{ backgroundColor: randomColor?.bg, width: 46, height: 46, justifyContent: 'center', alignItems: 'center', borderRadius: 100, flexDirection: 'column', display: 'flex' }}>
-                                            <span style={{ color: randomColor?.text, }} className='font-bold'>{name.split(' ').map((n: string) => n[0]).join('')}</span>
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        <span>{name}</span>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <div style={{ backgroundColor: randomColor?.bg, width: 46, height: 46, justifyContent: 'center', alignItems: 'center', borderRadius: 100, flexDirection: 'column', display: 'flex' }}>
+                                        <span style={{ color: randomColor?.text, }} className='font-bold uppercase'>{user?.name?.slice(0,2)}</span>
+                                    </div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <span>{user?.name}</span>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -200,7 +221,7 @@ const AvaliableDays = (data: any) => {
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem>
                                         <a
-                                            href={`https://wa.me/55${phone.replace(/[()\s-]/g, '')}`}
+                                            href={`https://wa.me/55${user?.phone?.replace(/[()\s-]/g, '')}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="flex items-center"
@@ -209,7 +230,7 @@ const AvaliableDays = (data: any) => {
                                         </a>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
-                                        <a href={`tel:+55${phone}`} className="flex items-center">
+                                        <a href={`tel:+55${user?.phone}`} className="flex items-center">
                                             Ligar
                                         </a>
                                     </DropdownMenuItem>

@@ -34,12 +34,12 @@ export default function Dashboard() {
       <Tabs defaultValue="users" >
         <TabsList>
           <TabsTrigger value="users">Usuários</TabsTrigger>
-          <TabsTrigger value="cameras">Câmeras</TabsTrigger>
+          <TabsTrigger value="bookings">Reservas</TabsTrigger>
         </TabsList>
         <TabsContent value="users">
           <ListUsers users={users || []} refetch={refetch} />
         </TabsContent>
-        <TabsContent value="cameras">
+        <TabsContent value="bookings">
 
         </TabsContent>
       </Tabs>

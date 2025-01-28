@@ -14,6 +14,7 @@ export const listBookings = async () => {
 export const addBooking = async (data: Booking) => {
     try {
         const res: any = await fetchWithAuth("/bookings", { method: "POST", data: data });
+        console.log(res)
         return res;
     } catch (error: any) {
         console.log(error)

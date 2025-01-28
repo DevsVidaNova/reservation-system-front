@@ -23,8 +23,7 @@ export type LoginUser = {
 }
 
 export type Booking = { 
-    name: string,
-    phone: string,
+    description: string,
     room: string,
     date: string,
     startTime: string,

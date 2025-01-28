@@ -4,6 +4,7 @@ import { BookingList } from "@/components/booking-list"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { getUser } from "@/hooks/user";
+
 export default function Home() {
   const [user, setuser] = useState({ isAdmin: false });
   useEffect(() => {
@@ -13,6 +14,7 @@ export default function Home() {
     }
     verify();
   }, []);
+
   return (
     <div className="container mx-auto py-2 px-4 sm:px-2">
        <img src="/imgs/logo_black.png" alt="Vida Nova" className="w-[180px] md:hidden block self-center items-center mx-auto" />
@@ -23,7 +25,7 @@ export default function Home() {
         <h1 className="text-[24px] font-bold " style={{lineHeight: 1,}}>Reservar Espaço</h1>
 
         <div>
-          {user?.isAdmin &&
+          {user &&
             <Link href="/dashboard">
               <Button variant='outline' >
                 Dashboard

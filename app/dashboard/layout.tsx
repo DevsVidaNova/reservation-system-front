@@ -2,9 +2,9 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { deleteToken } from '@/hooks/token';
 import { Button } from '@/components/ui/button'
 import { ChevronRight, LogOut, Store, User } from 'lucide-react';
-import { deleteToken } from '@/hooks/token';
 import { getUser } from '@/hooks/user';
 
 export default function DashLayout({ children }: { children: ReactNode }) {

@@ -24,11 +24,8 @@ import { toast } from "@/components/ui/use-toast"
 import { addBooking } from "@/app/api/booking"
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "O nome deve ter pelo menos 2 palavras.",
-  }),
-  phone: z.string().regex(/^\(\d{2}\) \d{5}-\d{4}$/, {
-    message: "Informe um número de celular válido com DDD e 11 dígitos.",
+  description: z.string().min(2, {
+    message: "A descrição deve ter pelo menos 2 palavras.",
   }),
   room: z.string({
     required_error: "Por favor, selecione uma sala.",
@@ -49,8 +46,7 @@ export function BookingForm({refetch }: { refetch: () => void }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      phone: "",
+      description: "",
       room: "",
       date: "",
       startTime: "",
@@ -103,36 +99,12 @@ export function BookingForm({refetch }: { refetch: () => void }) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="name"
+              name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
                     <Input placeholder="Descrição da reserva" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Celular (com DDD)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="(99) 99999-9999"
-                      {...field}
-                      onChange={(e) => {
-                        const value = e.target.value
-                          .replace(/\D/g, "")
-                          .replace(/^(\d{2})(\d)/g, "($1) $2")
-                          .replace(/(\d{5})(\d)/, "$1-$2")
-                          .slice(0, 15)
-                        field.onChange(value)
-                      }}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -189,8 +161,8 @@ export function BookingForm({refetch }: { refetch: () => void }) {
                       />
                     </FormControl>
 
-                    <Button type="button" onClick={() => setOpenCalendar(!openCalendar)}>
-                      {openCalendar ? 'Fechar calendário' : 'Mostrar calendário'}
+                    <Button type="button" className="w-full h-[48px]" onClick={() => setOpenCalendar(!openCalendar)}>
+                      {openCalendar ? 'Fechar calendário' : 'Abrir calendário'}
                     </Button>
                   </div>
                   {openCalendar && (

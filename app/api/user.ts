@@ -34,8 +34,7 @@ export const listUsers = async (page: number): Promise<UserList[]> => {
 
 export const excludeUser = async (id: string) => {
     try {
-        const res: any = await fetchWithAuth("/api/auth/deleteUser", { method: "DELETE", data: { _id: id } });
-        console.log(res)
+        const res: any = await fetchWithAuth("/api/auth/deleteUser", { method: "DELETE", data: { id: id } });
         return res.data;
     } catch (error) {
         console.log(error)

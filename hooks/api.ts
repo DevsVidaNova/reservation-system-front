@@ -61,6 +61,7 @@ export async function fetchWithAuth<T = unknown>(
 
     return response.data;
   } catch (error: any) {
+    console.log(error.request)
     console.error(`Error fetching with auth at ${url}:`, error.response?.data || error.message);
     throw error.response?.data || error;
   }
