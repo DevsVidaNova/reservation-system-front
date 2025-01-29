@@ -1,8 +1,17 @@
+
+//USER TYPES
 export type UserList = {
     email: string;
     phone: string;
     name: string;
     _id: string;
+};
+export type UserEdit = {
+    email: string;
+    phone: string;
+    name: string;
+    _id: string;
+    password: string;
 };
 
 export type RegisterUser = {
@@ -39,8 +48,14 @@ export type Room = {
     description: string, //ex: sala de reunião
     exclusive: boolean, //exclusivo ou não
     status: boolean,  //ativo ou não
+} //CRIAR/EDITAR/LISTAR/DELETAR
+export type RoomAdd = {
+    name: string, //nome da sala
+    size: number, //quantidade de pessoas
+    description: string, //ex: sala de reunião
+    exclusive: boolean, //exclusivo ou não
+    status: boolean,  //ativo ou não
 }
-
 export type Stats = {
     rooms: number, //quantidade de salas
     bookings: number, //quantidade de reservas

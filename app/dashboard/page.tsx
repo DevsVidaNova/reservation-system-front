@@ -2,12 +2,10 @@
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { UserAddForm } from '@/components/user_add'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { toast } from "@/components/ui/use-toast"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { listUsers } from '../api/user'
 import { BookMarked, BookPlus, Calendar1, MapPin, Trash, UserPlus, Users } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { excludeUser } from '@/app/api/user';
@@ -89,7 +87,7 @@ export default function Dashboard() {
               <CardDescription className='text-[16px] font-normal' style={{ lineHeight: 1, }}>Usuários podem criar reservas sozinhos. Para um novo usuário você precisará do seguintes dados: nome, telefone, e-mail e senha.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href='/dashboard/user'>
+              <Link href='/dashboard/users'>
                 <Button className='w-full'>Criar usuário</Button>
               </Link>
             </CardContent>
@@ -108,7 +106,8 @@ export default function Dashboard() {
               </Link>
             </CardContent>
           </Card>
-          <Card className='max-w-[300px]'>
+          <Card className='max-w-[300px]'
+          >
             <CardHeader>
               <div className="flex flex-row justify-between align-center items-center">
                 <BookMarked size={42} />

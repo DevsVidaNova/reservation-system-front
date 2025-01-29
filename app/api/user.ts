@@ -11,7 +11,6 @@ export const registerUser = async (data: RegisterUser) => {
         throw new Error(error.message);
     }
 };
-
 export const loginUser = async (email: string, password: string, session: boolean) => {
     try {
         const res: LoginUser = await fetchApi("/api/auth/login", { method: "POST", data: { email, password } });
@@ -23,19 +22,27 @@ export const loginUser = async (email: string, password: string, session: boolea
     }
 };
 
-export const listUsers = async (page: number): Promise<UserList[]> => {
+export const showUser = async (): Promise<UserList> => {
     try {
-        const res: UserList[] = await fetchWithAuth("/users", { method: "GET" });
+        const res: UserList = await fetchWithAuth("/api/auth/showUser", { method: "GET" });
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
     }
 };
 
-export const excludeUser = async (id: string) => {
+export const editUser = async (data: any) => {
     try {
-        const res: any = await fetchWithAuth("/api/auth/deleteUser", { method: "DELETE", data: { id: id } });
-        return res.data;
+        const res = await fetchWithAuth("/api/auth/editUser", { method: "PUT", data: data });
+        return res;
+    } catch (error) {
+        throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
+    }
+};
+export const excludeUser = async () => {
+    try {
+        const res: any = await fetchWithAuth("/api/auth/deleteUser", { method: "DELETE"});
+        return res;
     } catch (error) {
         console.log(error)
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');

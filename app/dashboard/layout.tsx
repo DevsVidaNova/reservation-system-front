@@ -25,7 +25,7 @@ export default function DashLayout({ children }: { children: ReactNode }) {
                 router.replace('/')
             } else {
                 setuser(res);
-                return; 
+                return;
             }
         }
         verify();
@@ -44,9 +44,11 @@ export default function DashLayout({ children }: { children: ReactNode }) {
                         </Link>
                     </div>
                     <div className='flex-row flex gap-x-4'>
-                        <div style={{ backgroundColor: "#303030", width: 46, height: 46, justifyContent: 'center', alignItems: 'center', borderRadius: 100, flexDirection: 'column', display: 'flex' }}>
-                            <User size={18} color='#fff' />
-                        </div>
+                        <Link href="/profile">
+                            <div style={{ backgroundColor: "#303030", width: 46, height: 46, justifyContent: 'center', alignItems: 'center', borderRadius: 100, flexDirection: 'column', display: 'flex' }}>
+                                <User size={18} color='#fff' />
+                            </div>
+                        </Link>
                         <Button style={{ width: 48, height: 48, borderRadius: 8, backgroundColor: '#ffffff30', }} onClick={handleLogout}>
                             <LogOut size={18} color='#fff' />
                         </Button>
