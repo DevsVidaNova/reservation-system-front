@@ -1,4 +1,4 @@
-import { fetchApi, fetchWithAuth,  } from "@/hooks/api";
+import { fetchApi, fetchWithAuth, } from "@/hooks/api";
 import { createToken } from "@/hooks/token";
 import { RegisterUser, UserList, LoginUser } from "./types";
 import { createUser } from "@/hooks/user";
@@ -22,18 +22,27 @@ export const loginUser = async (email: string, password: string, session: boolea
     }
 };
 
-export const showUser = async (): Promise<UserList> => {
+export const showUser = async (id: string): Promise<UserList> => {
     try {
-        const res: UserList = await fetchWithAuth("/api/auth/showUser", { method: "GET" });
+        const res: UserList = await fetchWithAuth("/users/" + id, { method: "GET" });
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
     }
 };
 
-export const editUser = async (data: any) => {
+export const editUser = async (id: string, data: any) => {
+    console.log(id)
     try {
-        const res = await fetchWithAuth("/api/auth/editUser", { method: "PUT", data: data });
+        const res = await fetchWithAuth("/api/auth/editUser", {
+            method: "PUT", data: {
+                id: id,
+                name: data.name,
+                email: data.email,
+                phone: data.phone
+            }
+        });
+        console.log(res)
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
@@ -41,7 +50,7 @@ export const editUser = async (data: any) => {
 };
 export const excludeUser = async () => {
     try {
-        const res: any = await fetchWithAuth("/api/auth/deleteUser", { method: "DELETE"});
+        const res: any = await fetchWithAuth("/api/auth/deleteUser", { method: "DELETE" });
         return res;
     } catch (error) {
         console.log(error)

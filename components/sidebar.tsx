@@ -10,7 +10,7 @@ import {
     SidebarMenuItem,
     SidebarMenuButton,
 } from "@/components/ui/sidebar"
-import { BookCheck, Calendar, Camera, Home, Inbox, Lightbulb, LogOut, Search, Settings, Users } from "lucide-react"
+import { BookCheck, Calendar, Camera, Home, Inbox, Lightbulb, LogOut, Search, Settings, User, Users } from "lucide-react"
 import Link from "next/link"
 import { useRouter, usePathname } from 'next/navigation'
 import { deleteToken } from '@/hooks/token';
@@ -49,6 +49,11 @@ export function AppSidebar() {
             title: "Usuários",
             url: "/dashboard/users",
             icon: Users,
+        },
+        {
+            title: "Meu Perfil",
+            url: "/profile",
+            icon: User,
         },
         {
             title: "Sair",

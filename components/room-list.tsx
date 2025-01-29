@@ -29,7 +29,7 @@ export function UserList({ logged, admin = false }: { logged: boolean, admin: bo
     const { data: bookings, error, isLoading, refetch } = useQuery({
         queryKey: ['bookings list'],
         queryFn: async () => {
-            const res = await listBookings();
+            const res = await L();
             return res;
         },
     });

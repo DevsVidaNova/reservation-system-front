@@ -1,23 +1,19 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-
 import { useQuery } from '@tanstack/react-query'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-
-import { toast } from "@/components/ui/use-toast"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { UserList } from '@/app/api/types'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { excludeUser, editUser, showUser } from '@/app/api/user';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { User } from 'lucide-react';
+
 import Link from 'next/link'
+
+import { editUser, showUser } from '@/app/api/user';
+import { getUser } from '@/hooks/user'
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -32,11 +28,16 @@ const formSchema = z.object({
 })
 
 export default function Profile() {
+
+  const [success, setsuccess] = useState('');
   const [error, seterror] = useState('');
-  const { data: user, error: isError, isLoading, refetch } = useQuery<UserList>({
+  const [userId, setuserId] = useState('');
+  const { data: user, error: isError, isLoading, } = useQuery<UserList>({
     queryKey: ['bookings'],
     queryFn: async () => {
-      const res = await showUser();
+      const useres = await getUser()
+      setuserId(useres?.id)
+      const res = await showUser(useres?.id);
       return res;
     },
   });
@@ -52,27 +53,16 @@ export default function Profile() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     seterror('')
+    setsuccess('')
     try {
-      const response = await editUser(values)
-      if (response) {
-        toast({
-          title: "Usuário criado com sucesso!",
-          description: "Deu tudo certo, o usuário foi criado com sucesso.",
-        })
-        form.reset()
-        refetch()
-      }
+      const response: any = await editUser(userId, values)
+      setsuccess(response?.message)
     } catch (error: any) {
       seterror(error.message)
-      toast({
-        title: "Erro",
-        description: error,
-        variant: "destructive",
-      })
     }
   }
 
-  useEffect(() => { 
+  useEffect(() => {
     if (user) {
       form.setValue('name', user.name)
       form.setValue('phone', user.phone)
@@ -80,8 +70,8 @@ export default function Profile() {
     }
   }, [user])
 
- // if (isLoading) return <p>Carregando...</p>
- // if (isError) return <p>Erro ao carregar usuários</p>
+  if (isLoading) return <p>Carregando...</p>
+  if (isError) return <p>Erro ao carregar usuários</p>
 
   return (
     <div className="flex flex-col w-full  px-4 py-4">
@@ -140,15 +130,16 @@ export default function Profile() {
               </FormItem>
             )}
           />
-            <div className="flex flex-col w-full gap-4">
-              {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
-              <Button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Salvar alterações</Button>
-              <Link href="/" className='flex w-full '>
-                <Button variant='outline' className="text-[18px] w-full font-semibold">Voltar para reservas</Button>
-              </Link> 
-            </div>
+          <div className="flex flex-col w-full gap-4">
+            {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
+            {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
+            <Button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Salvar alterações</Button>
+          </div>
         </form>
       </Form>
+      <Link href="/" className='flex w-full mt-4'>
+        <Button variant='outline' className="text-[18px] w-full font-semibold">Voltar para reservas</Button>
+      </Link>
     </div>
   )
 }

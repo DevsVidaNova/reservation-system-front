@@ -21,7 +21,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "@/components/ui/use-toast"
-import { addBooking } from "@/app/api/booking"
+import { addBooking, } from "@/app/api/booking"
+import { useQuery } from "@tanstack/react-query"
+import { Room } from "@/app/api/types"
+import { listRooms } from "@/app/api/rooms"
+import { HelpCircle, Users } from "lucide-react"
+import Link from "next/link"
 
 const formSchema = z.object({
   description: z.string().min(2, {
@@ -40,8 +45,16 @@ const formSchema = z.object({
 
 })
 
-export function BookingForm({refetch }: { refetch: () => void }) {
+export function BookingForm({ refetch }: { refetch: () => void }) {
   const [open, setOpen] = useState(false)
+
+  const { data: rooms, error: errorList, isLoading, } = useQuery<Room[]>({
+    queryKey: ['list rooms'],
+    queryFn: async () => {
+      const res = await listRooms(1);
+      return res;
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,33 +66,23 @@ export function BookingForm({refetch }: { refetch: () => void }) {
       endTime: "",
     },
   })
-
+  const [success, setsuccess] = useState('');
+  const [error, seterror] = useState('');
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setsuccess('')
+    seterror('')
     try {
       const response = await addBooking(values)
       if (response) {
-        toast({
-          title: "Reserva realizada com sucesso!",
-          description: "Sua reserva foi confirmada.",
-        })
-        setOpen(false)
-        form.reset()
-        refetch()
-      } else if (response.status === 409) {
-        toast({
-          title: "Conflito de horários",
-          description: "Já existe um agendamento para essa sala no período selecionado.",
-          variant: "destructive",
-        })
-      } else {
-        throw new Error("Falha ao criar a reserva")
-      }
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao processar sua reserva. Tente novamente.",
-        variant: "destructive",
-      })
+        setsuccess(response.message)
+        setTimeout(() => {
+          setOpen(false)
+          form.reset()
+          refetch()
+        }, 1500);
+      } 
+    } catch (error: any) {
+      seterror(error.message)
     }
   }
   const [openCalendar, setOpenCalendar] = useState(false);
@@ -116,20 +119,35 @@ export function BookingForm({refetch }: { refetch: () => void }) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Sala</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma sala" />
-                      </SelectTrigger>
+                      <div className="flex-row flex gap-2">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione uma sala" />
+                        </SelectTrigger>
+                        <Link href="/gallery">
+                          <div className="w-[62px] h-[60px] border rounded-[4px] items-center justify-center flex-col flex">
+                            <HelpCircle size={24} />
+                          </div>
+                        </Link>
+                      </div>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Estúdio">Estúdio</SelectItem>
-                      <SelectItem value="Espaço Multiuso">Espaço Multiuso</SelectItem>
-                      <SelectItem value="Sala de aula - 1">Sala de aula - 1</SelectItem>
-                      <SelectItem value="Sala de aula - 2">Sala de aula - 2</SelectItem>
-                      <SelectItem value="Sala de aula - 3">Sala de aula - 3</SelectItem>
-                      <SelectItem value="Cozinha">Cozinha</SelectItem>
-                      <SelectItem value="Templo">Templo</SelectItem>
+                    <SelectContent >
+                      {rooms?.map((room: Room) => {
+                        const { _id, name, size, description, exclusive, status, } = room
+                        return (
+                          <SelectItem value={name}>
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-[14px]">
+                                {name} {exclusive ? " (Exclusiva)" : ""}
+                              </span>
+                            </div>
+                            <div className="flex flex-row items-center gap-2 opacity-60">
+                              <Users size={14} /> {size} pessoas
+                            </div>
+                          </SelectItem>
+                        )
+                      })}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -161,7 +179,7 @@ export function BookingForm({refetch }: { refetch: () => void }) {
                       />
                     </FormControl>
 
-                    <Button type="button" className="w-full h-[48px]" onClick={() => setOpenCalendar(!openCalendar)}>
+                    <Button type="button" className="w-full rounded-[6px] h-[48px]" onClick={() => setOpenCalendar(!openCalendar)}>
                       {openCalendar ? 'Fechar calendário' : 'Abrir calendário'}
                     </Button>
                   </div>
@@ -214,7 +232,11 @@ export function BookingForm({refetch }: { refetch: () => void }) {
               />
             </div>
             <DialogFooter>
-              <Button type="submit" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Concluir reserva</Button>
+              <div className="flex flex-col w-full gap-4">
+                {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
+                {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
+                <Button type="submit" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Concluir reserva</Button>
+              </div>
             </DialogFooter>
           </form>
         </Form>
