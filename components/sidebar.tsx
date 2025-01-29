@@ -12,12 +12,14 @@ import {
 } from "@/components/ui/sidebar"
 import { BookCheck, Calendar, Camera, Home, Inbox, Lightbulb, LogOut, Search, Settings, Users } from "lucide-react"
 import Link from "next/link"
-import { Button } from "./ui/button"
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { deleteToken } from '@/hooks/token';
 
 export function AppSidebar() {
     const router = useRouter()
+    const pathname = usePathname()
+    console.log(pathname)
+
     const handleLogout = () => {
         try {
             deleteToken();
@@ -27,32 +29,31 @@ export function AppSidebar() {
         }
     }
 
-
     const items = [
         {
             title: "Início",
-            url: "dashboard",
+            url: "/dashboard",
             icon: Home,
         },
         {
             title: "Reservas",
-            url: "bookings",
+            url: "/",
             icon: Calendar,
         },
         {
             title: "Salas",
-            url: "rooms",
+            url: "/dashboard/rooms",
             icon: BookCheck,
         },
         {
             title: "Usuários",
-            url: "users",
+            url: "/dashboard/users",
             icon: Users,
         },
         {
             title: "Sair",
             icon: LogOut,
-            handle: handleLogout(),
+            handle: () => handleLogout(),
         },
     ]
 
@@ -69,11 +70,13 @@ export function AppSidebar() {
                 <SidebarGroup>
                     <SidebarGroupContent>
                         <SidebarMenu className="gap-4">
-                            {items?.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url ? item.url : '#'} onClick={item?.handle ? item?.handle : null}>
-                                            <item.icon />
+                            {items?.map((item: any) => (
+                                <SidebarMenuItem key={item.title} >
+                                    <SidebarMenuButton asChild className={`flex-row flex text-[16px]  ${pathname == item.url ? 'bg-[#fff] text-[#000]' : 'bg-[#000] text-[#f1f1f1] opacity-70'}`} >
+                                        <a href={item.url ? item.url : '#'} onClick={item?.handle ? item?.handle : null} className="py-6 px-4">
+                                            <span className="text-[16px]">
+                                                <item.icon />
+                                            </span>
                                             <span>{item.title}</span>
                                         </a>
                                     </SidebarMenuButton>
