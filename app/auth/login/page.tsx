@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { loginUser } from '@/app/api/user'
 import { Checkbox } from "@/components/ui/checkbox"
+import { useTheme } from 'next-themes'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -37,12 +38,14 @@ export default function Login() {
       setIsLoading(false)
     }
   }
+  
+  const { theme } = useTheme()
 
   return (
-    <div className="flex flex-col items-center justify-center bg-[#F7F7F7] w-full h-screen">
+    <div className="flex flex-col items-center justify-center bg-background w-full h-screen">
       <Card className="w-[350px] self-center">
         <CardHeader>
-          <img src="/imgs/logo_black.png" className="w-[220px] h-[70px] bg-gray self-center" />
+          <img src={theme =='dark' ? "/imgs/logo_white.png": "/imgs/logo_black.png"} className="w-[220px] h-[70px] bg-gray self-center" />
           <CardTitle className="text-2xl hidden">Entrar</CardTitle>
           <CardDescription className='hidden'>Digite seu email e senha para acessar sua conta.</CardDescription>
         </CardHeader>
@@ -78,19 +81,19 @@ export default function Login() {
             <div className="grid gap-1.5 leading-none">
               <label
                 htmlFor="terms1"
-                className="text-sm font-medium text-gray-500 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium text-primary opacity-70 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Manter conectado
               </label>
             </div>
           </div>
         </CardContent>
-        <CardFooter className='flex-col'>
-          <Button onClick={handleSubmit} disabled={isLoading} className="w-full bg-[#000] text-[16px] font-semibold py-6 rounded-full">
+        <div className='px-6 pb-6'>
+          {error && <div className='bg-red-200  mt-2 py-2 px-4 w-max rounded-md'><p className="text-red-500">{error}</p></div>}
+          <Button onClick={handleSubmit} disabled={isLoading} className='w-full' >
             {isLoading ? 'Enviando' : 'Entrar'}
           </Button>
-          {error && <div className='bg-red-200  mt-2 py-2 px-4 w-max rounded-md'><p className="text-red-500">{error}</p></div>}
-        </CardFooter>
+        </div>
       </Card>
       <p className="mt-8 text-gray-500 w-[300px] text-center">
         Ao continuar, você concorda com nossos

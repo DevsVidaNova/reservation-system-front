@@ -17,7 +17,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div>
-        {label && <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>}
+        {label && <label className="block text-sm font-medium text-primary opacity-70 mb-2">{label}</label>}
         <div className="relative">
           <input
             type={showPassword ? "text" : type}

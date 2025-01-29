@@ -46,7 +46,6 @@ export function BookingList({ logged, admin = false }: { logged: boolean, admin:
     const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
     const myBookings = bookings?.filter((booking: Booking) => booking.user._id === user?.id);
     const locateBookings = bookings?.filter((booking: Booking) => booking.room === selectLocate);
-    console.log(bookings)
 
     if (!logged) {
         return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
@@ -84,7 +83,7 @@ export function BookingList({ logged, admin = false }: { logged: boolean, admin:
                         {logged ?
                             <BookingForm refetch={refetch} /> :
                             <Link href="/auth/login">
-                                <Button variant="default" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Fazer Reserva</Button>
+                                <Button variant="default" >Fazer Reserva</Button>
                             </Link>
                         }
                     </div>
@@ -120,7 +119,7 @@ const AvaliableDays = ({ data, refetch, admin }: { data: any, refetch: () => voi
 
     if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
         <div className='hidden md:block'>
-            <div className='w-[124px] h-[124px] bg-gray-200 flex-col justify-center items-center rounded-full flex'>
+            <div className='w-[124px] h-[124px] bg-primary flex-col justify-center items-center rounded-full flex'>
                 <Calendar size={46} />
             </div>
         </div>
