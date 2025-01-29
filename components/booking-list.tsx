@@ -8,7 +8,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { Booking } from "./types";
-import { Calendar, Clock, MapPin, Phone, Trash } from 'lucide-react';
+import { Calendar, Clock, MapPin, Phone, Trash, User } from 'lucide-react';
 
 import {
     DropdownMenu,
@@ -195,12 +195,12 @@ const AvaliableDays = ({ data, refetch, admin }: { data: any, refetch: () => voi
                             </div>
                         </div>
 
-
                         <div className='flex-row flex px-4 py-4 gap-4 align-center items-center border-l-2'>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <div style={{ backgroundColor: randomColor?.bg, width: 46, height: 46, justifyContent: 'center', alignItems: 'center', borderRadius: 100, flexDirection: 'column', display: 'flex' }}>
-                                        <span style={{ color: randomColor?.text, }} className='font-bold uppercase'>{user?.name?.slice(0, 2)}</span>
+                                    <div className='flex-col flex'>
+                                        <User size={16} color='#000'/>
+                                        <span className='text-[12px] md:text-[18px] md:leading-[24px] leading-[12px]'>{user?.name.length > 16 ? user?.name.slice(0,16) + '...' : user?.name}</span>
                                     </div>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
