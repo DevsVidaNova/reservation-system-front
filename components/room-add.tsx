@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog"
 import { toast } from "@/components/ui/use-toast"
 import { addRoom } from "@/app/api/rooms"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -122,32 +123,19 @@ export function RoomAddForm({ refetch }: { refetch: () => void }) {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="exclusive"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Uso Exclusivo</FormLabel>
-                                    <FormControl>
-                                        <Input type="checkbox" checked={field.value} onChange={field.onChange} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Ativo</FormLabel>
-                                    <FormControl>
-                                        <Input type="checkbox" checked={field.value} onChange={field.onChange} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                          <FormField control={form.control} name="exclusive" render={({ field }) => (
+                            <FormItem className="flex items-center space-x-2">
+                                <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                                <FormLabel>Exclusiva</FormLabel>
+                            </FormItem>
+                        )} />
+
+                        <FormField control={form.control} name="status" render={({ field }) => (
+                            <FormItem className="flex items-center space-x-2">
+                                <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                                <FormLabel>Ativa</FormLabel>
+                            </FormItem>
+                        )} />
                         <DialogFooter className="border-t-2 pt-[16px]">
                             <div className="flex flex-col w-full">
                                 {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}

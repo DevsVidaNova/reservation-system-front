@@ -49,7 +49,7 @@ const ListRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch: 
     <>
       <div className=' flex flex-col self-center gap-4'>
         <div className='flex flex-row justify-between items-center'>
-          <h2 className='text-[24px] font-bold'>Salas cadastrados</h2>
+          <h2 className='text-[24px] font-bold'>Salas cadastradas</h2>
           <div className='md:block hidden'>
             <RoomAddForm refetch={refetch} />
           </div>
@@ -90,7 +90,7 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
         <TableHeader >
           <TableRow className='bg-neutral-50'>
             <TableHead >Nome</TableHead>
-            <TableHead >Quantidade</TableHead>
+            <TableHead >Ocupação</TableHead>
             <TableHead className='text-wrap min-w-[60px] '>Descrição</TableHead>
             <TableHead className='text-wrap min-w-[60px] '>Exclusivo</TableHead>
             <TableHead className='text-wrap min-w-[60px] '>Status</TableHead>
@@ -99,9 +99,9 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
         </TableHeader>
         <TableBody>
           {rooms?.map(room => {
-            const { id, name, size, description, exclusive, status, } = room
+            const { _id, name, size, description, exclusive, status, } = room
             return (
-              <TableRow key={id}>
+              <TableRow key={_id}>
                 <TableCell>{name}</TableCell>
                 <TableCell>{size}</TableCell>
                 <TableCell className='text-wrap min-w-[60px] ' style={{ wordBreak: 'break-word' }}>{description}</TableCell>
@@ -129,12 +129,12 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
                         </DialogHeader>
                         <DialogFooter className="border-t-2 pt-[16px]">
                           <DialogClose asChild>
-                            <Button onClick={() => handleExcludeUser(id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir sala</Button>
+                            <Button onClick={() => handleExcludeUser(_id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir sala</Button>
                           </DialogClose>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
-                    <RoomEditForm id={id} refetch={refetch} />
+                    <RoomEditForm id={_id} refetch={refetch} />
                   </div>
                 </TableCell>
               </TableRow>

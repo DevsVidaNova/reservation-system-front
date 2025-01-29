@@ -42,7 +42,7 @@ export type Booking = {
 
 
 export type Room = {
-    id: string, //id da sala
+    _id: string, //id da sala
     name: string, //nome da sala
     size: number, //quantidade de pessoas
     description: string, //ex: sala de reunião
@@ -56,6 +56,7 @@ export type RoomAdd = {
     exclusive: boolean, //exclusivo ou não
     status: boolean,  //ativo ou não
 }
+
 export type Stats = {
     rooms: number, //quantidade de salas
     bookings: number, //quantidade de reservas

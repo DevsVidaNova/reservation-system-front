@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog"
 import { toast } from "@/components/ui/use-toast"
 import { editRoom, showRoom } from "@/app/api/rooms"
-import { Room } from "@/app/api/types"
+import { RoomAdd } from "@/app/api/types"
 import { useQuery } from "@tanstack/react-query"
 import { Pencil } from "lucide-react"
 
@@ -34,7 +34,7 @@ const formSchema = z.object({
 export function RoomEditForm({ id, refetch }: { id: string, refetch: () => void }) {
     const [open, setOpen] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const { data: room, error: isError, isLoading } = useQuery<Room>({
+    const { data: room, error: isError, isLoading } = useQuery<RoomAdd>({
         queryKey: ['room edit show', id],
         queryFn: async () => {
             const res = await showRoom(id);
@@ -67,7 +67,7 @@ export function RoomEditForm({ id, refetch }: { id: string, refetch: () => void 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setError(null)
         try {
-            const response = await editRoom(values)
+            const response = await editRoom(id, values)
             if (response) {
                 toast({
                     title: "Sala editada com sucesso!",
@@ -112,7 +112,9 @@ export function RoomEditForm({ id, refetch }: { id: string, refetch: () => void 
                         <FormField control={form.control} name="size" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Capacidade</FormLabel>
-                                <FormControl><Input type="number" placeholder="Número de pessoas" {...field} /></FormControl>
+                                <FormControl>
+                                    <Input type="number" placeholder="Quantidade de pessoas" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
