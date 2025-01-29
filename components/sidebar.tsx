@@ -14,11 +14,14 @@ import { BookCheck, Calendar, Camera, Home, Inbox, Lightbulb, LogOut, Search, Se
 import Link from "next/link"
 import { useRouter, usePathname } from 'next/navigation'
 import { deleteToken } from '@/hooks/token';
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+import { Button } from "@/components/ui/button"
 
 export function AppSidebar() {
     const router = useRouter()
     const pathname = usePathname()
-    console.log(pathname)
+    const { setTheme, theme } = useTheme()
 
     const handleLogout = () => {
         try {
@@ -33,55 +36,56 @@ export function AppSidebar() {
         {
             title: "Início",
             url: "/dashboard",
-            icon: Home,
+            icon: <Home />,
         },
         {
             title: "Reservas",
             url: "/",
-            icon: Calendar,
+            icon: <Calendar />,
         },
         {
             title: "Salas",
             url: "/dashboard/rooms",
-            icon: BookCheck,
+            icon: <BookCheck />,
         },
         {
             title: "Usuários",
             url: "/dashboard/users",
-            icon: Users,
+            icon: <Users />,
         },
         {
             title: "Meu Perfil",
-            url: "/profile",
-            icon: User,
+            url: "/dashboard/profile",
+            icon: <User />,
         },
         {
             title: "Sair",
-            icon: LogOut,
+            icon: <LogOut />,
             handle: () => handleLogout(),
         },
     ]
 
+    const toggleTheme = () => {
+        setTheme(theme === 'dark' ? 'light' : 'dark')
+    }
     return (
         <Sidebar >
-            <SidebarHeader className="bg-[#000]">
+            <SidebarHeader className="bg-background">
                 <Link href="/" className="text-xl font-bold ml-2">
                     <div className='flex-row flex align-center justify-center items-center'>
-                        <img src="/imgs/logo_white.svg" alt="ProStock" className="w-[180px]" />
+                        <img src={theme =='dark' ? "/imgs/logo_white.png": "/imgs/logo_black.png"} alt="VIDA NOVA" className="w-[180px]" />
                     </div>
                 </Link>
             </SidebarHeader>
-            <SidebarContent className="bg-[#000]">
+            <SidebarContent className="bg-background">
                 <SidebarGroup>
                     <SidebarGroupContent>
-                        <SidebarMenu className="gap-4">
+                        <SidebarMenu className="">
                             {items?.map((item: any) => (
                                 <SidebarMenuItem key={item.title} >
-                                    <SidebarMenuButton asChild className={`flex-row flex text-[16px]  ${pathname == item.url ? 'bg-[#fff] text-[#000]' : 'bg-[#000] text-[#f1f1f1] opacity-70'}`} >
-                                        <a href={item.url ? item.url : '#'} onClick={item?.handle ? item?.handle : null} className="py-6 px-4">
-                                            <span className="text-[16px]">
-                                                <item.icon />
-                                            </span>
+                                    <SidebarMenuButton asChild className={`flex-row flex text-[16px] transition  ${pathname == item.url ? 'bg-muted text-primary font-semibold' : 'bg-background text-primary opacity-60'}`} >
+                                        <a href={item.url ? item.url : '#'} onClick={item?.handle ? item?.handle : null} className="py-5 px-4">
+                                            {item.icon}
                                             <span>{item.title}</span>
                                         </a>
                                     </SidebarMenuButton>
@@ -90,14 +94,13 @@ export function AppSidebar() {
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
+                <Button onClick={toggleTheme} variant='outline' className="w-[46px] h-[46px] fixed bottom-4 left-4">
+                    {theme === 'dark' ? <Sun size={18} color='#fff' /> : <Moon size={18} color='#000' />}
+                </Button>
             </SidebarContent>
         </Sidebar>
     )
 }
-
-
-
-
 
 /*
 <nav className=" text-white p-2 px-4 fixed w-full z-10" style={{ backgroundColor: '#000', }}>

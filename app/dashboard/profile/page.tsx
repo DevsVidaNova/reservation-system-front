@@ -74,8 +74,9 @@ export default function Profile() {
   if (isError) return <p>Erro ao carregar usuários</p>
 
   return (
-    <div className="flex flex-col w-full  px-4 py-4">
-      <div className='w-[124px] h-[124px] items-center justify-center bg-[#000000] flex flex-col rounded-full self-center'>
+    <div className='w-full bg-background'>
+    <div className="flex flex-col max-w-[500px]   container px-4 py-4 m-auto">
+      <div className='w-[124px] h-[124px] items-center justify-center bg-[#303030] flex flex-col rounded-full self-center'>
         <User size={52} color='#fff' />
       </div>
       <Form {...form}>
@@ -137,10 +138,9 @@ export default function Profile() {
           </div>
         </form>
       </Form>
-      <Link href="/" className='flex w-full mt-4'>
-        <Button variant='outline' className="text-[18px] w-full font-semibold">Voltar para reservas</Button>
-      </Link>
+      </div>
     </div>
+      
   )
 }
 

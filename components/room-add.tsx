@@ -75,7 +75,7 @@ export function RoomAddForm({ refetch }: { refetch: () => void }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="default" className="text-[18px] font-semibold py-6 rounded-full w-full">Criar Sala</Button>
+                <Button variant="default" >Criar Sala</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[455px]">
                 <DialogHeader>

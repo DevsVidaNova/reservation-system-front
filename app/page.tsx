@@ -18,12 +18,9 @@ export default function Home() {
   return (
     <div className="container mx-auto py-2 px-4 sm:px-2">
        <img src="/imgs/logo_black.png" alt="Vida Nova" className="w-[180px] md:hidden block self-center items-center mx-auto" />
-
       <div className="flex flex-row justify-between border-b-2 mb-6 align-center items-center pb-4">
         <img src="/imgs/logo_black.png" alt="Vida Nova" className="w-[180px] md:block hidden" />
-
         <h1 className="text-[24px] font-bold " style={{lineHeight: 1,}}>Reservar Espaço</h1>
-
         <div>
           {user &&
             <Link href="/dashboard">
@@ -39,9 +36,8 @@ export default function Home() {
             </Link>
           }
         </div>
-
       </div>
-      <BookingList logged={user ? true : false} admin={false} />
+      <BookingList logged={user ? true : false} admin={user?.isAdmin ? true : false} />
     </div>
   )
 }

@@ -13,6 +13,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/sidebar"
 import { LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeProvider } from "@/components/theme-provider"
 
 export default function RootLayout({
   children,
@@ -20,11 +21,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-br">
+    <html lang="pt-br" suppressHydrationWarning>
       <body className='font-mundial'>
+      <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
         <ReactQueryProvider>
             {children} 
         </ReactQueryProvider>
+      </ThemeProvider>
       </body>
     </html>
   )

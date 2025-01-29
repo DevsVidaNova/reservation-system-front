@@ -1,15 +1,14 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, } from "@/components/ui/card"
 import { useQuery } from '@tanstack/react-query'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { Pencil, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "@/components/ui/pagination"
 import { Room } from '@/app/api/types'
 import { deleteRoom, listRooms } from '@/app/api/rooms'
 import { RoomAddForm } from '@/components/room-add'
@@ -25,16 +24,16 @@ export default function Rooms() {
     },
   });
   useEffect(() => {
-    if (page > 1){
+    if (page > 1) {
       refetch()
     }
   }, [page])
 
-  if (isLoading) return <p>Carregando...</p>
-  if (error) return <p>Erro ao carregar usuários</p>
+  if (isLoading) return <div className="flex flex-col container w-full px-6 py-4"><p>Carregando...</p></div>
+  if (error) return <div className="flex flex-col container w-full px-6 py-4"><p>Erro ao carregar usuários</p></div>
 
   return (
-    <div className="flex flex-col container w-full  px-4 py-4">
+    <div className="flex flex-col container w-full px-6 py-4">
       <ListRooms rooms={rooms || []} refetch={refetch} setpage={setpage} page={page} />
     </div>
   )
@@ -84,7 +83,7 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
     <Card className='overflow-hidden'>
       <Table>
         <TableHeader >
-          <TableRow className='bg-neutral-50'>
+          <TableRow className='opacity-70'>
             <TableHead >Nome</TableHead>
             <TableHead >Ocupação</TableHead>
             <TableHead className='text-wrap min-w-[60px] '>Descrição</TableHead>
@@ -102,7 +101,7 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
                 <TableCell>{size}</TableCell>
                 <TableCell className='text-wrap min-w-[60px] ' style={{ wordBreak: 'break-word' }}>{description}</TableCell>
                 <TableCell>{exclusive ? 'Exclusivo' : 'Livre'}</TableCell>
-                <TableCell>{status ? 'Ativo': 'Desativado'}</TableCell>
+                <TableCell>{status ? 'Ativo' : 'Desativado'}</TableCell>
                 <TableCell >
                   <div className='flex flex-row gap-4'>
                     <Dialog open={openExclude} onOpenChange={setOpenExclude}>
@@ -137,29 +136,11 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
             )
           })}
         </TableBody>
-
-
       </Table>
-      <div className='flex flex-col w-full bg-neutral-50 px-2 py-2'>
-        <Pagination >
-          <PaginationContent>
-            <PaginationItem  onClick={() => setpage(page > 1 ? page - 1 : 1)}>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink isActive href="#">{page}</PaginationLink>
-            </PaginationItem>
-            <PaginationItem onClick={() => setpage(page + 1)} >
-              <PaginationLink href="#">{page + 1}</PaginationLink>
-            </PaginationItem>
-            <PaginationItem onClick={() => setpage(page + 2)} >
-              <PaginationLink href="#">{page + 2}</PaginationLink>
-            </PaginationItem>
-            <PaginationItem onClick={() => setpage(page + 1)}>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+      <div className='flex flex-row w-full border-t px-2 py-2 items-center gap-2 justify-center'>
+        <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page == 1 ? 1 : page - 1)}>{page - 1}</div>
+        <div className='bg-primary text-background rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer'  >{page}</div>
+        <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page + 1)} >{page + 1}</div>
       </div>
     </Card>
   )

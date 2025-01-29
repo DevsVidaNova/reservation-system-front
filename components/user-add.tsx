@@ -73,7 +73,7 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild >
-                <Button variant="default" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold">Criar usuário</Button>
+                <Button variant="default" >Criar usuário</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[455px]">
 

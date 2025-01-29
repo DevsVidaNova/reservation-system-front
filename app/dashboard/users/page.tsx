@@ -29,8 +29,8 @@ export default function Users() {
     }
   }, [page])
 
-  if (isLoading) return <p>Carregando...</p>
-  if (error) return <p>Erro ao carregar usuários</p>
+  if (isLoading) return  <div className="flex flex-col w-full px-4 py-4 container"><p>Carregando...</p></div>
+  if (error) return <div className="flex flex-col w-full px-4 py-4 container"><p>Erro ao carregar usuários</p></div>
 
   return (
     <div className="flex flex-col w-full px-4 py-4 container">
@@ -83,7 +83,7 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
     <Card className='overflow-hidden'>
       <Table>
         <TableHeader >
-          <TableRow className='bg-neutral-50'>
+          <TableRow className='opacity-70'>
             <TableHead >Nome</TableHead>
             <TableHead >Telefone</TableHead>
             <TableHead className='text-wrap min-w-[60px] '>Email</TableHead>
@@ -132,9 +132,9 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
 
 
       </Table>
-      <div className='flex flex-row w-full bg-neutral-50 px-2 py-2 items-center gap-2 justify-center'>
+      <div className='flex flex-row w-full border-t px-2 py-2 items-center gap-2 justify-center'>
         <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page == 1 ? 1 : page - 1)}>{page - 1}</div>
-        <div className='bg-[#000] text-[#fff] rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer'  >{page}</div>
+        <div className='bg-primary text-background rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer'  >{page}</div>
         <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page + 1)} >{page + 1}</div>
       </div>
     </Card>

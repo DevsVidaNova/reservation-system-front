@@ -38,7 +38,7 @@ export default function DashLayout({ children }: { children: ReactNode }) {
 
     return (
         <SidebarProvider>
-            <div className='bg-[#fff] w-full flex'>
+            <div className='bg-background w-full flex'>
                 <AppSidebar />
                 <div style={{ paddingTop: 20, }} className='container mx-auto flex'>
                     {children}
