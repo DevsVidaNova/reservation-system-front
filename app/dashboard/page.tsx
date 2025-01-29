@@ -116,7 +116,7 @@ export default function Dashboard() {
               <CardDescription className='text-[16px] font-normal' style={{ lineHeight: 1, }}>Quando reservada a sala ficará disponível para realizar atividades. Para reserver uma sala você precisará do seguintes dados: sala, descrição, dia, hora de inicio e hora de fim.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href='/dashboard/rooms'>
+              <Link href='/'>
                 <Button className='w-full'>Reservar sala</Button>
               </Link>
             </CardContent>

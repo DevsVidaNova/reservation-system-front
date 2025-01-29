@@ -7,6 +7,10 @@ import { Button } from '@/components/ui/button'
 import { ChevronRight, LogOut, Store, User } from 'lucide-react';
 import { getUser } from '@/hooks/user';
 
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/sidebar"
+
+
 export default function DashLayout({ children }: { children: ReactNode }) {
     const router = useRouter()
     const handleLogout = () => {
@@ -33,31 +37,14 @@ export default function DashLayout({ children }: { children: ReactNode }) {
 
 
     return (
-        <div className='bg-[#fff] w-full flex'>
-            <nav className=" text-white p-2 px-4 fixed w-full z-10" style={{ backgroundColor: '#000', }}>
-                <div className="container mx-auto flex justify-between items-center">
-                    <div className='flex-row flex'>
-                        <Link href="/" className="text-xl font-bold ml-2">
-                            <div className='flex-row flex align-center justify-center items-center'>
-                                <img src="/imgs/logo_white.svg" alt="ProStock" className="w-[180px]" />
-                            </div>
-                        </Link>
-                    </div>
-                    <div className='flex-row flex gap-x-4'>
-                        <Link href="/profile">
-                            <div style={{ backgroundColor: "#303030", width: 46, height: 46, justifyContent: 'center', alignItems: 'center', borderRadius: 100, flexDirection: 'column', display: 'flex' }}>
-                                <User size={18} color='#fff' />
-                            </div>
-                        </Link>
-                        <Button style={{ width: 48, height: 48, borderRadius: 8, backgroundColor: '#ffffff30', }} onClick={handleLogout}>
-                            <LogOut size={18} color='#fff' />
-                        </Button>
-                    </div>
+        <SidebarProvider>
+            <div className='bg-[#fff] w-full flex'>
+                <AppSidebar />
+                <div style={{ paddingTop: 20, }} className='container mx-auto flex'>
+                    {children}
                 </div>
-            </nav>
-            <div style={{ paddingTop: 80, }} className='container mx-auto flex'>
-                {children}
             </div>
-        </div>
+        </SidebarProvider>
+
     )
 }

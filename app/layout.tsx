@@ -23,9 +23,7 @@ export default function RootLayout({
     <html lang="pt-br">
       <body className='font-mundial'>
         <ReactQueryProvider>
-          <SidebarProvider>
-            {children}
-          </SidebarProvider>
+            {children} 
         </ReactQueryProvider>
       </body>
     </html>

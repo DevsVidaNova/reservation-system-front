@@ -39,7 +39,7 @@ export default function Login() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center bg-[#F7F7F7] w-full">
+    <div className="flex flex-col items-center justify-center bg-[#F7F7F7] w-full h-screen">
       <Card className="w-[350px] self-center">
         <CardHeader>
           <img src="/imgs/logo_black.png" className="w-[220px] h-[70px] bg-gray self-center" />

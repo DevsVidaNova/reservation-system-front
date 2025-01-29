@@ -1,19 +1,18 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, } from "@/components/ui/card"
 import { UserAddForm } from '@/components/user-add'
 import { useQuery } from '@tanstack/react-query'
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { UserList } from '@/app/api/types'
-import { Pencil, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 import { excludeUserById, listUsers } from '@/app/api/admin'
 import { UserEditForm } from '@/components/user-edit'
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "@/components/ui/pagination"
 
 export default function Users() {
   const [page, setpage] = useState(1);
@@ -25,7 +24,7 @@ export default function Users() {
     },
   });
   useEffect(() => {
-    if (page > 1){
+    if (page > 1) {
       refetch()
     }
   }, [page])
@@ -34,7 +33,7 @@ export default function Users() {
   if (error) return <p>Erro ao carregar usuários</p>
 
   return (
-    <div className="flex flex-col w-full  px-4 py-4">
+    <div className="flex flex-col w-full px-4 py-4 container">
       <ListUsers users={users || []} refetch={refetch} setpage={setpage} page={page} />
     </div>
   )
@@ -43,7 +42,7 @@ export default function Users() {
 const ListUsers = ({ users, refetch, setpage, page }: { users: UserList[], refetch: () => void, setpage: (page: number) => void; page: number, }) => {
   return (
     <>
-      <div className=' flex flex-col self-center gap-4'>
+      <div className=' flex flex-col  gap-4'>
         <div className='flex flex-row justify-between items-center'>
           <h2 className='text-[24px] font-bold'>Usuários cadastrados</h2>
           <div className='md:block hidden'>
@@ -133,26 +132,10 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
 
 
       </Table>
-      <div className='flex flex-col w-full bg-neutral-50 px-2 py-2'>
-        <Pagination >
-          <PaginationContent>
-            <PaginationItem  onClick={() => setpage(page > 1 ? page - 1 : 1)}>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink isActive href="#">{page}</PaginationLink>
-            </PaginationItem>
-            <PaginationItem onClick={() => setpage(page + 1)} >
-              <PaginationLink href="#">{page + 1}</PaginationLink>
-            </PaginationItem>
-            <PaginationItem onClick={() => setpage(page + 2)} >
-              <PaginationLink href="#">{page + 2}</PaginationLink>
-            </PaginationItem>
-            <PaginationItem onClick={() => setpage(page + 1)}>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+      <div className='flex flex-row w-full bg-neutral-50 px-2 py-2 items-center gap-2 justify-center'>
+        <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page == 1 ? 1 : page - 1)}>{page - 1}</div>
+        <div className='bg-[#000] text-[#fff] rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer'  >{page}</div>
+        <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page + 1)} >{page + 1}</div>
       </div>
     </Card>
   )
