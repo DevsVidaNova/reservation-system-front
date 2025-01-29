@@ -2,17 +2,13 @@
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { UserAddForm } from '@/components/user-add'
 import { useQuery } from '@tanstack/react-query'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { UserList } from '@/app/api/types'
 import { Pencil, Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
-import { excludeUserById, listUsers } from '@/app/api/admin'
-import { UserEditForm } from '@/components/user-edit'
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "@/components/ui/pagination"
 import { Room } from '@/app/api/types'
 import { deleteRoom, listRooms } from '@/app/api/rooms'
@@ -38,7 +34,7 @@ export default function Rooms() {
   if (error) return <p>Erro ao carregar usuários</p>
 
   return (
-    <div className="flex flex-col w-full  px-4 py-4">
+    <div className="flex flex-col container w-full  px-4 py-4">
       <ListRooms rooms={rooms || []} refetch={refetch} setpage={setpage} page={page} />
     </div>
   )
@@ -47,7 +43,7 @@ export default function Rooms() {
 const ListRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch: () => void, setpage: (page: number) => void; page: number, }) => {
   return (
     <>
-      <div className=' flex flex-col self-center gap-4'>
+      <div className='flex flex-col gap-4'>
         <div className='flex flex-row justify-between items-center'>
           <h2 className='text-[24px] font-bold'>Salas cadastradas</h2>
           <div className='md:block hidden'>
