@@ -90,7 +90,7 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild >
-        <Button variant="default" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Fazer Reserva</Button>
+        <Button variant="default">Fazer Reserva</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[455px]">
 

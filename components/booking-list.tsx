@@ -24,12 +24,17 @@ import { BookingForm } from './booking-form';
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { deleteBooking, listBookings } from '@/app/api/booking';
+import { getUser } from '@/hooks/user';
 
 export function BookingList({ logged, admin = false }: { logged: boolean, admin: boolean }) {
+    const [user, setuser] = useState();
     const { data: bookings, error, isLoading, refetch } = useQuery({
         queryKey: ['bookings list'],
         queryFn: async () => {
             const res = await listBookings();
+            const user = await getUser();
+            console.log(user)
+            setuser(user);
             return res;
         },
     });
@@ -38,10 +43,10 @@ export function BookingList({ logged, admin = false }: { logged: boolean, admin:
 
     const todayDate = new Date().toISOString().split('T')[0];
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
-
     const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
-
+    const myBookings = bookings?.filter((booking: Booking) => booking.user._id === user?.id);
     const locateBookings = bookings?.filter((booking: Booking) => booking.room === selectLocate);
+    console.log(bookings)
 
     if (!logged) {
         return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
@@ -68,10 +73,10 @@ export function BookingList({ logged, admin = false }: { logged: boolean, admin:
                 <div className='justify-between flex-row flex w-full'>
                     <div className='flex-row flex gap-2'>
                         <TabsList>
-                            <TabsTrigger value="hoje" onClick={() => { setLocal(false) }}>Para hoje</TabsTrigger>
-                            <TabsTrigger value="semana" onClick={() => { setLocal(false) }}>Esta semana</TabsTrigger>
-                            <TabsTrigger value="tudo" onClick={() => { setLocal(false) }}>Tudo</TabsTrigger>
-                            <TabsTrigger value="my" onClick={() => { setLocal(false) }}>Minhas reservas</TabsTrigger>
+                            <TabsTrigger value="hoje" >Para hoje</TabsTrigger>
+                            <TabsTrigger value="semana" >Esta semana</TabsTrigger>
+                            <TabsTrigger value="tudo" >Tudo</TabsTrigger>
+                            <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
                         </TabsList>
                        
                     </div>
@@ -91,10 +96,10 @@ export function BookingList({ logged, admin = false }: { logged: boolean, admin:
                     <AvaliableDays data={currentWeekBookings} refetch={refetch} admin={admin} />
                 </TabsContent>
                 <TabsContent value="tudo">
-                    <AvaliableDays data={bookings} refetch={refetch} admin />
+                    <AvaliableDays data={bookings} refetch={refetch} admin={admin} />
                 </TabsContent>
-                <TabsContent value="local">
-                    <AvaliableDays data={locateBookings} refetch={refetch} admin={admin} />
+                <TabsContent value="my">
+                    <AvaliableDays data={myBookings} refetch={refetch} admin={admin} />
                 </TabsContent>
             </Tabs>
             <div style={{ height: 150, }}></div>
