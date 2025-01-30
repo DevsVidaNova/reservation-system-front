@@ -95,7 +95,7 @@ export function BookingList() {
 }
 
 const AvaliableDays = ({ data, }: { data: any, }) => {
-    if (data?.length === 0) return <div className='flex flex-col items-center  border p-6 rounded-xl my-6 self-center'>
+    if (data?.length === 0) return <div className='flex flex-col items-center border p-6 rounded-xl my-6 self-center'>
         <div className='flex flex-col justify-center items-center gap-2'>
             <BookDashed size={64} />
             <h2 className='text-[24px] font-bold text-center' style={{ lineHeight: 1, }}>Não encontramos nenhuma reserva</h2>

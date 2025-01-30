@@ -87,7 +87,7 @@ export default function BookingsPage() {
 }
 
 const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void, }) => {
-    if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
+    if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border p-6 rounded-xl my-6'>
          <div className='flex flex-col justify-center items-center gap-2'>
             <BookDashed size={64} />
             <h2 className='text-[24px] font-bold text-center' style={{ lineHeight: 1, }}>Não encontramos nenhuma reserva</h2>
