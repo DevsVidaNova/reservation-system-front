@@ -113,7 +113,7 @@ export function BookingEditForm({ id, refetch, defaultValues }: { id: string, re
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild >
-        <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+        <Button variant='outline' className='w-[46px] h-[46px] rounded-full'>
           <Pencil size={24} />
         </Button>
       </DialogTrigger>
