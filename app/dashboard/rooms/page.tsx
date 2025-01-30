@@ -92,8 +92,8 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
             <TableHead >Nome</TableHead>
             <TableHead >Ocupação</TableHead>
             <TableHead className='text-wrap min-w-[60px] '>Descrição</TableHead>
-            <TableHead className='text-wrap min-w-[60px] md:block hidden'>Exclusivo</TableHead>
-            <TableHead className='text-wrap min-w-[60px] -mb-6 mt-3 md:block hidden'>Status</TableHead>
+            <TableHead className='text-wrap min-w-[60px] -mb-6 mt-3 md:inline-block hidden'>Exclusivo</TableHead>
+            <TableHead className='text-wrap min-w-[60px] -mb-6 mt-3 md:inline-block hidden'>Status</TableHead>
             <TableHead >Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -105,8 +105,8 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
                 <TableCell className='text-[12px] md:text-[18px] leading-none'>{name}</TableCell>
                 <TableCell className='text-[12px] md:text-[18px] leading-none'>{size}</TableCell>
                 <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none' style={{ wordBreak: 'break-word' }}>{description}</TableCell>
-                <TableCell className='md:block hidden text-[12px] md:text-[18px] leading-none '>{exclusive ? 'Exclusivo' : 'Livre'}</TableCell>
-                <TableCell className='md:block hidden text-[12px] md:text-[18px] leading-none'>{status ? 'Ativo' : 'Desativado'}</TableCell>
+                <TableCell className='md:inline-block hidden text-[12px] md:text-[18px] leading-none '>{exclusive ? 'Exclusivo' : 'Livre'}</TableCell>
+                <TableCell className='md:inline-block hidden text-[12px] md:text-[18px] leading-none'>{status ? 'Ativo' : 'Desativado'}</TableCell>
                 <TableCell >
                   <div className='flex flex-row gap-4 md:block hidden'>
                     <Dialog open={openExclude} onOpenChange={setOpenExclude}>
