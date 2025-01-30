@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className='font-mundial'>
       <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
