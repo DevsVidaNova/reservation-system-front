@@ -49,7 +49,7 @@ export function BookingList() {
         return <div>Error: {error.message}</div>
     }
     return (
-        <div>
+        <div className='z-1'>
             <Tabs defaultValue="semana" className="w-full">
                 <div className='justify-between flex-row flex w-full'>
                     <div className='flex-row flex gap-2 mx-auto'>
@@ -96,7 +96,7 @@ export function BookingList() {
 }
 
 const AvaliableDays = ({ data,}: { data: any, }) => {
-    if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
+    if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6 z-1'>
         <div className='flex flex-col'>
             <h2 className='text-[24px] font-bold text-center' style={{ lineHeight: 1, }}>Não encontramos nenhuma reserva</h2>
             <span className='opacity-70 text-[18px] text-center'>Sem reservas por enquanto...</span>
@@ -104,7 +104,7 @@ const AvaliableDays = ({ data,}: { data: any, }) => {
     </div>
     if (!data) return <div>Carregando...</div>
     return (
-        <div className='gap-8'>
+        <div className='gap-8 z-1'>
             {data?.map((booking: Booking) => {
                 const { endTime, startTime, room, user, date, _id, description } = booking
                 const [year, month, day] = (date?.split('-') || ['0000', '00', '00']);

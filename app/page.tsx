@@ -28,16 +28,14 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="container mx-auto py-2 px-4 sm:px-2">
-      <img src="/imgs/logo_black.png" alt="Vida Nova" className="w-[180px] md:hidden block self-center items-center mx-auto" />
-      <div className="flex flex-row justify-between mb-6 align-center items-center pb-4">
-        <img src={"/imgs/logo_black.png"} alt="Vida Nova" className="w-[180px] md:block hidden" />
-        <h1 className="text-[24px] font-bold " style={{ lineHeight: 1, }}>Reservar Espaço</h1>
-        <div>
-
+    <div className="bg-background">
+        <div className="flex flex-row z-20 bg-[#ffffff30] backdrop-blur-sm justify-between px-4 py-2 border-b fixed w-screen">
+          <img src="/imgs/logo_black.png" alt="Vida Nova" className="w-[180px] z-20" style={{ marginLeft: -18,  }} />
           <Drawer>
             <DrawerTrigger>
-              <AlignJustify size={24} />
+              <div className="w-[48px] h-[48px] border rounded-full flex-col flex items-center justify-center">
+                <AlignJustify size={24} />
+              </div>
             </DrawerTrigger>
             <DrawerContent>
               <DrawerHeader>
@@ -46,21 +44,21 @@ export default function Home() {
               </DrawerHeader>
 
               <div className="w-full flex-col flex gap-4 px-6">
-              {user &&
-                <Link href="/dashboard" >
-                  <Button  className="w-full">
-                    Painel de Controle
-                  </Button>
-                </Link>}
-              {!user &&
-                <Link href="/auth/login">
-                  <Button className="w-full">
-                    Fazer Login
-                  </Button>
-                </Link>
+                {user &&
+                  <Link href="/dashboard" >
+                    <Button className="w-full">
+                      Painel de Controle
+                    </Button>
+                  </Link>}
+                {!user &&
+                  <Link href="/auth/login">
+                    <Button className="w-full">
+                      Fazer Login
+                    </Button>
+                  </Link>
                 }
                 <Link href="/dashboard" >
-                  <Button  className="w-full" variant='outline' >
+                  <Button className="w-full" variant='outline' >
                     Solicitar acesso
                   </Button>
                 </Link>
@@ -73,8 +71,10 @@ export default function Home() {
             </DrawerContent>
           </Drawer>
         </div>
+
+      <div className="pt-[90px] container px-4 z-0">
+        <BookingList />
       </div>
-      <BookingList />
     </div>
   )
 }
