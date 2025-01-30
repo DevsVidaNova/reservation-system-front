@@ -7,7 +7,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { Booking } from "@/app/api/types";
-import { Calendar, Clock, MapPin, Phone, Trash, User } from 'lucide-react';
+import { Clock, MapPin, Phone, Trash, User, EllipsisVertical, BookDashed } from 'lucide-react';
 
 import {
     DropdownMenu,
@@ -21,6 +21,12 @@ import { Button } from "@/components/ui/button"
 import { useQuery } from '@tanstack/react-query'
 import { BookingForm } from '@/components/booking-form';
 import { deleteBooking, listBookings } from '@/app/api/booking';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { BookingEditForm } from "@/components/booking-edit";
 
 export default function BookingsPage() {
     const { data: bookings, error, isLoading, refetch } = useQuery({
@@ -46,53 +52,48 @@ export default function BookingsPage() {
         return <div>Error: {error.message}</div>
     }
     return (
-        <div>
-            <Tabs defaultValue="semana" className="w-full">
+        <div className="z-0 mx-auto py-6">
+            <Tabs defaultValue="semana" className="w-full px-3">
                 <div className='justify-between flex-row flex w-full'>
-                    <div className='flex-row flex gap-2'>
+                    <div className='flex-row flex gap-2 mx-auto md:mx-1'>
                         <TabsList>
                             <TabsTrigger value="hoje" >Para hoje</TabsTrigger>
                             <TabsTrigger value="semana" >Esta semana</TabsTrigger>
                             <TabsTrigger value="tudo" >Tudo</TabsTrigger>
                         </TabsList>
-                        <BookingForm refetch={refetch} /> :
                     </div>
+                    <div className="md:block hidden">
+                            <BookingForm refetch={refetch} />
+                        </div>
                 </div>
                 <TabsContent value="hoje">
-                    <AvaliableDays data={todayBookings} refetch={refetch}  />
+                    <AvaliableDays data={todayBookings} refetch={refetch} />
                 </TabsContent>
                 <TabsContent value="semana">
-                    <AvaliableDays data={currentWeekBookings} refetch={refetch}   />
+                    <AvaliableDays data={currentWeekBookings} refetch={refetch} />
                 </TabsContent>
                 <TabsContent value="tudo">
-                    <AvaliableDays data={bookings} refetch={refetch}  />
+                    <AvaliableDays data={bookings} refetch={refetch} />
                 </TabsContent>
-               
             </Tabs >
             <div style={{ height: 150, }}></div>
 
             <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
-                <BookingForm refetch={refetch} />  
+                <BookingForm refetch={refetch} />
             </div>
         </div >
     )
 
 }
 
-const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void,  }) => {
-
+const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void, }) => {
     if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
-        <div className='hidden md:block'>
-            <div className='w-[124px] h-[124px] bg-primary flex-col justify-center items-center rounded-full flex'>
-                <Calendar size={46} />
-            </div>
-        </div>
-        <div className='flex flex-col'>
-            <h2 className='text-[24px]  font-bold' style={{ lineHeight: 1, }}>Não encontramos nenhuma reserva</h2>
-            <span className='opacity-70 text-[18px]'>Sem reservas por enquanto...</span>
+         <div className='flex flex-col justify-center items-center gap-2'>
+            <BookDashed size={64} />
+            <h2 className='text-[24px] font-bold text-center' style={{ lineHeight: 1, }}>Não encontramos nenhuma reserva</h2>
+            <span className='opacity-70 text-[18px] text-center'>Sem reservas criadas por enquanto...</span>
         </div>
     </div>
-
     const handleExcludeBooking = async (id: string) => {
         try {
             await deleteBooking(id);
@@ -101,7 +102,6 @@ const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void,  })
             console.log(error)
         }
     }
-
     if (!data) return <div>Carregando...</div>
     return (
         <div className='gap-8'>
@@ -117,8 +117,8 @@ const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void,  })
                 return (
                     <Card key={_id} className="md:p-2 p-0 flex-row flex align-center justify-between items-center w-full my-4">
                         <div className='flex flex-row items-center gap-2'>
-                            <div className='flex-col w-[80px] flex md:px-6 md:py-2 px-4 py-2 justify-center items-center border-r-2'>
-                                <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
+                            <div className='flex-col w-[80px] flex md:px-6 md:py-2 px-4 py-2 justify-center items-center border-r-2 '>
+                                <span className='md:text-[18px]  md:leading-none text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
                                 <span className='md:text-[36px] font-bold md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
                             </div>
                             <div className='flex-col flex px-2 py-4 gap-2 sm:px-0 sm:py-0'>
@@ -139,7 +139,7 @@ const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void,  })
                             </div>
                         </div>
 
-                        <div className='flex-row flex px-4 py-4 gap-4 align-center items-center border-l-2'>
+                        <div className='flex-row flex px-4 py-4 ml-2 align-center items-center border-l-2  md:block hidden'>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className="h-12 w-12">
@@ -167,9 +167,53 @@ const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void,  })
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                                <Button variant="outline" className="h-12 w-12" onClick={() => handleExcludeBooking(_id)}>
-                                    <Trash className="h-16 w-16" />
-                                </Button>
+                            <Button variant="outline" className="h-12 w-12 mx-2" onClick={() => handleExcludeBooking(_id)}>
+                                <Trash className="h-16 w-16" />
+                            </Button>
+                            <BookingEditForm id={_id} refetch={refetch} defaultValues={booking} />
+                        </div>
+
+                        <div className='block md:hidden border w-[46px] mr-2 h-[46px] rounded-lg items-center justify-center flex'>
+                            <Popover>
+                                <PopoverTrigger>
+                                    <EllipsisVertical size={24} />
+                                </PopoverTrigger>
+                                <PopoverContent className='w-[204px] mr-4'>
+                                    <div className='gap-2 flex flex-row items-center justify-center'>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="outline" className="h-12 w-12">
+                                                    <Phone className="h-16 w-16" />
+                                                    <span className="sr-only">Abrir menu</span>
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuLabel>Contato</DropdownMenuLabel>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem>
+                                                    <a
+                                                        href={`https://wa.me/55${user?.phone?.replace(/[()\s-]/g, '')}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center"
+                                                    >
+                                                        WhatsApp
+                                                    </a>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <a href={`tel:+55${user?.phone}`} className="flex items-center">
+                                                        Ligar
+                                                    </a>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                        <Button variant="outline" className="h-12 w-12" onClick={() => handleExcludeBooking(_id)}>
+                                            <Trash className="h-16 w-16" />
+                                        </Button>
+                                        <BookingEditForm id={_id} refetch={refetch} defaultValues={booking} />
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                         </div>
                     </Card >
                 )

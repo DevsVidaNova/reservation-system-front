@@ -8,8 +8,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { Booking } from "./types";
-import { BookDashed, Calendar, Clock, MapPin, Phone, User } from 'lucide-react';
-
+import { BookDashed, Clock, MapPin, Phone, User } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -39,8 +38,12 @@ export function BookingList() {
     const todayDate = new Date().toISOString().split('T')[0];
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
     const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
-   // const myBookings = bookings?.filter((booking: Booking) => booking.user._id === user?._id);
-    const myBookings = [];
+    // const myBookings = bookings?.filter((booking: Booking) => booking.user._id === user?._id);
+    // const myBookings = [];
+    //<TabsContent value="my" >
+    //              <AvaliableDays data={myBookings} />
+    //        </TabsContent>
+
     if (isLoading) {
         return <div>Carregando reservas aguarde...</div>
     }
@@ -69,16 +72,13 @@ export function BookingList() {
                     </div>
                 </div>
                 <TabsContent value="hoje">
-                    <AvaliableDays data={todayBookings}/>
+                    <AvaliableDays data={todayBookings} />
                 </TabsContent>
                 <TabsContent value="semana">
                     <AvaliableDays data={currentWeekBookings} />
                 </TabsContent>
                 <TabsContent value="tudo">
                     <AvaliableDays data={bookings} />
-                </TabsContent>
-                <TabsContent value="my" >
-                    <AvaliableDays data={myBookings} />
                 </TabsContent>
             </Tabs>
             <div style={{ height: 150, }}></div>
@@ -94,7 +94,7 @@ export function BookingList() {
     )
 }
 
-const AvaliableDays = ({ data,}: { data: any, }) => {
+const AvaliableDays = ({ data, }: { data: any, }) => {
     if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border p-6 rounded-xl my-6 z-1'>
         <div className='flex flex-col justify-center items-center gap-2'>
             <BookDashed size={64} />

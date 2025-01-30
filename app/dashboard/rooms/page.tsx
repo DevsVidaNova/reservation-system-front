@@ -3,16 +3,22 @@ import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, } from "@/components/ui/card"
 import { useQuery } from '@tanstack/react-query'
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { Trash } from 'lucide-react'
+import { EllipsisVertical, Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 import { Room } from '@/app/api/types'
 import { deleteRoom, listRooms } from '@/app/api/rooms'
 import { RoomAddForm } from '@/components/room-add'
 import { RoomEditForm } from '@/components/room-edit'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
 
 export default function Rooms() {
   const [page, setpage] = useState(1);
@@ -33,7 +39,7 @@ export default function Rooms() {
   if (error) return <div className="flex flex-col container w-full px-6 py-4"><p>Erro ao carregar usuários</p></div>
 
   return (
-    <div className="flex flex-col container w-full px-6 py-4">
+    <div className="flex flex-col container w-full px-3 py-4">
       <ListRooms rooms={rooms || []} refetch={refetch} setpage={setpage} page={page} />
     </div>
   )
@@ -78,7 +84,6 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
     }
   }
 
-
   return (
     <Card className='overflow-hidden'>
       <Table>
@@ -87,8 +92,8 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
             <TableHead >Nome</TableHead>
             <TableHead >Ocupação</TableHead>
             <TableHead className='text-wrap min-w-[60px] '>Descrição</TableHead>
-            <TableHead className='text-wrap min-w-[60px] '>Exclusivo</TableHead>
-            <TableHead className='text-wrap min-w-[60px] '>Status</TableHead>
+            <TableHead className='text-wrap min-w-[60px] md:block hidden'>Exclusivo</TableHead>
+            <TableHead className='text-wrap min-w-[60px] -mb-6 mt-3 md:block hidden'>Status</TableHead>
             <TableHead >Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -97,13 +102,13 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
             const { _id, name, size, description, exclusive, status, } = room
             return (
               <TableRow key={_id}>
-                <TableCell>{name}</TableCell>
-                <TableCell>{size}</TableCell>
-                <TableCell className='text-wrap min-w-[60px] ' style={{ wordBreak: 'break-word' }}>{description}</TableCell>
-                <TableCell>{exclusive ? 'Exclusivo' : 'Livre'}</TableCell>
-                <TableCell>{status ? 'Ativo' : 'Desativado'}</TableCell>
+                <TableCell className='text-[12px] md:text-[18px] leading-none'>{name}</TableCell>
+                <TableCell className='text-[12px] md:text-[18px] leading-none'>{size}</TableCell>
+                <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none' style={{ wordBreak: 'break-word' }}>{description}</TableCell>
+                <TableCell className='md:block hidden text-[12px] md:text-[18px] leading-none '>{exclusive ? 'Exclusivo' : 'Livre'}</TableCell>
+                <TableCell className='md:block hidden text-[12px] md:text-[18px] leading-none'>{status ? 'Ativo' : 'Desativado'}</TableCell>
                 <TableCell >
-                  <div className='flex flex-row gap-4'>
+                  <div className='flex flex-row gap-4 md:block hidden'>
                     <Dialog open={openExclude} onOpenChange={setOpenExclude}>
                       <DialogTrigger asChild >
                         <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
@@ -129,7 +134,44 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
-                    <RoomEditForm id={_id} refetch={refetch}  defaultValues={room}/>
+                    <RoomEditForm id={_id} refetch={refetch} defaultValues={room} />
+                  </div>
+                  <div className='block md:hidden'>
+                    <Popover>
+                      <PopoverTrigger>
+                        <EllipsisVertical size={24} />
+                      </PopoverTrigger>
+                      <PopoverContent className='w-[144px] mr-4'>
+                        <div className='gap-2 flex flex-row items-center justify-center'>
+                          <Dialog open={openExclude} onOpenChange={setOpenExclude}>
+                            <DialogTrigger asChild >
+                              <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+                                <Trash size={24} />
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[455px]">
+                              <DialogHeader>
+                                <DialogTitle>Excluir sala</DialogTitle>
+                                <DialogDescription>Tem certeza que quer excluir a sala? Digite "sim" para confirmar</DialogDescription>
+                                <Input
+                                  id='confirmation'
+                                  label='Confirmação'
+                                  placeholder='Leia a mensagem acima'
+                                  value={confirmation}
+                                  onChange={(e) => setconfirmation(e.target.value)}
+                                />
+                              </DialogHeader>
+                              <DialogFooter className="border-t-2 pt-[16px]">
+                                <DialogClose asChild>
+                                  <Button onClick={() => handleExcludeUser(_id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir sala</Button>
+                                </DialogClose>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                          <RoomEditForm id={_id} refetch={refetch} defaultValues={room} />
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </TableCell>
               </TableRow>

@@ -75,7 +75,7 @@ export default function Profile() {
 
   return (
     <div className='w-full bg-background'>
-    <div className="flex flex-col max-w-[500px] container px-4 py-4 m-auto">
+    <div className="flex flex-col max-w-[500px] container px-3 py-4 m-auto">
       <div className='w-[124px] h-[124px] items-center justify-center bg-[#303030] flex flex-col rounded-full self-center'>
         <User size={52} color='#fff' />
       </div>

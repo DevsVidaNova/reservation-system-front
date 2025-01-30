@@ -60,7 +60,7 @@ export function AppSidebar() {
     return (
         <div>
             <div className="bg-background">
-                <Link href="/" className="text-xl font-bold ml-2">
+                <Link href="/" className="font-bold -mt-6">
                     <div className='flex-row flex align-center justify-center items-center'>
                         <img src={theme == 'dark' ? "/imgs/logo_white.png" : "/imgs/logo_black.png"} alt="VIDA NOVA" className="w-[180px]" />
                     </div>
@@ -69,14 +69,14 @@ export function AppSidebar() {
             <div className="bg-background">
                 <div className="flex flex-col px-4">
                     {items?.map((item: any) => (
-                        <div key={item.title} className={`flex-row flex text-[16px] rounded-lg transition w-full  ${pathname == item.url ? 'bg-muted text-primary font-semibold' : 'bg-background text-primary opacity-60'}`} >
-                            <a href={item.url ? item.url : '#'} onClick={item?.handle ? item?.handle : null} className="py-4 px-4">
+                            <a href={item.url ? item.url : '#'} onClick={item?.handle ? item?.handle : null} className="">
+                        <div key={item.title} className={`flex-row flex text-[16px] py-4 px-4 rounded-lg transition w-full  ${pathname == item.url ? 'bg-muted text-primary font-semibold' : 'bg-background text-primary opacity-60'}`} >
                                 <div className="flex flex-row w-full gap-2">
                                     {item.icon}
                                     <span className="text-[16px] font-semibold">{item.title}</span>
                                 </div>
-                            </a>
                         </div>
+                            </a>
                     ))}
                 </div>
             </div>

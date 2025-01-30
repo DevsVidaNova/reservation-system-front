@@ -8,11 +8,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { UserList } from '@/app/api/types'
-import { Trash } from 'lucide-react'
+import { EllipsisVertical, Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 import { excludeUserById, listUsers } from '@/app/api/admin'
 import { UserEditForm } from '@/components/user-edit'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 export default function Users() {
   const [page, setpage] = useState(1);
@@ -29,11 +34,11 @@ export default function Users() {
     }
   }, [page])
 
-  if (isLoading) return  <div className="flex flex-col w-full px-4 py-4 container"><p>Carregando...</p></div>
+  if (isLoading) return <div className="flex flex-col w-full px-4 py-4 container"><p>Carregando...</p></div>
   if (error) return <div className="flex flex-col w-full px-4 py-4 container"><p>Erro ao carregar usuários</p></div>
 
   return (
-    <div className="flex flex-col w-full px-4 py-4 container">
+    <div className="flex flex-col w-full px-3 py-4 container">
       <ListUsers users={users || []} refetch={refetch} setpage={setpage} page={page} />
     </div>
   )
@@ -44,7 +49,7 @@ const ListUsers = ({ users, refetch, setpage, page }: { users: UserList[], refet
     <>
       <div className=' flex flex-col  gap-4'>
         <div className='flex flex-row justify-between items-center'>
-          <h2 className='text-[24px] font-bold'>Usuários cadastrados</h2>
+          <h2 className='md:text-[28px] text-[22px] font-bold'>Usuários cadastrados</h2>
           <div className='md:block hidden'>
             <UserAddForm refetch={refetch} />
           </div>
@@ -93,11 +98,11 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
         <TableBody>
           {users?.map(user => (
             <TableRow key={user.email}>
-              <TableCell>{user.name}</TableCell>
-              <TableCell>{user.phone}</TableCell>
-              <TableCell className='text-wrap min-w-[60px] ' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
-              <TableCell >
-                <div className='flex flex-row gap-4'>
+              <TableCell className='text-[12px] md:text-[18px] leading-none'>{user.name}</TableCell>
+              <TableCell className='text-[12px] md:text-[18px] leading-none'>{user.phone}</TableCell>
+              <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
+              <TableCell className=''>
+                <div className='flex flex-row gap-4 md:block hidden'>
                   <Dialog open={openExclude} onOpenChange={setOpenExclude}>
                     <DialogTrigger asChild >
                       <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
@@ -123,7 +128,44 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <UserEditForm id={user._id} refetch={refetch} defaultValue={user}/>
+                  <UserEditForm id={user._id} refetch={refetch} defaultValue={user} />
+                </div>
+                <div className='block md:hidden'>
+                  <Popover>
+                    <PopoverTrigger>
+                      <EllipsisVertical size={24} />
+                    </PopoverTrigger>
+                    <PopoverContent className='w-[144px] mr-4'>
+                      <div className='gap-2 flex flex-row items-center justify-center'>
+                        <Dialog open={openExclude} onOpenChange={setOpenExclude}>
+                          <DialogTrigger asChild >
+                            <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+                              <Trash size={24} />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[455px]">
+                            <DialogHeader>
+                              <DialogTitle>Excluir usuário</DialogTitle>
+                              <DialogDescription>Tem certeza que quer excluir o usuário? Digite "sim" para confirmar</DialogDescription>
+                              <Input
+                                id='confirmation'
+                                label='Confirmação'
+                                placeholder='Leia a mensagem acima'
+                                value={confirmation}
+                                onChange={(e) => setconfirmation(e.target.value)}
+                              />
+                            </DialogHeader>
+                            <DialogFooter className="border-t-2 pt-[16px]">
+                              <DialogClose asChild>
+                                <Button onClick={() => handleExcludeUser(user._id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir usuário</Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                        <UserEditForm id={user._id} refetch={refetch} defaultValue={user} />
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </TableCell>
             </TableRow>

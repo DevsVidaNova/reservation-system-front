@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BookingList } from "@/components/booking-list"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { deleteUser, getUser } from "@/hooks/user";
+import {  getUser } from "@/hooks/user";
 
 import {
   Drawer,
@@ -29,8 +29,6 @@ export default function Home() {
     }
     verify();
   }, []);
-
-
 
   return (
     <div className="bg-background">
@@ -91,7 +89,6 @@ export default function Home() {
 }
 
 const MenuProfile = ({ user }: { user: any }) => {
-
   const router = useRouter()
   const handleLogout = () => {
     try {

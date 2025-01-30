@@ -21,6 +21,16 @@ export const addBooking = async (data: Booking) => {
         throw new Error(error.message);
     }
 };
+export const editBooking = async (id: string, data: Booking) => {
+    try {
+        const res: any = await fetchWithAuth("/bookings/"+id, { method: "PUT", data: data });
+        return res;
+    } catch (error: any) {
+        console.log(error)
+        throw new Error(error.message);
+    }
+};
+
 
 export const userBookings = async (id: string) => {
     try {
