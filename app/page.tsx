@@ -96,16 +96,15 @@ const MenuProfile = ({ user }: { user: any }) => {
   const handleLogout = () => {
     try {
       deleteToken();
-      router.replace('/')
+      router.replace('/auth/login');
     } catch (error) {
       console.log(error);
     }
   }
   return (
     <Drawer>
-
-      <DrawerTrigger>
-        <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row justify-between items-center">
+        <DrawerTrigger>
           <div className="flex flex-row ">
             <div className="uppercase w-[52px] h-[52px] bg-secondary rounded-full items-center justify-center flex flex-col">
               {user?.name?.slice(0, 2)}
@@ -119,17 +118,17 @@ const MenuProfile = ({ user }: { user: any }) => {
               </span>
             </div>
           </div>
-          <div className="border w-[42px] h-[42px] rounded-full cursor-pointer flex flex-col justify-center items-center" onClick={handleLogout} >
-            <LogOut size={18} color='#00000090' />
-          </div>
+        </DrawerTrigger>
+        <div className="border w-[42px] h-[42px] rounded-full cursor-pointer flex flex-col justify-center items-center" onClick={handleLogout} >
+          <LogOut size={18} color='#00000090' />
         </div>
-      </DrawerTrigger>
+      </div>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Editar perfil</DrawerTitle>
           <DrawerDescription>Altere seu nome, celular e email.</DrawerDescription>
         </DrawerHeader>
-      <Profile />
+        <Profile />
         <DrawerFooter className="px-6 border-t pt-4 mt-4">
           <DrawerClose>
             <Button variant="secondary" className="w-full">Fechar</Button>
