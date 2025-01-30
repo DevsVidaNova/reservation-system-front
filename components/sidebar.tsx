@@ -40,7 +40,7 @@ export function AppSidebar() {
         },
         {
             title: "Reservas",
-            url: "/",
+            url: "/dashboard/bookings",
             icon: <Calendar />,
         },
         {

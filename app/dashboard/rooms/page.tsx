@@ -129,7 +129,7 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
-                    <RoomEditForm id={_id} refetch={refetch} />
+                    <RoomEditForm id={_id} refetch={refetch}  defaultValues={room}/>
                   </div>
                 </TableCell>
               </TableRow>

@@ -123,7 +123,7 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <UserEditForm id={user._id} refetch={refetch} />
+                  <UserEditForm id={user._id} refetch={refetch} defaultValue={user}/>
                 </div>
               </TableCell>
             </TableRow>

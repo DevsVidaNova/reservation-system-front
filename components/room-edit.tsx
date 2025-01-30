@@ -31,16 +31,9 @@ const formSchema = z.object({
     status: z.boolean(),
 })
 
-export function RoomEditForm({ id, refetch }: { id: string, refetch: () => void }) {
+export function RoomEditForm({ id, refetch, defaultValues }: { id: string, refetch: () => void, defaultValues: any }) {
     const [open, setOpen] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const { data: room, error: isError, isLoading } = useQuery<RoomAdd>({
-        queryKey: ['room edit show', id],
-        queryFn: async () => {
-            const res = await showRoom(id);
-            return res;
-        },
-    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -55,14 +48,14 @@ export function RoomEditForm({ id, refetch }: { id: string, refetch: () => void 
     })
 
     useEffect(() => {
-        if (room) {
-            form.setValue("name", room.name)
-            form.setValue("size", room.size)
-            form.setValue("description", room.description)
-            form.setValue("exclusive", room.exclusive)
-            form.setValue("status", room.status)
+        if (defaultValues) {
+            form.setValue("name", defaultValues.name)
+            form.setValue("size", defaultValues.size)
+            form.setValue("description", defaultValues.description)
+            form.setValue("exclusive", defaultValues.exclusive)
+            form.setValue("status", defaultValues.status)
         }
-    }, [room])
+    }, [defaultValues])
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setError(null)

@@ -36,16 +36,9 @@ const formSchema = z.object({
     }),
 })
 
-export function UserEditForm({ id, refetch }: { id: string, refetch: () => void }) {
+export function UserEditForm({ id, refetch, defaultValue }: { id: string, refetch: () => void, defaultValue: any }) {
     const [open, setOpen] = useState(false)
     const [error, seterror] = useState(null);
-    const { data: user, error: isError, isLoading } = useQuery<UserEdit>({
-        queryKey: ['user edit show', id],
-        queryFn: async () => {
-            const res = await showUserById(id);
-            return res;
-        },
-    });
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -56,12 +49,12 @@ export function UserEditForm({ id, refetch }: { id: string, refetch: () => void 
         },
     })
     useEffect(() => {
-        if (user) {
-            form.setValue('name', user.name)
-            form.setValue('phone', user.phone)
-            form.setValue('email', user.email)
+        if (defaultValue) {
+            form.setValue('name', defaultValue.name)
+            form.setValue('phone', defaultValue.phone)
+            form.setValue('email', defaultValue.email)
         }
-    }, [user])
+    }, [defaultValue])
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         seterror(null)
