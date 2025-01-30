@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BookingList } from "@/components/booking-list"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { getUser } from "@/hooks/user";
+import { deleteUser, getUser } from "@/hooks/user";
 
 import {
   Drawer,
@@ -15,18 +15,22 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import { AlignJustify } from "lucide-react";
+import { AlignJustify, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { deleteToken } from "@/hooks/token";
+import Profile from "./dashboard/profile/page";
 
 export default function Home() {
   const [user, setuser] = useState({ isAdmin: false, name: '', email: '' });
   useEffect(() => {
     const verify = async () => {
       const res: any = await getUser();
-      console.log(user)
       setuser(res);
     }
     verify();
   }, []);
+
+
 
   return (
     <div className="bg-background">
@@ -51,19 +55,10 @@ export default function Home() {
                     Painel de Controle
                   </Button>
                 </Link>}
-              
 
-              {user && <Link href="/auth/logout" >
-                <div>
-                  <div className="uppercase w-[52px] h-[52px] bg-secondary rounded-full items-center justify-center">
-                    {user?.name?.slice(0,2)}
-                  </div>
-                  Logado como {user?.name}
-                </div>
-                <Button className="w-full" variant='outline' >
-                  Sair
-                </Button>
-              </Link>}
+
+              {user && <MenuProfile user={user} />}
+
               {!user &&
                 <>
                   <Link href="/auth/login">
@@ -95,3 +90,54 @@ export default function Home() {
   )
 }
 
+const MenuProfile = ({ user }: { user: any }) => {
+
+  const router = useRouter()
+  const handleLogout = () => {
+    try {
+      deleteToken();
+      router.replace('/')
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  return (
+    <Drawer>
+
+      <DrawerTrigger>
+        <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row ">
+            <div className="uppercase w-[52px] h-[52px] bg-secondary rounded-full items-center justify-center flex flex-col">
+              {user?.name?.slice(0, 2)}
+            </div>
+            <div className="flex flex-col pl-3 justify-center items-start">
+              <span className="font-semibold text-[18px] -mb-2">
+                {user?.name}
+              </span>
+              <span className="font-regular text-[14px] opacity-70">
+                {user?.email}
+              </span>
+            </div>
+          </div>
+          <div className="border w-[42px] h-[42px] rounded-full cursor-pointer flex flex-col justify-center items-center" onClick={handleLogout} >
+            <LogOut size={18} color='#00000090' />
+          </div>
+        </div>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Editar perfil</DrawerTitle>
+          <DrawerDescription>Altere seu nome, celular e email.</DrawerDescription>
+        </DrawerHeader>
+      <Profile />
+        <DrawerFooter className="px-6 border-t pt-4 mt-4">
+          <DrawerClose>
+            <Button variant="secondary" className="w-full">Fechar</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+
+    </Drawer>
+
+  )
+}

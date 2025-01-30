@@ -17,15 +17,17 @@ import { deleteToken } from '@/hooks/token';
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
+import { deleteUser } from "@/hooks/user";
 
 export function AppSidebar() {
-    const router = useRouter()
     const pathname = usePathname()
     const { setTheme, theme } = useTheme()
-
+    
+    const router = useRouter()
     const handleLogout = () => {
         try {
             deleteToken();
+            deleteUser();
             router.replace('/')
         } catch (error) {
             console.log(error);
