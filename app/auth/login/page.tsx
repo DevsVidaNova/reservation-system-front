@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { loginUser } from '@/app/api/user'
 import { Checkbox } from "@/components/ui/checkbox"
-import { useTheme } from 'next-themes'
+import Link from "next/link"
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -39,13 +39,18 @@ export default function Login() {
     }
   }
   
-  const { theme } = useTheme()
+  const handleWhatsApp = () => {
+  
+  }
+
 
   return (
     <div className="flex flex-col items-center justify-center bg-background w-full h-screen">
-      <Card className="w-[350px] self-center">
+      <Card className="w-[350px] self-center border-none shadow-none">
         <CardHeader>
-          <img src={theme =='dark' ? "/imgs/logo_white.png": "/imgs/logo_black.png"} className="w-[220px] h-[70px] bg-gray self-center" />
+          <Link href="/" className='w-full items-center self-center mx-auto flex flex-col justify-center'>
+            <img src="/imgs/logo_black.png" className="w-[220px] h-[70px] bg-gray self-center items-center" />
+          </Link>
           <CardTitle className="text-2xl hidden">Entrar</CardTitle>
           <CardDescription className='hidden'>Digite seu email e senha para acessar sua conta.</CardDescription>
         </CardHeader>
@@ -92,6 +97,9 @@ export default function Login() {
           {error && <div className='bg-red-200  mt-2 py-2 px-4 w-max rounded-md'><p className="text-red-500">{error}</p></div>}
           <Button onClick={handleSubmit} disabled={isLoading} className='w-full' >
             {isLoading ? 'Enviando' : 'Entrar'}
+          </Button>
+          <Button onClick={handleWhatsApp} variant='secondary' className='w-full mt-4' >
+            Solicitar acesso
           </Button>
         </div>
       </Card>

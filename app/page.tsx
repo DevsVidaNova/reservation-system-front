@@ -71,7 +71,7 @@ export default function Home() {
             </DrawerContent>
           </Drawer>
         </div>
-
+              
       <div className="pt-[90px] container px-4 z-0">
         <BookingList />
       </div>

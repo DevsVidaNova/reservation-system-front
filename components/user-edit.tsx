@@ -16,9 +16,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "@/components/ui/use-toast"
-import { editUserById, showUserById } from "@/app/api/admin"
-import { UserEdit, } from "@/app/api/types"
-import { useQuery } from "@tanstack/react-query"
+import { editUserById,  } from "@/app/api/admin"
 import { Pencil } from "lucide-react"
 
 const formSchema = z.object({

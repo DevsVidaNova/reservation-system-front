@@ -8,7 +8,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { Booking } from "./types";
-import { Calendar, Clock, MapPin, Phone, User } from 'lucide-react';
+import { BookDashed, Calendar, Clock, MapPin, Phone, User } from 'lucide-react';
 
 import {
     DropdownMenu,
@@ -96,10 +96,11 @@ export function BookingList() {
 }
 
 const AvaliableDays = ({ data,}: { data: any, }) => {
-    if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6 z-1'>
-        <div className='flex flex-col'>
+    if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border p-6 rounded-xl my-6 z-1'>
+        <div className='flex flex-col justify-center items-center gap-2'>
+            <BookDashed size={64} />
             <h2 className='text-[24px] font-bold text-center' style={{ lineHeight: 1, }}>Não encontramos nenhuma reserva</h2>
-            <span className='opacity-70 text-[18px] text-center'>Sem reservas por enquanto...</span>
+            <span className='opacity-70 text-[18px] text-center'>Sem reservas criadas por enquanto...</span>
         </div>
     </div>
     if (!data) return <div>Carregando...</div>
