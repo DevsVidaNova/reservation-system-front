@@ -13,7 +13,8 @@ export const listUsers = async (page: number): Promise<UserList[]> => {
 
 export const showUserById = async (id: string): Promise<UserEdit> => {
     try {
-        const res: UserEdit = await fetchWithAuth("/api/auth/showUserById/"+id, { method: "GET", });
+        const res: UserEdit = await fetchWithAuth("/users/" + id, { method: "GET", });
+        console.log(res)
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');

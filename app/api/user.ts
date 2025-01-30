@@ -32,7 +32,6 @@ export const showUser = async (id: string): Promise<UserList> => {
 };
 
 export const editUser = async (id: string, data: any) => {
-    console.log(id)
     try {
         const res = await fetchWithAuth("/api/auth/editUser", {
             method: "PUT", data: {
@@ -42,7 +41,6 @@ export const editUser = async (id: string, data: any) => {
                 phone: data.phone
             }
         });
-        console.log(res)
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');

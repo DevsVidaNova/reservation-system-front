@@ -53,7 +53,6 @@ export function UserEditForm({ id, refetch }: { id: string, refetch: () => void 
             name: "",
             phone: "",
             email: "",
-            password: "",
         },
     })
     useEffect(() => {
@@ -61,7 +60,6 @@ export function UserEditForm({ id, refetch }: { id: string, refetch: () => void 
             form.setValue('name', user.name)
             form.setValue('phone', user.phone)
             form.setValue('email', user.email)
-            form.setValue('password', user.password)
         }
     }, [user])
 
@@ -147,19 +145,6 @@ export function UserEditForm({ id, refetch }: { id: string, refetch: () => void 
                                     <FormLabel>E-mail</FormLabel>
                                     <FormControl>
                                         <Input placeholder="E-mail" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Senha</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" placeholder="Senha" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
