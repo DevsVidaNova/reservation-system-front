@@ -49,10 +49,10 @@ export function BookingList() {
         return <div>Error: {error.message}</div>
     }
     return (
-        <div className='z-1'>
-            <Tabs defaultValue="semana" className="w-full">
-                <div className='justify-between flex-row flex w-full'>
-                    <div className='flex-row flex gap-2 mx-auto'>
+        <div className='z-10 mx-auto'>
+            <Tabs defaultValue="semana" className=" w-full">
+                <div className='justify-between flex-row flex w-full container'>
+                    <div className='flex-row flex gap-2 mx-auto md:mx-1'>
                         <TabsList>
                             <TabsTrigger value="hoje" >Hoje</TabsTrigger>
                             <TabsTrigger value="semana" >Semana</TabsTrigger>
@@ -105,7 +105,7 @@ const AvaliableDays = ({ data,}: { data: any, }) => {
     </div>
     if (!data) return <div>Carregando...</div>
     return (
-        <div className='gap-8 z-1'>
+        <div className='gap-8 z-0'>
             {data?.map((booking: Booking) => {
                 const { endTime, startTime, room, user, date, _id, description } = booking
                 const [year, month, day] = (date?.split('-') || ['0000', '00', '00']);
@@ -122,7 +122,7 @@ const AvaliableDays = ({ data,}: { data: any, }) => {
                                 <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
                                 <span className='md:text-[36px] font-bold md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
                             </div>
-                            <div className='flex-col flex px-4 py-4 gap-2 sm:px-0 sm:py-0  w-[80%]'>
+                            <div className='flex-col flex px-4 py-4 gap-2 justify-center  w-[80%]'>
                                 <div className='flex-row flex gap-2'>
                                     <div className='flex-row flex gap-2 items-center opacity-70'>
                                         <Clock size={12} />

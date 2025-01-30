@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col w-full  px-4 py-4">
-      <div className='container justify-center px-2 gap-2 flex flex-col self-center '>
+      <div className='container justify-center px-2 gap-2 flex flex-col self-center md:self-start'>
         <h2 className='text-[32px] font-bold'>Dashboard</h2>
         <div className="flex flex-row gap-4 flex-wrap align-center ">
           <Card>

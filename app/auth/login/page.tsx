@@ -1,9 +1,9 @@
 "use client"
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent,  } from "@/components/ui/card"
 import { loginUser } from '@/app/api/user'
 import { Checkbox } from "@/components/ui/checkbox"
 import Link from "next/link"
@@ -42,7 +42,6 @@ export default function Login() {
   const handleWhatsApp = () => {
   
   }
-
 
   return (
     <div className="flex flex-col items-center justify-center bg-background w-full h-screen">
