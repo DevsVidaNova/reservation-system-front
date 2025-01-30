@@ -39,9 +39,8 @@ export function BookingList() {
     const todayDate = new Date().toISOString().split('T')[0];
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
     const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
-    const myBookings = bookings?.filter((booking: Booking) => booking.user._id === user?.id);
-
-   
+   // const myBookings = bookings?.filter((booking: Booking) => booking.user._id === user?._id);
+    const myBookings = [];
     if (isLoading) {
         return <div>Carregando reservas aguarde...</div>
     }

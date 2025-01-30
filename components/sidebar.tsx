@@ -1,28 +1,15 @@
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarGroup,
-    SidebarHeader,
-    SidebarGroupContent,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuItem,
-    SidebarMenuButton,
-} from "@/components/ui/sidebar"
-import { BookCheck, Calendar, Camera, Home, Inbox, Lightbulb, LogOut, Search, Settings, User, Users } from "lucide-react"
+import { BookCheck, Calendar, Home, LogOut, Users } from "lucide-react"
 import Link from "next/link"
 import { useRouter, usePathname } from 'next/navigation'
 import { deleteToken } from '@/hooks/token';
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import { Button } from "@/components/ui/button"
 import { deleteUser } from "@/hooks/user";
 
 export function AppSidebar() {
     const pathname = usePathname()
     const { setTheme, theme } = useTheme()
-    
+
     const router = useRouter()
     const handleLogout = () => {
         try {
@@ -33,7 +20,9 @@ export function AppSidebar() {
             console.log(error);
         }
     }
-
+    const toggleTheme = () => {
+        setTheme(theme === 'dark' ? 'light' : 'dark')
+    }
     const items = [
         {
             title: "Início",
@@ -56,9 +45,9 @@ export function AppSidebar() {
             icon: <Users />,
         },
         {
-            title: "Meu Perfil",
-            url: "/dashboard/profile",
-            icon: <User />,
+            title: "Alterar tema",
+            icon: <>{theme === 'dark' ? <Sun size={24} color='#fff' /> : <Moon size={24} color='#000' />}</>,
+            handle: () => toggleTheme(),
         },
         {
             title: "Sair",
@@ -67,40 +56,31 @@ export function AppSidebar() {
         },
     ]
 
-    const toggleTheme = () => {
-        setTheme(theme === 'dark' ? 'light' : 'dark')
-    }
+    
     return (
-        <Sidebar >
-            <SidebarHeader className="bg-background">
+        <div>
+            <div className="bg-background">
                 <Link href="/" className="text-xl font-bold ml-2">
                     <div className='flex-row flex align-center justify-center items-center'>
-                        <img src={theme =='dark' ? "/imgs/logo_white.png": "/imgs/logo_black.png"} alt="VIDA NOVA" className="w-[180px]" />
+                        <img src={theme == 'dark' ? "/imgs/logo_white.png" : "/imgs/logo_black.png"} alt="VIDA NOVA" className="w-[180px]" />
                     </div>
                 </Link>
-            </SidebarHeader>
-            <SidebarContent className="bg-background">
-                <SidebarGroup>
-                    <SidebarGroupContent>
-                        <SidebarMenu className="">
-                            {items?.map((item: any) => (
-                                <SidebarMenuItem key={item.title} >
-                                    <SidebarMenuButton asChild className={`flex-row flex text-[16px] transition  ${pathname == item.url ? 'bg-muted text-primary font-semibold' : 'bg-background text-primary opacity-60'}`} >
-                                        <a href={item.url ? item.url : '#'} onClick={item?.handle ? item?.handle : null} className="py-5 px-4">
-                                            {item.icon}
-                                            <span>{item.title}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
-                <Button onClick={toggleTheme} variant='outline' className="w-[46px] h-[46px] fixed bottom-4 left-4">
-                    {theme === 'dark' ? <Sun size={18} color='#fff' /> : <Moon size={18} color='#000' />}
-                </Button>
-            </SidebarContent>
-        </Sidebar>
+            </div>
+            <div className="bg-background">
+                <div className="flex flex-col px-4">
+                    {items?.map((item: any) => (
+                        <div key={item.title} className={`flex-row flex text-[16px] rounded-lg transition w-full  ${pathname == item.url ? 'bg-muted text-primary font-semibold' : 'bg-background text-primary opacity-60'}`} >
+                            <a href={item.url ? item.url : '#'} onClick={item?.handle ? item?.handle : null} className="py-4 px-4">
+                                <div className="flex flex-row w-full gap-2">
+                                    {item.icon}
+                                    <span className="text-[16px] font-semibold">{item.title}</span>
+                                </div>
+                            </a>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
     )
 }
 

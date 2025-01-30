@@ -1,5 +1,4 @@
 'use client'
-import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import {
     Tabs,
@@ -7,7 +6,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
-import { Booking } from "../../api/types/bookings";
+import { Booking } from "@/app/api/types";
 import { Calendar, Clock, MapPin, Phone, Trash, User } from 'lucide-react';
 
 import {
@@ -21,11 +20,9 @@ import {
 import { Button } from "@/components/ui/button"
 import { useQuery } from '@tanstack/react-query'
 import { BookingForm } from '@/components/booking-form';
-import Link from "next/link"
 import { deleteBooking, listBookings } from '@/app/api/booking';
 
 export default function BookingsPage() {
-    const [user, setuser] = useState();
     const { data: bookings, error, isLoading, refetch } = useQuery({
         queryKey: ['bookings list'],
         queryFn: async () => {
@@ -36,8 +33,11 @@ export default function BookingsPage() {
     const todayDate = new Date().toISOString().split('T')[0];
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
     const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
-    const myBookings = bookings?.filter((booking: Booking) => booking.user._id === user?.id);
-
+    //  const myBookings = bookings?.filter((booking: Booking) => booking.user._id === user?.id);
+    //  <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
+    //  <TabsContent value="my">
+    //  <AvaliableDays data={myBookings} refetch={refetch}   />
+    //  </TabsContent>
 
     if (isLoading) {
         return <div>Carregando reservas aguarde...</div>
@@ -47,14 +47,13 @@ export default function BookingsPage() {
     }
     return (
         <div>
-            <Tabs defaultValue="my" className="w-full">
+            <Tabs defaultValue="semana" className="w-full">
                 <div className='justify-between flex-row flex w-full'>
                     <div className='flex-row flex gap-2'>
                         <TabsList>
                             <TabsTrigger value="hoje" >Para hoje</TabsTrigger>
                             <TabsTrigger value="semana" >Esta semana</TabsTrigger>
                             <TabsTrigger value="tudo" >Tudo</TabsTrigger>
-                            <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
                         </TabsList>
                         <BookingForm refetch={refetch} /> :
                     </div>
@@ -68,9 +67,7 @@ export default function BookingsPage() {
                 <TabsContent value="tudo">
                     <AvaliableDays data={bookings} refetch={refetch}  />
                 </TabsContent>
-                <TabsContent value="my">
-                    <AvaliableDays data={myBookings} refetch={refetch}   />
-                </TabsContent>
+               
             </Tabs >
             <div style={{ height: 150, }}></div>
 
@@ -82,7 +79,7 @@ export default function BookingsPage() {
 
 }
 
-const AvaliableDays = ({ data, refetch, admin }: { data: any, refetch: () => void, admin: boolean }) => {
+const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void,  }) => {
 
     if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border-2 p-6 rounded-xl my-6'>
         <div className='hidden md:block'>
@@ -170,10 +167,9 @@ const AvaliableDays = ({ data, refetch, admin }: { data: any, refetch: () => voi
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-                            {admin &&
                                 <Button variant="outline" className="h-12 w-12" onClick={() => handleExcludeBooking(_id)}>
                                     <Trash className="h-16 w-16" />
-                                </Button>}
+                                </Button>
                         </div>
                     </Card >
                 )

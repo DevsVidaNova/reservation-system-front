@@ -27,6 +27,7 @@ export default function Login() {
     }
     try {
       const res = await loginUser(email, password, session)
+      console.log(res)
       if (res?.user.isAdmin) {
         router.push('/dashboard')
       } else {
