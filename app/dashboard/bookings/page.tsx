@@ -81,15 +81,13 @@ export default function BookingsPage() {
                 <TabsContent value="my">
                     <AvaliableDays data={myBookings} refetch={refetch} />
                 </TabsContent>
-            </Tabs >
+            </Tabs>
             <div style={{ height: 150, }}></div>
-
             <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
                 <BookingForm refetch={refetch} />
             </div>
-        </div >
+        </div>
     )
-
 }
 
 const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void, }) => {
@@ -115,7 +113,6 @@ const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void, }) 
                 const { endTime, startTime, room, user, date, _id, description } = booking
                 const [year, month, day] = (date?.split('-') || ['0000', '00', '00']);
                 const formattedDate = `${year}-${month}-${day}`;
-
                 const timeStart = new Date(startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 const timeEnd = new Date(endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
