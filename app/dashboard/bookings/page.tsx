@@ -1,4 +1,5 @@
 'use client'
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import {
     Tabs,
@@ -27,20 +28,24 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { BookingEditForm } from "@/components/booking-edit";
+import { getUser } from "@/hooks/user";
 
 export default function BookingsPage() {
+    const [myBookings, setmyBookings] = useState();
+
     const { data: bookings, error, isLoading, refetch } = useQuery({
         queryKey: ['bookings list'],
         queryFn: async () => {
             const res = await listBookings();
+            const user = await getUser();
+            const myBookings = res?.filter((booking: any) => booking?.user?._id === user?.id);
+            setmyBookings(myBookings);
             return res;
         },
     });
     const todayDate = new Date().toISOString().split('T')[0];
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
     const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
-    //  const myBookings = bookings?.filter((booking: Booking) => booking.user._id === user?.id);
-    //  <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
     //  <TabsContent value="my">
     //  <AvaliableDays data={myBookings} refetch={refetch}   />
     //  </TabsContent>
@@ -52,14 +57,15 @@ export default function BookingsPage() {
         return <div>Error: {error.message}</div>
     }
     return (
-        <div className="z-0 mx-auto py-6">
+        <div className="z-0 mx-auto py-6 container mx-auto">
             <Tabs defaultValue="semana" className="w-full px-3">
                 <div className='justify-between flex-row flex w-full'>
                     <div className='flex-row flex gap-2 mx-auto md:mx-1'>
                         <TabsList>
-                            <TabsTrigger value="hoje" >Para hoje</TabsTrigger>
-                            <TabsTrigger value="semana" >Esta semana</TabsTrigger>
+                            <TabsTrigger value="hoje" >Hoje</TabsTrigger>
+                            <TabsTrigger value="semana" >Semana</TabsTrigger>
                             <TabsTrigger value="tudo" >Tudo</TabsTrigger>
+                            <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
                         </TabsList>
                     </div>
                     <div className="md:block hidden">
@@ -75,6 +81,9 @@ export default function BookingsPage() {
                 <TabsContent value="tudo">
                     <AvaliableDays data={bookings} refetch={refetch} />
                 </TabsContent>
+                <TabsContent value="my">
+                    <AvaliableDays data={myBookings} refetch={refetch} />
+                </TabsContent>
             </Tabs >
             <div style={{ height: 150, }}></div>
 
@@ -87,7 +96,7 @@ export default function BookingsPage() {
 }
 
 const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void, }) => {
-    if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border p-6 rounded-xl my-6'>
+    if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border p-6 justify-center rounded-xl my-6'>
          <div className='flex flex-col justify-center items-center gap-2'>
             <BookDashed size={64} />
             <h2 className='text-[24px] font-bold text-center' style={{ lineHeight: 1, }}>Não encontramos nenhuma reserva</h2>
@@ -113,13 +122,14 @@ const AvaliableDays = ({ data, refetch, }: { data: any, refetch: () => void, }) 
                 const timeStart = new Date(startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 const timeEnd = new Date(endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
-
+                const monthName = new Date(formattedDate).toLocaleDateString('pt-BR', { month: 'long' });
                 return (
                     <Card key={_id} className="md:p-2 p-0 flex-row flex align-center justify-between items-center w-full my-4">
                         <div className='flex flex-row items-center gap-2'>
                             <div className='flex-col w-[80px] flex md:px-6 md:py-2 px-4 py-2 justify-center items-center border-r-2 '>
                                 <span className='md:text-[18px]  md:leading-none text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
                                 <span className='md:text-[36px] font-bold md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
+                                <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{monthName.slice(0,3)}</span>
                             </div>
                             <div className='flex-col flex px-2 py-4 gap-2 sm:px-0 sm:py-0'>
                                 <div className='flex-row flex gap-2'>

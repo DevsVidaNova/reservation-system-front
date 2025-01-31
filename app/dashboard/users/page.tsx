@@ -174,11 +174,14 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
 
 
       </Table>
-      <div className='flex flex-row w-full border-t px-2 py-2 items-center gap-2 justify-center'>
+     
+    </Card>
+  )
+}
+/*
+ <div className='flex flex-row w-full border-t px-2 py-2 items-center gap-2 justify-center'>
         <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page == 1 ? 1 : page - 1)}>{page - 1}</div>
         <div className='bg-primary text-background rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer'  >{page}</div>
         <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page + 1)} >{page + 1}</div>
       </div>
-    </Card>
-  )
-}
+*/

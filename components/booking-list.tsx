@@ -113,13 +113,15 @@ const AvaliableDays = ({ data, }: { data: any, }) => {
                 const timeStart = new Date(startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 const timeEnd = new Date(endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
-
+                const monthName = new Date(formattedDate).toLocaleDateString('pt-BR', { month: 'long' });
+              
                 return (
                     <Card key={_id} className="md:p-2 flex-row flex align-center justify-between items-center w-full my-4">
                         <div className='flex flex-row w-[100%]'>
                             <div className='flex-col w-[80px] flex md:px-6 md:py-2 w-[20%] justify-center items-center border-r'>
                                 <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
                                 <span className='md:text-[36px] font-bold md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
+                                <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{monthName.slice(0,3)}</span>
                             </div>
                             <div className='flex-col flex px-4 py-4 gap-2 justify-center  w-[80%]'>
                                 <div className='flex-row flex gap-2'>

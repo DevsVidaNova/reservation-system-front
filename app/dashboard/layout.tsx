@@ -36,7 +36,7 @@ export default function DashLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className='bg-background w-full flex '>
-      <div className='flex flex-row z-20 bg-[#ffffff30] border-b  backdrop-blur-sm fixed left-0 right-0 top-0 bg-background px-4 py-0'>
+      <div className='flex flex-row z-20 bg-[#ffffff30] border-b  backdrop-blur-sm fixed left-0 right-0 top-0 bg-background px-4 py-2'>
         <div className='container mx-auto'>
           <Drawer>
             <div className='container justify-between items-center flex-row flex'>
@@ -60,7 +60,7 @@ export default function DashLayout({ children }: { children: ReactNode }) {
           </Drawer>
         </div>
       </div>
-      <div className='container mx-auto flex pt-[60px]'>
+      <div className='container mx-auto flex pt-[90px]'>
         {children}
       </div>
     </div>
