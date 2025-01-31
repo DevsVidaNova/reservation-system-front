@@ -37,6 +37,8 @@ export type Booking = {
     date: string,
     startTime: string,
     endTime: string,
+    user: any,
+    _id: string,
 }
 
 
