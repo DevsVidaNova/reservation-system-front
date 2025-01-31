@@ -25,13 +25,17 @@ import { listBookings } from '@/app/api/booking';
 import { getUser } from '@/hooks/user';
 
 export function BookingList() {
+    
+    const [myBookings, setmyBookings] = useState([]);
     const [user, setuser] = useState({id: '', name: '', email: '', isAdmin: false, phone: ''});
     const { data: bookings, error, isLoading, refetch } = useQuery({
         queryKey: ['bookings list'],
         queryFn: async () => {
             const res = await listBookings();
             const user = await getUser();
+            const myBookings = res?.filter((booking: any) => booking?.user?._id === user?.id);
             setuser(user);
+            setmyBookings(myBookings);
             return res;
         },
     });
@@ -60,6 +64,7 @@ export function BookingList() {
                             <TabsTrigger value="hoje" >Hoje</TabsTrigger>
                             <TabsTrigger value="semana" >Semana</TabsTrigger>
                             <TabsTrigger value="tudo" >Tudo</TabsTrigger>
+                            <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
                         </TabsList>
                     </div>
                     <div className='md:block hidden'>
@@ -79,6 +84,9 @@ export function BookingList() {
                 </TabsContent>
                 <TabsContent value="tudo">
                     <AvaliableDays data={bookings} />
+                </TabsContent>
+                <TabsContent value="my">
+                    <AvaliableDays data={myBookings}  />
                 </TabsContent>
             </Tabs>
             <div style={{ height: 150, }}></div>

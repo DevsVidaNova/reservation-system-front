@@ -31,7 +31,7 @@ import { BookingEditForm } from "@/components/booking-edit";
 import { getUser } from "@/hooks/user";
 
 export default function BookingsPage() {
-    const [myBookings, setmyBookings] = useState();
+    const [myBookings, setmyBookings] = useState([]);
 
     const { data: bookings, error, isLoading, refetch } = useQuery({
         queryKey: ['bookings list'],
