@@ -1,7 +1,6 @@
 import { fetchApi, fetchWithAuth,  } from "@/hooks/api";
 import { Booking } from "./types";
 
-
 export const listBookings = async () => {
     try {
         const res: any = await fetchApi("/bookings", { method: "GET",});
@@ -30,8 +29,6 @@ export const editBooking = async (id: string, data: Booking) => {
         throw new Error(error.message);
     }
 };
-
-
 export const userBookings = async (id: string) => {
     try {
         const res: any = await fetchWithAuth("/bookings", { method: "GET", data: {_id: id} });

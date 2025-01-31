@@ -41,8 +41,6 @@ export type Booking = {
     _id: string,
 }
 
-
-
 export type Room = {
     _id: string, //id da sala
     name: string, //nome da sala
