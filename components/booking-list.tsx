@@ -43,12 +43,6 @@ export function BookingList() {
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
     const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
     
-    // const myBookings = [];
-    //<TabsContent value="my" >
-    //              <AvaliableDays data={myBookings} />
-    //        </TabsContent>
-    //<TabsTrigger value="my" className='md:block hidden'>Minhas reservas</TabsTrigger>
-
     if (isLoading) {
         return <div>Carregando reservas aguarde...</div>
     }

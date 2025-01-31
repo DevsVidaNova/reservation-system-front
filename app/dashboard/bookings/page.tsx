@@ -46,9 +46,6 @@ export default function BookingsPage() {
     const todayDate = new Date().toISOString().split('T')[0];
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
     const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
-    //  <TabsContent value="my">
-    //  <AvaliableDays data={myBookings} refetch={refetch}   />
-    //  </TabsContent>
 
     if (isLoading) {
         return <div>Carregando reservas aguarde...</div>
