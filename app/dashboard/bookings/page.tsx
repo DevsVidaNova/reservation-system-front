@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/tabs"
 import { Booking } from "@/app/api/types";
 import { Clock, MapPin, Phone, Trash, User, EllipsisVertical, BookDashed } from 'lucide-react';
-
 import {
     DropdownMenu,
     DropdownMenuContent,
