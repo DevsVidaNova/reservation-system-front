@@ -9,8 +9,6 @@ interface FetchApiOptions extends AxiosRequestConfig {
   params?: Record<string, string | number | boolean | unknown>;
 }
 
-type ApiResponse<T> = T | null;
-
 const apiClient = axios.create({
   baseURL: baseURL,
   headers: { "Content-Type": "application/json" },
