@@ -25,9 +25,9 @@ import { listBookings } from '@/app/api/booking';
 import { getUser } from '@/hooks/user';
 
 export function BookingList() {
-    
+
     const [myBookings, setmyBookings] = useState([]);
-    const [user, setuser] = useState({id: '', name: '', email: '', isAdmin: false, phone: ''});
+    const [user, setuser] = useState({ id: '', name: '', email: '', isAdmin: false, phone: '' });
     const { data: bookings, error, isLoading, refetch } = useQuery({
         queryKey: ['bookings list'],
         queryFn: async () => {
@@ -42,7 +42,7 @@ export function BookingList() {
     const todayDate = new Date().toISOString().split('T')[0];
     const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
     const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
-    
+
     if (isLoading) {
         return <div>Carregando reservas aguarde...</div>
     }
@@ -80,7 +80,7 @@ export function BookingList() {
                     <AvaliableDays data={bookings} />
                 </TabsContent>
                 <TabsContent value="my">
-                    <AvaliableDays data={myBookings}  />
+                    <AvaliableDays data={myBookings} />
                 </TabsContent>
             </Tabs>
             <div style={{ height: 150, }}></div>
@@ -116,16 +116,16 @@ const AvaliableDays = ({ data, }: { data: any, }) => {
                 const timeEnd = new Date(endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
                 const monthName = new Date(formattedDate).toLocaleDateString('pt-BR', { month: 'long' });
-              
+
                 return (
-                    <Card key={_id} className="md:p-2 flex-row flex align-center justify-between items-center w-full my-4">
+                    <div key={_id} className="border rounded-lg flex-row flex justify-between w-full my-4">
                         <div className='flex flex-row w-[100%]'>
-                            <div className='flex-col w-[80px] flex md:px-6 md:py-2 w-[20%] justify-center items-center border-r'>
-                                <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{dayOfWeek.slice(0, 3)}</span>
-                                <span className='md:text-[36px] font-bold md:leading-[36px] text-[24px] leading-[24px] font-medium '>{day}</span>
-                                <span className='md:text-[18px]  md:leading-[24px] text-[16px]  leading-[16px] uppercase sm:text-[12px]'>{monthName.slice(0,3)}</span>
+                            <div className='flex-col w-[80px] h-full flex md:px-6 md:py-2 w-[20%] justify-center items-center border-r'>
+                                <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{dayOfWeek.slice(0, 3)}</span>
+                                <span className='md:text-[36px] md:leading-[32px] text-[24px] leading-[22px] font-bold uppercase'>{day}</span>
+                                <span className='md:text-[16px] md:leading-[24px] text-[14px] leading-[14px] uppercase'>{monthName.slice(0, 3)}</span>
                             </div>
-                            <div className='flex-col flex px-4 py-4 gap-2 justify-center  w-[80%]'>
+                            <div className='flex-col h-[100%] flex px-4 py-4 gap-2 justify-center w-[80%]'>
                                 <div className='flex-row flex gap-2'>
                                     <div className='flex-row flex gap-2 items-center opacity-70'>
                                         <Clock size={12} />
@@ -142,37 +142,39 @@ const AvaliableDays = ({ data, }: { data: any, }) => {
                                 </div>
                             </div>
                         </div>
-
-                        <div className='flex-row flex px-2 py-2 align-center items-center border-l flex-none'>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" className="h-12 w-12">
-                                        <Phone className="h-16 w-16" />
-                                        <span className="sr-only">Abrir menu</span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Contato</DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem>
-                                        <a
-                                            href={`https://wa.me/55${user?.phone?.replace(/[()\s-]/g, '')}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center"
-                                        >
-                                            WhatsApp
-                                        </a>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <a href={`tel:+55${user?.phone}`} className="flex items-center">
-                                            Ligar
-                                        </a>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                        <div className='flex flex-col border-l'>
+                            <div className='flex-row flex px-4 h-full items-center'>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" className="h-12 w-12">
+                                            <Phone className="h-16 w-16" />
+                                            <span className="sr-only">Abrir menu</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuLabel>Contato</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem>
+                                            <a
+                                                href={`https://wa.me/55${user?.phone?.replace(/[()\s-]/g, '')}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center"
+                                            >
+                                                WhatsApp
+                                            </a>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            <a href={`tel:+55${user?.phone}`} className="flex items-center">
+                                                Ligar
+                                            </a>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
                         </div>
-                    </Card >
+
+                    </div>
                 )
             }
             )}

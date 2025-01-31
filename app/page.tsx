@@ -41,43 +41,50 @@ export default function Home() {
                 <AlignJustify size={24} />
               </div>
             </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader>
-                <DrawerTitle>O que deseja fazer?</DrawerTitle>
-                <DrawerDescription>Clique em um dos botões abaixo ou arraste esse componente para baixo.</DrawerDescription>
-              </DrawerHeader>
+            <DrawerContent >
+              <div className="container">
 
-              <div className="w-full flex-col flex gap-4 px-6">
-                {user?.isAdmin &&
-                  <Link href="/dashboard" >
-                    <Button className="w-full">
-                      Painel de Controle
-                    </Button>
-                  </Link>}
+                <DrawerHeader>
+                  <DrawerTitle>O que deseja fazer?</DrawerTitle>
+                  <DrawerDescription>Clique em um dos botões abaixo ou arraste esse componente para baixo.</DrawerDescription>
+                </DrawerHeader>
 
-
-                {user && <MenuProfile user={user} />}
-
-                {!user &&
-                  <>
-                    <Link href="/auth/login">
+                <div className="w-full flex-col flex gap-4 px-6">
+                  {user?.isAdmin &&
+                    <Link href="/dashboard" >
                       <Button className="w-full">
-                        Fazer Login
+                        Painel de Controle
                       </Button>
-                    </Link>
-                    <Link href="/" >
-                      <Button className="w-full" variant='outline' >
-                        Solicitar acesso
-                      </Button>
-                    </Link>
-                  </>
-                }
+                    </Link>}
+
+
+                  {user && <MenuProfile user={user} />}
+
+                  {!user &&
+                    <>
+                      <Link href="/auth/login">
+                        <Button className="w-full">
+                          Fazer Login
+                        </Button>
+                      </Link>
+                      <Link href="/" >
+                        <Button className="w-full" variant='outline' >
+                          Solicitar acesso
+                        </Button>
+                      </Link>
+                    </>
+                  }
+                </div>
+                <DrawerFooter className="px-6 border-t pt-4 mt-4">
+                  <DrawerClose>
+                    <Button variant="secondary" className="w-full">Fechar</Button>
+                  </DrawerClose>
+                </DrawerFooter>   
+
+
+                
               </div>
-              <DrawerFooter className="px-6 border-t pt-4 mt-4">
-                <DrawerClose>
-                  <Button variant="secondary" className="w-full">Fechar</Button>
-                </DrawerClose>
-              </DrawerFooter>
+
             </DrawerContent>
           </Drawer>
         </div>

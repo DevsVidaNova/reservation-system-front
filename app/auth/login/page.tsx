@@ -11,6 +11,7 @@ import Link from "next/link"
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [success, setsucces] = useState('');
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -27,12 +28,14 @@ export default function Login() {
     }
     try {
       const res = await loginUser(email, password, session)
-      console.log(res)
-      if (res?.user.isAdmin) {
-        router.push('/dashboard')
-      } else {
-        router.push('/')
-      }
+      setsucces('Login efetuado com sucesso.')
+      setTimeout(() => {
+        if (res?.user.isAdmin) {
+          router.push('/dashboard')
+        } else {
+          router.push('/')
+        }
+      }, 1500);
     } catch (error: any) {
       setError('E-mail ou senha incorretos.')
     } finally {
@@ -94,7 +97,8 @@ export default function Login() {
           </div>
         </CardContent>
         <div className='px-6 pb-6'>
-          {error && <div className='bg-red-200  mt-2 py-2 px-4 w-max rounded-md'><p className="text-red-500">{error}</p></div>}
+          {success && <div className='bg-green-200 mb-4 py-2 px-4 w-full text-center rounded-md'><p className="text-green-500">{success}</p></div>}
+          {error && <div className='bg-red-200 mb-4 py-2 px-4 w-full text-center rounded-md'><p className="text-red-500">{error}</p></div>}
           <Button onClick={handleSubmit} disabled={isLoading} className='w-full' >
             {isLoading ? 'Enviando' : 'Entrar'}
           </Button>
