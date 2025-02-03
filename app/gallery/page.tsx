@@ -15,17 +15,13 @@ const items = [
 export default function Gallery() {
   return (
     <div className="space-y-8">
-
-<Image
-                    src={item.image || "/placeholder.svg"}
-                    alt={item.title}
-                    width={600}
-                    height={400}
-                    className="rounded-lg object-cover"
-                  />
-      
-
-     
+      <Image
+        src={"/espaco.jpg"}
+        alt="espaço"
+        width={600}
+        height={400}
+        className="rounded-lg object-cover"
+      />
     </div>
   )
 }
