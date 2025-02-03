@@ -88,7 +88,7 @@ export function BookingList() {
                 {user ?
                     <BookingForm refetch={refetch} /> :
                     <Link href="/auth/login">
-                        <Button variant="default" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Fazer Reserva</Button>
+                        <Button variant="default" className='bg-sky-300' >Fazer Reserva</Button>
                     </Link>
                 }
             </div>
