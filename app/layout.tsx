@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Reserve um horário para atendimento no Espaço Vida Nova',
 }
 
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/ui/theme-provider"
 
 export default function RootLayout({
   children,

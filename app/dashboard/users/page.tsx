@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, } from "@/components/ui/card"
-import { UserAddForm } from '@/components/user-add'
+import { UserAddForm } from '@/components/user/user-add'
 import { useQuery } from '@tanstack/react-query'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
@@ -12,7 +12,7 @@ import { EllipsisVertical, Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 import { excludeUserById, listUsers } from '@/app/api/admin'
-import { UserEditForm } from '@/components/user-edit'
+import { UserEditForm } from '@/components/user/user-edit'
 import {
   Popover,
   PopoverContent,

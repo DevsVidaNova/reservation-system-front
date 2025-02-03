@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/input'
 
 import { Room } from '@/app/api/types'
 import { deleteRoom, listRooms } from '@/app/api/rooms'
-import { RoomAddForm } from '@/components/room-add'
-import { RoomEditForm } from '@/components/room-edit'
+import { RoomAddForm } from '@/components/room/room-add'
+import { RoomEditForm } from '@/components/room/room-edit'
 import {
   Popover,
   PopoverContent,

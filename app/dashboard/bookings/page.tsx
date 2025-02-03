@@ -19,14 +19,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useQuery } from '@tanstack/react-query'
-import { BookingForm } from '@/components/booking-form';
+import { BookingForm } from '@/components/booking/booking-form';
 import { deleteBooking, listBookings } from '@/app/api/booking';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { BookingEditForm } from "@/components/booking-edit";
+import { BookingEditForm } from "@/components/booking/booking-edit";
 import { getUser } from "@/hooks/user";
 
 export default function BookingsPage() {

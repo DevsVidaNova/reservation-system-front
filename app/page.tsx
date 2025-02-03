@@ -1,7 +1,7 @@
 'use client';
 import React from "react";
 import { useEffect, useState } from "react";
-import { BookingList } from "@/components/booking-list"
+import { BookingList } from "@/components/booking/booking-list"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { getUser } from "@/hooks/user";

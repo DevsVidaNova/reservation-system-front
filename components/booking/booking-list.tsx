@@ -6,7 +6,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
-import { Booking } from "./types";
+import { Booking } from "@/app/api/types";
 import { BookDashed, Clock, MapPin, Phone, User } from 'lucide-react';
 import {
     DropdownMenu,
