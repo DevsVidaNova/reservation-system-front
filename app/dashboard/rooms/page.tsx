@@ -92,8 +92,10 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
             <TableHead >Nome</TableHead>
             <TableHead >Ocupação</TableHead>
             <TableHead className='text-wrap min-w-[60px] '>Descrição</TableHead>
-            <TableHead className='text-wrap min-w-[60px] -mb-6 mt-3 md:inline-block hidden'>Exclusivo</TableHead>
-            <TableHead className='text-wrap min-w-[60px] -mb-6 mt-3 md:inline-block hidden'>Status</TableHead>
+            <div className='md:flex hidden flex-row'>
+              <TableHead className='text-wrap min-w-[60px] pt-[14px]'>Exclusivo</TableHead>
+              <TableHead className='text-wrap min-w-[60px] pt-[14px]'>Status</TableHead>
+            </div>
             <TableHead >Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -104,38 +106,43 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
               <TableRow key={_id}>
                 <TableCell className='text-[12px] md:text-[18px] leading-none'>{name}</TableCell>
                 <TableCell className='text-[12px] md:text-[18px] leading-none'>{size}</TableCell>
-                <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none' style={{ wordBreak: 'break-word' }}>{description}</TableCell>
-                <TableCell className='md:inline-block hidden text-[12px] md:text-[18px] leading-none '>{exclusive ? 'Exclusivo' : 'Livre'}</TableCell>
-                <TableCell className='md:inline-block hidden text-[12px] md:text-[18px] leading-none'>{status ? 'Ativo' : 'Desativado'}</TableCell>
-                <TableCell >
-                  <div className='flex flex-row gap-4 md:block hidden'>
-                    <Dialog open={openExclude} onOpenChange={setOpenExclude}>
-                      <DialogTrigger asChild >
-                        <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
-                          <Trash size={24} />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[455px]">
-                        <DialogHeader>
-                          <DialogTitle>Excluir sala</DialogTitle>
-                          <DialogDescription>Tem certeza que quer excluir a sala? Digite "sim" para confirmar</DialogDescription>
-                          <Input
-                            id='confirmation'
-                            label='Confirmação'
-                            placeholder='Leia a mensagem acima'
-                            value={confirmation}
-                            onChange={(e) => setconfirmation(e.target.value)}
-                          />
-                        </DialogHeader>
-                        <DialogFooter className="border-t-2 pt-[16px]">
-                          <DialogClose asChild>
-                            <Button onClick={() => handleExcludeUser(_id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir sala</Button>
-                          </DialogClose>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                    <RoomEditForm id={_id} refetch={refetch} defaultValues={room} />
+                <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none' style={{ wordBreak: 'break-word' }}>{description?.length > 100 ? description.slice(0, 97) + '...' : description}</TableCell>
+                <div className='md:flex hidden flex-row text-center items-center justify-center'>
+                  <TableCell className=' text-[12px] md:text-[18px] leading-none md:flex hidden'>{exclusive ? 'Exclusivo' : 'Livre'}  </TableCell>
+                  <TableCell className=' text-[12px] md:text-[18px] leading-none md:flex hidden'>{status ? 'Ativo' : 'Desativado'}</TableCell>
+                </div>
+                <TableCell>
+                  <div className='md:block hidden'>
+                    <div className='flex flex-row gap-2'>
+                      <Dialog open={openExclude} onOpenChange={setOpenExclude}>
+                        <DialogTrigger asChild >
+                          <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+                            <Trash size={24} />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[455px]">
+                          <DialogHeader>
+                            <DialogTitle>Excluir sala</DialogTitle>
+                            <DialogDescription>Tem certeza que quer excluir a sala? Digite "sim" para confirmar</DialogDescription>
+                            <Input
+                              id='confirmation'
+                              label='Confirmação'
+                              placeholder='Leia a mensagem acima'
+                              value={confirmation}
+                              onChange={(e) => setconfirmation(e.target.value)}
+                            />
+                          </DialogHeader>
+                          <DialogFooter className="border-t-2 pt-[16px]">
+                            <DialogClose asChild>
+                              <Button onClick={() => handleExcludeUser(_id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir sala</Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                      <RoomEditForm id={_id} refetch={refetch} defaultValues={room} />
+                    </div>
                   </div>
+
                   <div className='block md:hidden'>
                     <Popover>
                       <PopoverTrigger>
@@ -179,7 +186,7 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
           })}
         </TableBody>
       </Table>
-     
+
     </Card>
   )
 }
