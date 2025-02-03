@@ -17,9 +17,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "@/components/ui/use-toast"
-import { editRoom, showRoom } from "@/app/api/rooms"
-import { RoomAdd } from "@/app/api/types"
-import { useQuery } from "@tanstack/react-query"
+import { editRoom,  } from "@/app/api/rooms"
 import { Pencil } from "lucide-react"
 
 const formSchema = z.object({

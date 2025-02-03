@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react';
-import { Card } from "./ui/card";
 import {
     Tabs,
     TabsContent,
@@ -65,7 +64,7 @@ export function BookingList() {
                         {user ?
                             <BookingForm refetch={refetch} /> :
                             <Link href="/auth/login">
-                                <Button variant="default" >Fazer Reserva</Button>
+                                <Button  >Fazer Reserva</Button>
                             </Link>
                         }
                     </div>
@@ -88,7 +87,7 @@ export function BookingList() {
                 {user ?
                     <BookingForm refetch={refetch} /> :
                     <Link href="/auth/login">
-                        <Button variant="default" className='bg-sky-300' >Fazer Reserva</Button>
+                        <Button  >Fazer Reserva</Button>
                     </Link>
                 }
             </div>
