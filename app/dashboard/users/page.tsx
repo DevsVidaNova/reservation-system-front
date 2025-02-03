@@ -102,7 +102,7 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
               <TableCell className='text-[12px] md:text-[18px] leading-none'>{user.phone}</TableCell>
               <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
               <TableCell className=''>
-                <div className=' md:block hidden flex gap-2 flex-row '>
+                <div className=' md:flex hidden gap-3 flex-row '>
                   <Dialog open={openExclude} onOpenChange={setOpenExclude}>
                     <DialogTrigger asChild >
                       <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
@@ -129,7 +129,7 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
                     </DialogContent>
                   </Dialog>
                   <UserEditForm id={user._id} refetch={refetch} defaultValue={user} />
-                </div>
+                  </div>
                 <div className='block md:hidden'>
                   <Popover>
                     <PopoverTrigger>

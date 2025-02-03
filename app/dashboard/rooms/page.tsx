@@ -57,6 +57,7 @@ const ListRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch: 
         </div>
         <div>
           <TableRooms rooms={rooms || []} refetch={refetch} page={page} setpage={setpage} />
+          <div className='h-[120px]'></div>
         </div>
       </div>
       <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
