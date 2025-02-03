@@ -6,36 +6,32 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 const items = [
   {
-    image: "/placeholder.svg?height=400&width=600",
+    image: "/espaco.jpg",
     title: "Imagem 1",
     description: "Descrição da primeira imagem no carrossel.",
-  },
-  {
-    image: "/placeholder.svg?height=400&width=600",
-    title: "Imagem 2",
-    description: "Detalhes sobre a segunda imagem apresentada.",
-  },
-  {
-    image: "/placeholder.svg?height=400&width=600",
-    title: "Imagem 3",
-    description: "Explicação da terceira imagem no conjunto.",
-  },
-  {
-    image: "/placeholder.svg?height=400&width=600",
-    title: "Imagem 4",
-    description: "Informações adicionais sobre a quarta imagem.",
-  },
-  {
-    image: "/placeholder.svg?height=400&width=600",
-    title: "Imagem 5",
-    description: "Detalhes finais sobre a quinta imagem do carrossel.",
   },
 ]
 
 export default function Gallery() {
   return (
     <div className="space-y-8">
-      <Carousel className="w-full max-w-3xl mx-auto">
+
+<Image
+                    src={item.image || "/placeholder.svg"}
+                    alt={item.title}
+                    width={600}
+                    height={400}
+                    className="rounded-lg object-cover"
+                  />
+      
+
+     
+    </div>
+  )
+}
+
+/*
+<Carousel className="w-full max-w-3xl mx-auto">
         <CarouselContent>
           {items.map((item, index) => (
             <CarouselItem key={index}>
@@ -56,8 +52,7 @@ export default function Gallery() {
         <CarouselPrevious className="left-2" />
         <CarouselNext className="right-2" />
       </Carousel>
-
-      <div className="w-full max-w-3xl mx-auto">
+ <div className="w-full max-w-3xl mx-auto">
         <h2 className="text-2xl font-bold mb-4">Lista de Itens</h2>
         <ul className="space-y-4">
           {items.map((item, index) => (
@@ -77,7 +72,4 @@ export default function Gallery() {
           ))}
         </ul>
       </div>
-    </div>
-  )
-}
-
+ */
