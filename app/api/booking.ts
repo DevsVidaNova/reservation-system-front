@@ -1,5 +1,5 @@
 import { fetchApi, fetchWithAuth,  } from "@/hooks/api";
-import { Booking } from "./types";
+import { Booking, CreateBooking } from "./types";
 
 export const listBookings = async () => {
     try {
@@ -10,7 +10,7 @@ export const listBookings = async () => {
     }
 };
 
-export const addBooking = async (data: Booking) => {
+export const addBooking = async (data: CreateBooking) => {
     try {
         const res: any = await fetchWithAuth("/bookings", { method: "POST", data: data });
         console.log(res)

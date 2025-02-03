@@ -13,7 +13,6 @@ export type UserEdit = {
     _id: string;
     password: string;
 };
-
 export type RegisterUser = {
     email: string;
     password: string;
@@ -21,16 +20,14 @@ export type RegisterUser = {
     name: string;
 };
 
-export type LoginUser = {
-    message: string;
-    user: {
-        email: string;
-        id: string;
-        isAdmin: boolean;
-    };
-    token: string;
-}
 
+export type CreateBooking = {
+    description: string,
+    room: string,
+    date: string,
+    startTime: string,
+    endTime: string,
+}
 export type Booking = { 
     description: string,
     room: string,
@@ -41,6 +38,7 @@ export type Booking = {
     _id: string,
 }
 
+
 export type Room = {
     _id: string, //id da sala
     name: string, //nome da sala
@@ -48,7 +46,7 @@ export type Room = {
     description: string, //ex: sala de reunião
     exclusive: boolean, //exclusivo ou não
     status: boolean,  //ativo ou não
-} //CRIAR/EDITAR/LISTAR/DELETAR
+} 
 export type RoomAdd = {
     name: string, //nome da sala
     size: number, //quantidade de pessoas
@@ -57,6 +55,16 @@ export type RoomAdd = {
     status: boolean,  //ativo ou não
 }
 
+
+export type LoginUser = {
+    message: string;
+    user: {
+        email: string;
+        id: string;
+        isAdmin: boolean;
+    };
+    token: string;
+}
 export type Stats = {
     rooms: number, //quantidade de salas
     bookings: number, //quantidade de reservas
