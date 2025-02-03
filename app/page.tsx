@@ -1,4 +1,5 @@
 'use client';
+import React from "react";
 import { useEffect, useState } from "react";
 import { BookingList } from "@/components/booking-list"
 import { Button } from "@/components/ui/button"
@@ -42,7 +43,7 @@ export default function Home() {
               </div>
             </DrawerTrigger>
             <DrawerContent >
-              <div className="container">
+              <div className="container mx-auto">
 
                 <DrawerHeader>
                   <DrawerTitle>O que deseja fazer?</DrawerTitle>

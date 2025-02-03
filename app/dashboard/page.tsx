@@ -1,13 +1,9 @@
 "use client"
-import { useEffect, useState } from 'react'
+import React from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 
-import { toast } from "@/components/ui/use-toast"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { BookMarked, BookPlus, Calendar1, MapPin, Trash, UserPlus, Users } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { BookMarked, BookPlus, Calendar1, MapPin, UserPlus, Users } from 'lucide-react'
 
 import { Stats } from '../api/types'
 import { useQuery } from '@tanstack/react-query'
