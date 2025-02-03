@@ -1,22 +1,12 @@
 import * as React from "react"
 import Image from "next/image"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-
-const items = [
-  {
-    image: "/espaco.jpg",
-    title: "Imagem 1",
-    description: "Descrição da primeira imagem no carrossel.",
-  },
-]
 
 export default function Gallery() {
   return (
     <div className="space-y-8">
       <Image
-        src={"/espaco.jpg"}
+        src={"/imgs/espaco.jpg"}
         alt="espaço"
         width={600}
         height={400}
@@ -27,6 +17,17 @@ export default function Gallery() {
 }
 
 /*
+
+import { Card, CardContent } from "@/components/ui/card"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+
+const items = [
+  {
+    image: "/espaco.jpg",
+    title: "Imagem 1",
+    description: "Descrição da primeira imagem no carrossel.",
+  },
+]
 <Carousel className="w-full max-w-3xl mx-auto">
         <CarouselContent>
           {items.map((item, index) => (
