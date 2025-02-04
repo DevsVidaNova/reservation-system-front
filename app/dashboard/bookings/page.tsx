@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useQuery } from '@tanstack/react-query'
-import { BookingForm } from '@/components/booking/booking-form';
+import { BookingForm } from '@/components/booking/booking-add';
 import { deleteBooking, listBookings } from '@/app/api/booking';
 import {
     Popover,

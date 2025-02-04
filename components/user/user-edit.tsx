@@ -15,9 +15,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { toast } from "@/components/ui/use-toast"
-import { editUserById,  } from "@/app/api/admin"
 import { Pencil } from "lucide-react"
+import { editUserById,  } from "@/app/api/admin"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -29,14 +28,12 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Informe um e-mail válido.",
     }),
-    password: z.string().min(6, {
-        message: "A senha deve ter pelo menos 6 caracteres.",
-    }),
 })
 
 export function UserEditForm({ id, refetch, defaultValue }: { id: string, refetch: () => void, defaultValue: any }) {
     const [open, setOpen] = useState(false)
-    const [error, seterror] = useState(null);
+    const [success, setsuccess] = useState('');
+    const [error, seterror] = useState('');
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -55,25 +52,19 @@ export function UserEditForm({ id, refetch, defaultValue }: { id: string, refetc
     }, [defaultValue])
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        seterror(null)
+        seterror('')
+        setsuccess('')
         try {
             const response = await editUserById(id, values)
             if (response) {
-                toast({
-                    title: "Usuário criado com sucesso!",
-                    description: "Deu tudo certo, o usuário foi criado com sucesso.",
-                })
-                setOpen(false)
-                form.reset()
+                setsuccess('Usuário editado com sucesso!')
                 refetch()
+                setTimeout(() => {
+                    setOpen(false)
+                }, 1500);
             }
         } catch (error: any) {
             seterror(error.message)
-            toast({
-                title: "Erro",
-                description: error,
-                variant: "destructive",
-            })
         }
     }
 
@@ -143,8 +134,11 @@ export function UserEditForm({ id, refetch, defaultValue }: { id: string, refetc
                         />
                         <DialogFooter className="border-t-2 pt-[16px] ">
                             <div className="flex flex-col w-full">
+                                {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
                                 {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
-                                <Button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Salvar usuário</Button>
+                                <Button>
+                                    <button type='submit' className="text-[18px] font-semibold py-6 rounded-full w-full">Salvar usuário</button>
+                                </Button>
                             </div>
                         </DialogFooter>
                     </form>

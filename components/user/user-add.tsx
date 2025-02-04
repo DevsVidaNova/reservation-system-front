@@ -15,7 +15,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { toast } from "@/components/ui/use-toast"
 import { registerUser } from "@/app/api/user"
 
 const formSchema = z.object({
@@ -35,7 +34,8 @@ const formSchema = z.object({
 
 export function UserAddForm({ refetch }: { refetch: () => void }) {
     const [open, setOpen] = useState(false)
-    const [error, seterror] = useState(null);
+    const [error, seterror] = useState('');
+    const [success, setsuccess] = useState('');
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -48,32 +48,25 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        seterror(null)
+        seterror('')
+        setsuccess('')
         try {
             const response = await registerUser(values)
             if (response) {
-                toast({
-                    title: "Usuário criado com sucesso!",
-                    description: "Deu tudo certo, o usuário foi criado com sucesso.",
-                })
+                setsuccess('Usuário criado com sucesso!')
                 setOpen(false)
                 form.reset()
                 refetch()
             }
         } catch (error: any) {
             seterror(error.message)
-            toast({
-                title: "Erro",
-                description: error,
-                variant: "destructive",
-            })
         }
     }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild >
-                <Button variant="default" >Criar usuário</Button>
+                <Button variant="default">Criar usuário</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[455px]">
 
@@ -148,6 +141,7 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
                         />
                         <DialogFooter className="border-t-2 pt-[16px] ">
                             <div className="flex flex-col w-full">
+                                {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
                                 {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
                                 <Button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Criar usuário</Button>
                             </div>

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useQuery } from '@tanstack/react-query'
-import { BookingForm } from './booking-form';
+import { BookingForm } from './booking-add';
 import Link from "next/link"
 import { listBookings } from '@/app/api/booking';
 import { getUser } from '@/hooks/user';

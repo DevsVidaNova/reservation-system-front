@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -16,7 +15,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { toast } from "@/components/ui/use-toast"
 import { addRoom } from "@/app/api/rooms"
 import { Checkbox } from "@/components/ui/checkbox"
 
@@ -36,7 +34,8 @@ const formSchema = z.object({
 
 export function RoomAddForm({ refetch }: { refetch: () => void }) {
     const [open, setOpen] = useState(false)
-    const [error, setError] = useState<string | null>(null);
+    const [success, setsuccess] = useState('');
+    const [error, seterror] = useState('');
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -50,25 +49,19 @@ export function RoomAddForm({ refetch }: { refetch: () => void }) {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        setError(null)
+        seterror('')
+        setsuccess('')
         try {
             const response = await addRoom(values)
             if (response) {
-                toast({
-                    title: "Sala criada com sucesso!",
-                    description: "A sala foi adicionada com sucesso.",
-                })
-                setOpen(false)
-                form.reset()
+                setsuccess('Sala criada com sucesso!')
                 refetch()
+                setTimeout(() => {
+                    setOpen(false)
+                }, 1500);
             }
         } catch (error: any) {
-            setError(error.message)
-            toast({
-                title: "Erro",
-                description: error.message,
-                variant: "destructive",
-            })
+            seterror(error.message)
         }
     }
 
@@ -129,17 +122,21 @@ export function RoomAddForm({ refetch }: { refetch: () => void }) {
                                 <FormLabel>Exclusiva</FormLabel>
                             </FormItem>
                         )} />
-
                         <FormField control={form.control} name="status" render={({ field }) => (
                             <FormItem className="flex items-center space-x-2">
-                                <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                                <FormLabel>Ativa</FormLabel>
+                                <FormControl>
+                                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                </FormControl>
+                                <FormLabel className="">Ativa</FormLabel>
                             </FormItem>
                         )} />
                         <DialogFooter className="border-t-2 pt-[16px]">
                             <div className="flex flex-col w-full">
+                                {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
                                 {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
-                                <Button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Criar Sala</Button>
+                                <Button>
+                                    <button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Criar Sala</button>
+                                </Button>
                             </div>
                         </DialogFooter>
                     </form>

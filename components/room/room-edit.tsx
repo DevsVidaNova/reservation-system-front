@@ -16,7 +16,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { toast } from "@/components/ui/use-toast"
 import { editRoom,  } from "@/app/api/rooms"
 import { Pencil } from "lucide-react"
 
@@ -31,7 +30,8 @@ const formSchema = z.object({
 
 export function RoomEditForm({ id, refetch, defaultValues }: { id: string, refetch: () => void, defaultValues: any }) {
     const [open, setOpen] = useState(false)
-    const [error, setError] = useState<string | null>(null)
+    const [success, setsuccess] = useState('');
+    const [error, seterror] = useState('');
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -56,25 +56,19 @@ export function RoomEditForm({ id, refetch, defaultValues }: { id: string, refet
     }, [defaultValues])
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        setError(null)
+        seterror('')
+        setsuccess('')
         try {
             const response = await editRoom(id, values)
             if (response) {
-                toast({
-                    title: "Sala editada com sucesso!",
-                    description: "As informações da sala foram atualizadas.",
-                })
-                setOpen(false)
-                form.reset()
+                setsuccess('Sala editado com sucesso!')
                 refetch()
+                setTimeout(() => {
+                    setOpen(false)
+                }, 1500);
             }
         } catch (error: any) {
-            setError(error.message)
-            toast({
-                title: "Erro",
-                description: error.message,
-                variant: "destructive",
-            })
+            seterror(error.message)
         }
     }
 
@@ -134,8 +128,11 @@ export function RoomEditForm({ id, refetch, defaultValues }: { id: string, refet
 
                         <DialogFooter className="border-t-2 pt-[16px]">
                             <div className="flex flex-col w-full">
-                                {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md'><p className="text-red-500">{error}</p></div>}
-                                <Button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Salvar</Button>
+                                {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
+                                {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
+                                <Button>
+                                    <button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Salvar sala</button>
+                                </Button>
                             </div>
                         </DialogFooter>
                     </form>
