@@ -43,12 +43,17 @@ const formSchema = z.object({
   }),
   date: z.string({
     required_error: "Por favor, selecione uma data.",
-  }).refine((val) => val !== null, {
-    message: "Por favor, selecione uma data válida.",
+  }).refine((val) => {
+    const [day, month, year] = val.split("/").map(Number);
+    const selectedDate = new Date(year, month - 1, day);5
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Remove time part for comparison
+    return selectedDate >= currentDate;
+  }, {
+    message: "A data não pode ser anterior à data atual.",
   }),
   startTime: z.string().nonempty("Por favor, selecione uma hora de início."),
   endTime: z.string().nonempty("Por favor, selecione uma hora de término."),
-
 })
 
 export function BookingForm({ refetch }: { refetch: () => void }) {
