@@ -26,6 +26,14 @@ import { listRooms } from "@/app/api/rooms"
 import { HelpCircle, Users } from "lucide-react"
 import Link from "next/link"
 
+const blockedSchedules = [
+  { day: 'Friday', room: 'Espaço Multi', start: '19:30', end: '21:00', event: 'Start' },
+  { day: 'Friday', room: 'Salão de Culto', start: '20:00', end: '22:00', event: 'Role' },
+  { day: 'Saturday', room: 'Salão de Culto', start: '20:00', end: '22:00', event: 'Deeper' },
+  { day: 'Sunday', room: 'Espaço Multi', start: '09:00', end: '12:00', event: 'EBD e Culto Kids' },
+  { day: 'Sunday', room: 'Salão de Culto', start: '09:00', end: '22:00', event: 'Culto' }
+];
+
 const formSchema = z.object({
   description: z.string().min(2, {
     message: "A descrição deve ter pelo menos 2 palavras.",
@@ -54,6 +62,26 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
     },
   });
 
+  /*
+  function isBlocked(date, room, startTime, endTime) {
+    const day = new Date(date.split("/").reverse().join("-")).toLocaleDateString('en-US', { weekday: 'long' });
+  
+    return blockedSchedules.some(schedule => {
+      return (
+        schedule.day === day &&
+        schedule.room === room &&
+        (
+          (startTime >= schedule.start && startTime < schedule.end) ||
+          (endTime > schedule.start && endTime <= schedule.end) ||
+          (startTime <= schedule.start && endTime >= schedule.end)
+        )
+      );
+    });
+  }
+  */
+
+  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -69,8 +97,17 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setsuccess('')
     seterror('')
+
+    /* 
+    if (isBlocked(values.date, values.room, values.startTime, values.endTime)) {
+      seterror('Este horário está indisponível para reserva devido a um evento programado.');
+      return;
+    }
+    */
+    
     try {
       const response = await addBooking(values)
+      console.log(response)
       if (response) {
         setsuccess('Reserva feita com sucesso!')
         setTimeout(() => {
