@@ -32,6 +32,7 @@ export function BookingList() {
         queryFn: async () => {
             const res = await listBookings();
             const user = await getUser();
+            console.log(res)
             const myBookings = res?.filter((booking: any) => booking?.user?._id === user?.id);
             setuser(user);
             setmyBookings(myBookings);
