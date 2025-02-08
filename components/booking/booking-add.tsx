@@ -26,6 +26,14 @@ import { listRooms } from "@/app/api/rooms"
 import { HelpCircle, Users } from "lucide-react"
 import Link from "next/link"
 
+const blockedSchedules = [
+  { day: 'Friday', room: 'Espaço Multi', start: '19:30', end: '21:00', event: 'Start' },
+  { day: 'Friday', room: 'Salão de Culto', start: '20:00', end: '22:00', event: 'Role' },
+  { day: 'Saturday', room: 'Salão de Culto', start: '20:00', end: '22:00', event: 'Deeper' },
+  { day: 'Sunday', room: 'Espaço Multi', start: '09:00', end: '12:00', event: 'EBD e Culto Kids' },
+  { day: 'Sunday', room: 'Salão de Culto', start: '09:00', end: '22:00', event: 'Culto' }
+];
+
 const formSchema = z.object({
   description: z.string().min(2, {
     message: "A descrição deve ter pelo menos 2 palavras.",
@@ -35,12 +43,17 @@ const formSchema = z.object({
   }),
   date: z.string({
     required_error: "Por favor, selecione uma data.",
-  }).refine((val) => val !== null, {
-    message: "Por favor, selecione uma data válida.",
+  }).refine((val) => {
+    const [day, month, year] = val.split("/").map(Number);
+    const selectedDate = new Date(year, month - 1, day);5
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Remove time part for comparison
+    return selectedDate >= currentDate;
+  }, {
+    message: "A data não pode ser anterior à data atual.",
   }),
   startTime: z.string().nonempty("Por favor, selecione uma hora de início."),
   endTime: z.string().nonempty("Por favor, selecione uma hora de término."),
-
 })
 
 export function BookingForm({ refetch }: { refetch: () => void }) {
@@ -53,6 +66,26 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
       return res;
     },
   });
+
+  /*
+  function isBlocked(date, room, startTime, endTime) {
+    const day = new Date(date.split("/").reverse().join("-")).toLocaleDateString('en-US', { weekday: 'long' });
+  
+    return blockedSchedules.some(schedule => {
+      return (
+        schedule.day === day &&
+        schedule.room === room &&
+        (
+          (startTime >= schedule.start && startTime < schedule.end) ||
+          (endTime > schedule.start && endTime <= schedule.end) ||
+          (startTime <= schedule.start && endTime >= schedule.end)
+        )
+      );
+    });
+  }
+  */
+
+  
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,12 +102,27 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setsuccess('')
     seterror('')
+
+    /* 
+    if (isBlocked(values.date, values.room, values.startTime, values.endTime)) {
+      seterror('Este horário está indisponível para reserva devido a um evento programado.');
+      return;
+    }
+    */
+    
     try {
       const response = await addBooking(values)
+      if (response.message === "Conflito de horários para essa sala.") {
+        seterror('Conflito de horários para essa sala. Por favor, tente outro horário.')
+        return
+      }
+      console.log(response)
       if (response) {
-        setsuccess(response.message)
+        setsuccess('Reserva feita com sucesso!')
         setTimeout(() => {
           setOpen(false)
+          setsuccess('')
+          seterror('')
           form.reset()
           refetch()
         }, 1500);
@@ -231,9 +279,11 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
             </div>
             <DialogFooter>
               <div className="flex flex-col w-full gap-4">
-                {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
-                {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
-                <Button type="submit" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Concluir reserva</Button>
+                {error && <div className='bg-red-200 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
+                {success && <div className='bg-green-200 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
+                <Button>
+                  <button type="submit" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Concluir reserva</button>
+                </Button>
               </div>
             </DialogFooter>
           </form>
