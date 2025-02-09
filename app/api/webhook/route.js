@@ -2,13 +2,21 @@ import { exec } from 'child_process';
 
 export async function POST(req) {
     try {
-        exec('/root/scripts/deploy.sh', (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Erro ao executar deploy: ${error.message}`);
-                return new Response('Erro ao atualizar o servidor', { status: 500 });
-            }
-            console.log(`Saída do deploy: ${stdout}`);
-        });
+        const deployScript = () => {
+            return new Promise((resolve, reject) => {
+                exec('/root/scripts/deploy.sh', (error, stdout, stderr) => {
+                    if (error) {
+                        reject(`Erro ao executar deploy: ${error.message}`);
+                    } else if (stderr) {
+                        reject(`Erro no stderr: ${stderr}`);
+                    } else {
+                        resolve(stdout);
+                    }
+                });
+            });
+        };
+        const output = await deployScript();
+        console.log(`Saída do deploy: ${output}`);
 
         return new Response('Webhook processado e deploy realizado', { status: 200 });
     } catch (err) {
