@@ -10,7 +10,6 @@ export const listRooms = async (page: number) => {
         throw new Error(error.message);
     }
 };
-
 export const showRoom = async (id: string) => {
     try {
         const res: Room = await fetchApi("/rooms/"+id, { method: "GET",});
@@ -19,7 +18,6 @@ export const showRoom = async (id: string) => {
         throw new Error(error.message);
     }
 };
-
 export const addRoom = async (data: RoomAdd) => {
     try {
         const res: any = await fetchWithAuth("/rooms", { method: "POST", data: data });
@@ -28,7 +26,6 @@ export const addRoom = async (data: RoomAdd) => {
         throw new Error(error.message);
     }
 };
-
 export const editRoom = async (id: string, data: RoomAdd) => {
     try {
         const res: any = await fetchWithAuth("/rooms/"+id, { method: "PUT", data: data });
@@ -37,7 +34,6 @@ export const editRoom = async (id: string, data: RoomAdd) => {
         throw new Error(error.message);
     }
 };
-
 export const deleteRoom = async (id: string) => {
     try {
         const res: any = await fetchWithAuth("/rooms/"+id, { method: "DELETE" });

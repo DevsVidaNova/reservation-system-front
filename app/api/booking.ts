@@ -9,7 +9,6 @@ export const listBookings = async () => {
         throw new Error(error.message);
     }
 };
-
 export const addBooking = async (data: CreateBooking) => {
     try {
         const res: any = await fetchWithAuth("/bookings", { method: "POST", data: data });
