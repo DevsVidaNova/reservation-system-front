@@ -7,9 +7,7 @@ import { Stats } from '../api/types'
 import { useQuery } from '@tanstack/react-query'
 import { listDash } from '@/app/api/dashboard'
 import Link from 'next/link'
-
 export default function Dashboard() {
-
   const { data, error, isLoading } = useQuery<Stats>({
     queryKey: ['stats'],
     queryFn: async () => {
