@@ -7,7 +7,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { EllipsisVertical, Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-
 import { Room } from '@/app/api/types'
 import { deleteRoom, listRooms } from '@/app/api/rooms'
 import { RoomAddForm } from '@/components/room/room-add'
@@ -17,7 +16,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-
 export default function Rooms() {
   const [page, setpage] = useState(1);
   const { data: rooms, error, isLoading, refetch } = useQuery<Room[]>({
