@@ -2,15 +2,11 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation'
 import { getUser } from '@/hooks/user';
-
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { AlignJustify } from "lucide-react";
