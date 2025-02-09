@@ -21,6 +21,14 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',  // Qualquer rota que começa com "/api"
+        destination: 'https://www.espacovidanova.com.br/api/:path*',  // Reescreve para o backend
+      },
+    ];
+  },
 }
 
 mergeConfig(nextConfig, userConfig)

@@ -20,7 +20,7 @@
         "**/.eslintrc.json": true,
         "**/tailwind.config.ts": true,
         "**/components.json": true,
-        "**/next.config.mjs": true,
+        "**/next.config.mjs": false,
         "**/eslint.config.js": true,
         "**/public": false,
         "**/app/favicon.ico": true,
