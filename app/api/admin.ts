@@ -1,7 +1,5 @@
 import { fetchWithAuth } from "@/hooks/api";
 import { UserEdit, UserList } from "./types";
-
-//ADMIN
 export const listUsers = async (page: number): Promise<UserList[]> => {
     try {
         const res: UserList[] = await fetchWithAuth("/users", { method: "GET" });
