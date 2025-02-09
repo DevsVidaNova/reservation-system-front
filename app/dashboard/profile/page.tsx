@@ -10,8 +10,6 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { User } from 'lucide-react';
 
-import Link from 'next/link'
-
 import { editUser, showUser } from '@/app/api/user';
 import { getUser } from '@/hooks/user'
 
