@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getToken } from "../hooks/token";
 
-const baseURL = "https://backagenda.onrender.com";
+const baseURL = "https://www.espacovidanova.com.br/api";
 
 interface FetchApiOptions extends AxiosRequestConfig {
   headers?: Record<string, string>;
