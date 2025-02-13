@@ -24,9 +24,11 @@ export type RegisterUser = {
 export type CreateBooking = {
     description: string,
     room: string,
-    date: string,
+    date: string | undefined | Date,
     startTime: string,
     endTime: string,
+    repeat: string,
+    dayRepeat: string,
 }
 export type Booking = {
     description: string,

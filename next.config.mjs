@@ -31,6 +31,10 @@ const nextConfig = {
         source: '/webhook/:path*',  // Qualquer rota que começa com "/webhook"
         destination: 'https://www.espacovidanova.com.br/webhook/:path*',  // Reescreve para o backend
       },
+      {
+        source: '/supabase/:path*',  // Qualquer rota que começa com "/supabase"
+        destination: 'https://www.espacovidanova.com.br/supabase/:path*',  // Reescreve para o backend
+      },
     ];
   },
 }
