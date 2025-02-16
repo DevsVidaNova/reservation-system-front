@@ -22,7 +22,7 @@ import {
 } from "@/components/ui"
 
 import { useQuery } from "@tanstack/react-query"
-import { CreateRoom, ListRoom } from "@/app/__api/types"
+import {  ListRoom } from "@/app/__api/types"
 import { addBooking, } from "@/app/__api/booking"
 import { listRooms } from "@/app/__api/rooms"
 
@@ -47,10 +47,10 @@ const formSchema = z
     }),
     date: z.string().optional(),
     repeat: z.string().optional(),
-    dayRepeat: z.string().optional(),
+    day_repeat: z.string().optional(),
   })
   .refine(
-    (data) => data.dayRepeat || (data.date && data.date.length === 10),
+    (data) => data.day_repeat || (data.date && data.date.length === 10),
     {
       message: "Informe uma data válida ou escolha um intervalo de repetição.",
       path: ["date"],
@@ -79,12 +79,6 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
       const res = await addBooking(values);
       if (res) {
         setsuccess('Reserva feita com sucesso!');
-        setTimeout(() => {
-          setsuccess('');
-          seterror('');
-          form.reset();
-          refetch();
-        }, 1500);
       }
     } catch (error: any) {
       seterror(error.message);
@@ -99,26 +93,25 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
   ];
 
   const days = [
-    { id: 1, name: 'Domingo', },
-    { id: 2, name: 'Segunda', },
-    { id: 3, name: 'Terça', },
-    { id: 4, name: 'Quarta', },
-    { id: 5, name: 'Quinta', },
-    { id: 6, name: 'Sexta', },
-    { id: 7, name: 'Sábado', }
+    { id: '1', name: 'Domingo', },
+    { id: '2', name: 'Segunda', },
+    { id: '3', name: 'Terça', },
+    { id: '4', name: 'Quarta', },
+    { id: '5', name: 'Quinta', },
+    { id: '6', name: 'Sexta', },
+    { id: '7', name: 'Sábado', }
   ];
 
   const [selectedRepeat, setSelectedRepeat] = useState<string | null>('none');
 
   return (
-    <div className="bg-gray-400">
+    <div >
       <Drawer>
         <DrawerTrigger asChild >
           <Button variant="default" className="bg-amber-500 z-20  hover:bg-amber-100 hover:text-amber-500">Fazer Reserva</Button>
         </DrawerTrigger>
         <DrawerContent  >
-
-          <div className="container mx-auto  px-6">
+          <div className="container mx-auto px-4">
             <DrawerHeader>
               <DrawerTitle>Reserva de Sala</DrawerTitle>
               <DrawerDescription>Preencha os detalhes para fazer sua reserva.</DrawerDescription>
@@ -161,7 +154,7 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
                           {rooms?.map((room: ListRoom) => {
                             const { id, name, size, description, exclusive, status, } = room
                             return (
-                              <SelectItem value={name} key={id}>
+                              <SelectItem value={id} key={id}>
                                 <div className="flex flex-col">
                                   <span className="font-semibold text-[14px]">
                                     {name} {exclusive ? " (Exclusiva)" : ""}
@@ -246,7 +239,7 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="h-[48px]" style={{ marginTop: 0 }}>
+                            <SelectTrigger className="h-[48px]">
                               <SelectValue defaultChecked placeholder="Nenhum dia" />
                             </SelectTrigger>
                           </FormControl>
@@ -254,7 +247,7 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
                             {repeats?.map((repeat: { id: string, name: string }) => {
                               const { id, name, } = repeat
                               return (
-                                <SelectItem value={name}>
+                                <SelectItem value={id} key={id}>
                                   <div className="flex flex-col">
                                     <span className="font-semibold text-[14px]">
                                       {name}
@@ -272,24 +265,26 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
 
 
                 </div>
-                {selectedRepeat != "none" && (
+                {selectedRepeat != "null" && (
                   <FormField
                     control={form.control}
-                    name="dayRepeat"
+                    name="day_repeat"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Qual dia deve se repetir?</FormLabel>
+                      <FormItem >
+                        <div style={{ marginBottom: 6, marginTop: -6 }}>
+                          <FormLabel >Qual dia deve se repetir?</FormLabel>
+                        </div>
                         <Select onValueChange={field.onChange} defaultValue={field.value} >
                           <FormControl>
-                            <SelectTrigger className="h-[48px]" style={{ marginTop: 0 }}>
+                            <SelectTrigger className="h-[48px]" >
                               <SelectValue placeholder="Segunda" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent >
-                            {days?.map((repeat: { id: string, name: string }) => {
+                            {days?.map((repeat: any) => {
                               const { id, name, } = repeat
                               return (
-                                <SelectItem value={name} key={id}>
+                                <SelectItem value={id} key={id}>
                                   <div className="flex flex-col">
                                     <span className="font-semibold text-[14px]">
                                       {name}

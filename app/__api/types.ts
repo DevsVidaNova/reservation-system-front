@@ -7,7 +7,7 @@ export type CreateBooking = {
     start_time: string,
     end_time: string,
     repeat?: string | undefined | null,
-    dayRepeat?: string | undefined | null,
+    day_repeat?: number | string | undefined | null,
 }
 
 export type ListBooking = {
@@ -28,7 +28,7 @@ export type ListBooking = {
         phone: string | null
     },
     repeat: string | null,
-    day_repeat: string | null,
+    day_repeat: number |  null | string,
 }
 
 //ROOM

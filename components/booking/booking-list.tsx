@@ -21,7 +21,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { BookingForm } from './booking-add';
 import { ListBooking } from "@/app/__api/types";
-import { listBookings, listBookingsWeek, listBookingsMy, listBookingsToday } from '@/app/__api/booking';
+import { listBookings, listBookingsWeek, listBookingsMy, listBookingsToday, listBookingsMonth } from '@/app/__api/booking';
 
 import { getUser } from '@/hooks/user';
 
@@ -37,6 +37,10 @@ export function BookingList() {
     const { data: mybookings, error: mybookingserror, isLoading: mybookingsloading, } = useQuery<ListBooking[]>({
         queryKey: ['my bookings'],
         queryFn: listBookingsMy,
+    });
+    const { data: month, error: monthbookingserror, isLoading: monthbookingsloading, } = useQuery<ListBooking[]>({
+        queryKey: ['month bookings'],
+        queryFn: listBookingsMonth,
     });
     const { data: weekbookings, error: weekbookingserror, isLoading: weekbookingsloading, } = useQuery<ListBooking[]>({
         queryKey: ['week bookings'],
@@ -55,6 +59,7 @@ export function BookingList() {
                         <TabsList>
                             <TabsTrigger value="hoje" >Hoje</TabsTrigger>
                             <TabsTrigger value="semana" >Semana</TabsTrigger>
+                            <TabsTrigger value="mes" >Mês</TabsTrigger>
                             <TabsTrigger value="tudo" >Tudo</TabsTrigger>
                             <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
                         </TabsList>
@@ -73,6 +78,9 @@ export function BookingList() {
                 </TabsContent>
                 <TabsContent value="semana">
                     {weekbookingsloading ? <SkeletonBookings /> : <BookingItem data={weekbookings || []} />}
+                </TabsContent>
+                <TabsContent value="mes">
+                    <BookingItem data={month || []} />
                 </TabsContent>
                 <TabsContent value="tudo">
                     <BookingItem data={bookings || []} />
@@ -102,22 +110,54 @@ const BookingItem = ({ data }: { data: ListBooking[], }) => {
             <span className='opacity-70 text-[18px] text-center'>Sem reservas criadas por enquanto...</span>
         </div>
     </div>
-    if (!data) return <div>Carregando...</div>
     return (
         <div className='gap-8 z-0'>
             {data?.map((booking: ListBooking) => {
-                const { end_time, start_time, room, user, date, id, description } = booking;
-                const [day, month, year] = date.split('/');
-                const formattedDate = `${year}-${month}-${day}`;
-                const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
-                const monthName = new Date(formattedDate).toLocaleDateString('pt-BR', { month: 'long' });
+                const { end_time, start_time, room, user, date, id, description, repeat, day_repeat } = booking;
+
+                let dayOfWeek = '';
+                let monthName = '';
+                let formattedDate = '';
+                let currentDay = ""
+
+                const days = [
+                    { id: 1, name: 'Domingo', },
+                    { id: 2, name: 'Segunda', },
+                    { id: 3, name: 'Terça', },
+                    { id: 4, name: 'Quarta', },
+                    { id: 5, name: 'Quinta', },
+                    { id: 6, name: 'Sexta', },
+                    { id: 7, name: 'Sábado', }
+                ];
+                if (date) {
+                    const [day, month, year] = date.split('/');
+                    formattedDate = `${year}-${month}-${day}`;
+                    currentDay = day
+                    dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
+                    monthName = new Date(formattedDate).toLocaleDateString('pt-BR', { month: 'long' });
+                } else {
+                    if (day_repeat) {
+                        const dayOfWeekObj = days.find(day => day.id == day_repeat);
+                        if (dayOfWeekObj) {
+                            dayOfWeek = dayOfWeekObj.name;
+                        }
+                        if (repeat === 'month') {
+                            monthName = 'Mês'
+                        } else if (repeat === 'week') {
+                            monthName = 'semanal'; 
+                        } else {
+                            monthName = 'diario';
+                        }
+                        currentDay = "↻"
+                    }
+                }
 
                 return (
                     <div key={id} className="border rounded-lg flex-row flex justify-between w-full my-4">
                         <div className='flex flex-row w-[100%]'>
                             <div className='flex-col w-[80px] h-full py-3 flex md:px-6 md:py-2 w-[20%] justify-center items-center border-r'>
                                 <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{dayOfWeek.slice(0, 3)}</span>
-                                <span className='md:text-[36px] md:leading-[32px] text-[24px] leading-[26px] font-bold uppercase'>{day}</span>
+                                <span className='md:text-[36px] md:leading-[32px] text-[24px] leading-[26px] font-bold uppercase'>{currentDay}</span>
                                 <span className='md:text-[16px] md:leading-[24px] text-[14px] leading-[14px] uppercase'>{monthName.slice(0, 3)}</span>
                             </div>
                             <div className='flex-col h-[100%] flex px-4 py-4 gap-2 justify-center w-[80%]'>

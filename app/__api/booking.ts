@@ -13,6 +13,18 @@ export const listBookings = async (): Promise<ListBooking[]> => {
         }
     }
 };
+export const listBookingsMonth = async (): Promise<ListBooking[]> => {
+    try {
+        const res = await fetchApi<ListBooking[]>("/booking/month", { method: "GET", });
+        return res;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
+    }
+};
 export const listBookingsWeek = async (): Promise<ListBooking[]> => {
     try {
         const res = await fetchApi<ListBooking[]>("/booking/week", { method: "GET", });
