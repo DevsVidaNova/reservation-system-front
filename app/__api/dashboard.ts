@@ -1,10 +1,9 @@
 import { fetchWithAuth,  } from "@/hooks/api";
-import { Stats } from "./types";
+import { Analytics } from "./types";
 
-export const listDash = async () => {
+export const listAnalytics = async (): Promise<Analytics> => {
     try {
-        const res: Stats = await fetchWithAuth("/stats", { method: "GET", });
-        console.log(res);
+        const res = await fetchWithAuth<Analytics>("/analytics", { method: "GET", });
         return res;
     } catch (error: any) {
         throw new Error(error.message);

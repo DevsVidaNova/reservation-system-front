@@ -1,25 +1,33 @@
 import { fetchWithAuth } from "@/hooks/api";
-import { UserEdit, UserList } from "./types";
-export const listUsers = async (page: number): Promise<UserList[]> => {
+import { EditUser, ListUser, CreateUser } from "./types";
+
+export const createUser = async (data: CreateUser): Promise<CreateUser> => {
     try {
-        const res: UserList[] = await fetchWithAuth("/users", { method: "GET" });
+        const res = await fetchWithAuth<CreateUser>("/user", { method: "POST", data: data });
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
     }
 };
-export const showUserById = async (id: string): Promise<UserEdit> => {
+export const listUsers = async (): Promise<ListUser[]> => {
     try {
-        const res: UserEdit = await fetchWithAuth("/users/" + id, { method: "GET", });
-        console.log(res)
+        const res = await fetchWithAuth<ListUser[]>("/user", { method: "GET" });
+        return res;
+    } catch (error) {
+        throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
+    }
+};
+export const showUserById = async (id: string): Promise<ListUser> => {
+    try {
+        const res = await fetchWithAuth<ListUser>("/user/" + id, { method: "GET", });
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
     }
 }
-export const editUserById = async (id: string, data: any) => {
+export const editUserById = async (id: string, data: EditUser): Promise<EditUser> => {
     try {
-        const res = await fetchWithAuth("/api/auth/editUser/", { method: "PUT", data: {id: id, name: data.name, phone: data.phone, email: data.email, password: data.password} });
+        const res = await fetchWithAuth<EditUser>(`/user/${id}`, { method: "PUT", data: data });
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
@@ -27,7 +35,7 @@ export const editUserById = async (id: string, data: any) => {
 };
 export const excludeUserById = async (id: string) => {
     try {
-        const res: any = await fetchWithAuth("/api/auth/deleteUser", { method: "DELETE", data: { id: id } });
+        const res = await fetchWithAuth(`/user/${id}`, { method: "DELETE" });
         return res;
     } catch (error) {
         console.log(error)

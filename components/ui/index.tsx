@@ -3,6 +3,7 @@ import { Input } from "./input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 import { Checkbox } from "./checkbox";
 import { Skeleton } from "./skeleton";
+import {Card} from "./card";
 import {
     Dialog,
     DialogContent,
@@ -40,8 +41,30 @@ import {
 import {
     Calendar
 } from "./calendar";
+import Message from "./message";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "./popover"
+import {
+    Command,
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+    CommandSeparator,
+    CommandShortcut,
+  } from "./command"
 export {
+    Message,
+    Card,
     Calendar,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
     Button,
     Input,
     Select,
@@ -82,4 +105,13 @@ export {
     DrawerHeader,
     DrawerTitle,
     DrawerTrigger,
+    Command,
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+    CommandSeparator,
+    CommandShortcut,
 }

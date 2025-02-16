@@ -1,11 +1,13 @@
-import { fetchApi, fetchWithAuth, } from "@/hooks/api";
+import { fetchWithAuth, } from "@/hooks/api";
 import { ListScale, SingleScale, CreateScale } from "./types";
 
 export const listScales = async (): Promise<ListScale[]> => {
     try {
-        const res = await fetchApi<ListScale[]>("/scale", { method: "GET" });
+        const res = await fetchWithAuth<ListScale[]>("/scale", { method: "GET" });
+        console.log(res)
         return res;
     } catch (error) {
+        console.log(error)
         if (error instanceof Error) {
             throw new Error(error.message);
         } else {
@@ -16,7 +18,7 @@ export const listScales = async (): Promise<ListScale[]> => {
 
 export const listMyScales = async (): Promise<ListScale[]> => {
     try {
-        const res = await fetchApi<ListScale[]>("/scale/my", { method: "GET" });
+        const res = await fetchWithAuth<ListScale[]>("/scale/my", { method: "GET" });
         return res;
     } catch (error) {
         if (error instanceof Error) {
@@ -29,7 +31,7 @@ export const listMyScales = async (): Promise<ListScale[]> => {
 
 export const singleScale = async (id: string): Promise<SingleScale> => {
     try {
-        const res = await fetchApi<SingleScale>("/scale/" + id, { method: "GET", });
+        const res = await fetchWithAuth<SingleScale>("/scale/" + id, { method: "GET", });
         return res;
     } catch (error) {
         if (error instanceof Error) {
@@ -41,6 +43,7 @@ export const singleScale = async (id: string): Promise<SingleScale> => {
 };
 
 export const addScale = async (data: CreateScale): Promise<CreateScale> => {
+    console.log('adicionando esala')
     try {
         const res = await fetchWithAuth<CreateScale>("/scale", { method: "POST", data: data });
         return res;
@@ -98,7 +101,7 @@ export const confirmScale = async (id: string, confirmed: boolean) => {
 
 export const searchScale = async (name: string): Promise<ListScale> => {
     try {
-        const res = await fetchApi<ListScale>("/scale/search", {
+        const res = await fetchWithAuth<ListScale>("/scale/search", {
             method: "POST",
             data: {
                 name: name

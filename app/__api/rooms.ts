@@ -55,7 +55,7 @@ export const editRoom = async (id: string, data: CreateRoom): Promise<CreateRoom
 
 export const deleteRoom = async (id: string) => {
     try {
-        const res: any = await fetchWithAuth(`/room/${id}`, { method: "DELETE" });
+        const res = await fetchWithAuth(`/room/${id}`, { method: "DELETE" });
         return res;
     } catch (error) {
         if (error instanceof Error) {

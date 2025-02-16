@@ -92,18 +92,18 @@ export interface SingleScale {
 export interface CreateScale { 
     name: string,
     date: string,
-    band: string|null|undefined,
-    projection: string|null|undefined,
     direction: string|null|undefined,
-    sound: string | null | undefined,
-    light: string | null | undefined,
-    transmission: string | null | undefined,
-    camera: string | null | undefined,
-    live: string | null | undefined,
-    training_sound: string | null | undefined,
-    photography: string | null | undefined,
-    stories: string | null | undefined,
-    dynamic: string | null | undefined,
+    band?: string|null|undefined,
+    projection?: string|null|undefined,
+    sound?: string | null | undefined,
+    light?: string | null | undefined,
+    transmission?: string | null | undefined,
+    camera?: string | null | undefined,
+    live?: string | null | undefined,
+    training_sound?: string | null | undefined,
+    photography?: string | null | undefined,
+    stories?: string | null | undefined,
+    dynamic?: string | null | undefined,
 }
 export interface ConfirmScale {
     scale_id: string,
@@ -121,7 +121,7 @@ export type LoginUser = {
     };
     token: string;
 }
-export type Stats = {
+export type Analytics = {
     rooms: number, //quantidade de salas
     bookings: number, //quantidade de reservas
     users: number, //quantidade de usuários
@@ -129,24 +129,26 @@ export type Stats = {
 }
 
 //USER TYPES
-export type UserList = {
-    email: string;
-    phone: string;
+export type ListUser = {
+    id: string;
     name: string;
-    _id: string;
+    role: string;
+    user_id: string;
+    phone: string;
+    email: string;
 };
-export type UserEdit = {
-    email: string;
+
+export type EditUser = {
     phone: string;
     name: string;
-    _id: string;
-    password: string;
 };
-export type RegisterUser = {
+
+export type CreateUser = {
+    name: string;
+    phone: string;
     email: string;
     password: string;
-    phone: string;
-    name: string;
+    role?: string;
 };
 
 //TIMELINE

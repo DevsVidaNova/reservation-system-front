@@ -1,11 +1,11 @@
 import { fetchApi, fetchWithAuth, } from "@/hooks/api";
 import { createToken } from "@/hooks/token";
-import { RegisterUser, UserList, LoginUser } from "./types";
+import { CreateUser, EditUser, ListUser, LoginUser } from "./types";
 import { createUser } from "@/hooks/user";
 
-export const registerUser = async (data: RegisterUser) => {
+export const registerUser = async (data: CreateUser): Promise<CreateUser> => {
     try {
-        const res: any = await fetchWithAuth("/api/auth/register", { method: "POST", data: data });
+        const res = await fetchWithAuth<CreateUser>("/user", { method: "POST", data: data });
         return res;
     } catch (error: any) {
         throw new Error(error.message);
@@ -23,7 +23,7 @@ export const loginUser = async (email: string, password: string, session: boolea
     }
 };
 
-export const showUser = async (id: string): Promise<UserList> => {
+export const showUser = async (id: string): Promise<ListUser> => {
     try {
         const res: UserList = await fetchWithAuth("/users/" + id, { method: "GET" });
         return res;
@@ -32,7 +32,7 @@ export const showUser = async (id: string): Promise<UserList> => {
     }
 };
 
-export const editUser = async (id: string, data: any) => {
+export const editUser = async (id: string, data: EditUser): Promise<EditUser> => {
     try {
         const res = await fetchWithAuth("/api/auth/editUser", {
             method: "PUT", data: {
@@ -50,7 +50,7 @@ export const editUser = async (id: string, data: any) => {
 
 export const excludeUser = async () => {
     try {
-        const res: any = await fetchWithAuth("/api/auth/deleteUser", { method: "DELETE" });
+        const res: any = await fetchWithAuth("/user", { method: "DELETE" });
         return res;
     } catch (error) {
         console.log(error)

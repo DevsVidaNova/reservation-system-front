@@ -1,19 +1,13 @@
 "use client"
 import React from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { BookMarked, BookPlus, Calendar1, MapPin, UserPlus, Users } from 'lucide-react'
-import { Stats } from '../__api/types'
+import { Analytics, } from '../__api/types'
 import { useQuery } from '@tanstack/react-query'
-import { listDash } from '@/app/__api/dashboard'
-import Link from 'next/link'
+import { listAnalytics, } from '@/app/__api/dashboard'
 export default function Dashboard() {
-  const { data, error, isLoading } = useQuery<Stats>({
+  const { data, error, isLoading } = useQuery<Analytics>({
     queryKey: ['stats'],
-    queryFn: async () => {
-      const res = await listDash();
-      return res;
-    },
+    queryFn: listAnalytics,
   });
 
   const { rooms, bookings, users, week } = data || {};
@@ -55,7 +49,17 @@ export default function Dashboard() {
             <span className='opacity-70 text-[16px] font-regular'>Para semana</span>
           </div>
         </div>
-        <h2 className='text-[32px] font-bold'>Ações</h2>
+
+      </div>
+    </div>
+  )
+}
+
+/*
+
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+ <h2 className='text-[32px] font-bold'>Ações</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="w-full">
             <CardHeader>
@@ -108,7 +112,4 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
-      </div>
-    </div>
-  )
-}
+*/
