@@ -16,7 +16,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { editRoom,  } from "@/app/api/rooms"
+import { editRoom,  } from "@/app/__api/rooms"
 import { Pencil } from "lucide-react"
 
 const formSchema = z.object({

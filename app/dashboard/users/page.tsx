@@ -7,11 +7,11 @@ import { useQuery } from '@tanstack/react-query'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { UserList } from '@/app/api/types'
+import { UserList } from '@/app/__api/types'
 import { EllipsisVertical, Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
-import { excludeUserById, listUsers } from '@/app/api/admin'
+import { excludeUserById, listUsers } from '@/app/__api/admin'
 import { UserEditForm } from '@/components/user/user-edit'
 import {
   Popover,

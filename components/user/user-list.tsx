@@ -23,7 +23,7 @@ import { useQuery } from '@tanstack/react-query'
 import { BookingForm } from './booking-form';
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { deleteBooking, listBookings } from '@/app/api/booking';
+import { deleteBooking, listBookings } from '@/app/__api/booking';
 
 export function UserList({ logged, admin = false }: { logged: boolean, admin: boolean }) {
     const { data: bookings, error, isLoading, refetch } = useQuery({

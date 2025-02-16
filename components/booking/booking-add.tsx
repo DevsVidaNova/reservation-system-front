@@ -19,10 +19,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { addBooking, } from "@/app/api/booking"
+import { addBooking, } from "@/app/__api/booking"
 import { useQuery } from "@tanstack/react-query"
-import { Room } from "@/app/api/types"
-import { listRooms } from "@/app/api/rooms"
+import { Room } from "@/app/__api/types"
+import { listRooms } from "@/app/__api/rooms"
 import { CalendarSearch, CalendarX2, HelpCircle, Users } from "lucide-react"
 import Link from "next/link"
 

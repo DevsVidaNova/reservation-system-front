@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { useQuery } from '@tanstack/react-query'
-import { UserList } from '@/app/api/types'
+import { UserList } from '@/app/__api/types'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { User } from 'lucide-react';
 
-import { editUser, showUser } from '@/app/api/user';
+import { editUser, showUser } from '@/app/__api/user';
 import { getUser } from '@/hooks/user'
 
 const formSchema = z.object({

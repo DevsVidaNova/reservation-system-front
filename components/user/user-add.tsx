@@ -15,7 +15,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { registerUser } from "@/app/api/user"
+import { registerUser } from "@/app/__api/user"
 
 const formSchema = z.object({
     name: z.string().min(2, {

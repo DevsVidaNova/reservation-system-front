@@ -3,9 +3,9 @@ import React from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { BookMarked, BookPlus, Calendar1, MapPin, UserPlus, Users } from 'lucide-react'
-import { Stats } from '../api/types'
+import { Stats } from '../__api/types'
 import { useQuery } from '@tanstack/react-query'
-import { listDash } from '@/app/api/dashboard'
+import { listDash } from '@/app/__api/dashboard'
 import Link from 'next/link'
 export default function Dashboard() {
   const { data, error, isLoading } = useQuery<Stats>({

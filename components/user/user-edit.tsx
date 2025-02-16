@@ -16,7 +16,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Pencil } from "lucide-react"
-import { editUserById,  } from "@/app/api/admin"
+import { editUserById,  } from "@/app/__api/admin"
 
 const formSchema = z.object({
     name: z.string().min(2, {

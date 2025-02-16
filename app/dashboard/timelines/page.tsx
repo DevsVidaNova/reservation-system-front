@@ -7,7 +7,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
-import { Booking } from "@/app/api/types";
+import { Booking } from "@/app/__api/types";
 import { Clock, MapPin, Phone, Trash, User, EllipsisVertical, BookDashed } from 'lucide-react';
 import {
     DropdownMenu,
@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button"
 
 
 import { useQuery } from '@tanstack/react-query'
-import { deleteBooking, listBookings } from '@/app/api/booking';
+import { deleteBooking, listBookings } from '@/app/__api/booking';
 
 import TimelineForm from "../../../components/timeline/timeline-add";
 import TimelineShow from "@/components/timeline/timeline-show";

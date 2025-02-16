@@ -6,7 +6,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
-import { Booking } from "@/app/api/types";
+import { Booking } from "@/app/__api/types";
 import { BookDashed, Clock, MapPin, Phone, User } from 'lucide-react';
 import {
     DropdownMenu,
@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button"
 import { useQuery } from '@tanstack/react-query'
 import { BookingForm } from './booking-add';
 import Link from "next/link"
-import { listBookings } from '@/app/api/booking';
+import { listBookings } from '@/app/__api/booking';
 import { getUser } from '@/hooks/user';
 
 export function BookingList() {

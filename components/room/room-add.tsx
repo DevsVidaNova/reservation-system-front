@@ -15,7 +15,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { addRoom } from "@/app/api/rooms"
+import { addRoom } from "@/app/__api/rooms"
 import { Checkbox } from "@/components/ui/checkbox"
 
 const formSchema = z.object({
