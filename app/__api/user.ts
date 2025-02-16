@@ -23,22 +23,29 @@ export const loginUser = async (email: string, password: string, session: boolea
     }
 };
 
-export const showUser = async (id: string): Promise<ListUser> => {
+export const profileUser = async (): Promise<ListUser> => {
     try {
-        const res: UserList = await fetchWithAuth("/users/" + id, { method: "GET" });
+        const res = await fetchWithAuth<ListUser>("/auth/profile", { method: "GET" });
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
     }
 };
 
-export const editUser = async (id: string, data: EditUser): Promise<EditUser> => {
+export const showUser = async (id: string): Promise<ListUser> => {
     try {
-        const res = await fetchWithAuth("/api/auth/editUser", {
+        const res = await fetchWithAuth<ListUser>("/users/" + id, { method: "GET" });
+        return res;
+    } catch (error) {
+        throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
+    }
+};
+
+export const editUser = async (data: EditUser): Promise<EditUser> => {
+    try {
+        const res = await fetchWithAuth<EditUser>("/auth/edit/", {
             method: "PUT", data: {
-                id: id,
-                name: data.name,
-                email: data.email,
+                name: data.name, 
                 phone: data.phone
             }
         });

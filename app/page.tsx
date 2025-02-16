@@ -27,7 +27,7 @@ export default function Home() {
   const { data: user, error: usererror, isLoading: userloading, } = useQuery({
     queryKey: ['user'],
     queryFn: getUser
-});
+  });
 
   return (
     <div className="bg-background ">
@@ -48,15 +48,21 @@ export default function Home() {
                   <DrawerDescription>Clique em um dos botões abaixo ou arraste esse componente para baixo.</DrawerDescription>
                 </DrawerHeader>
 
-                <div className="w-full flex-col flex gap-4 px-6">
+                <div className="w-full flex-col flex gap-4 ">
                   {user?.role == 'admin' &&
                     <Link href="/dashboard" >
-                      <Button className="w-full">
+                      <Button className="w-full" >
                         Painel de Controle
                       </Button>
                     </Link>}
 
-
+                  {user &&
+                    <Link href="/scales">
+                      <Button className="w-full" variant='outline'>
+                        Minhas Escalas
+                      </Button>
+                    </Link>
+                  }
                   {user && <MenuProfile user={user} />}
 
                   {!user &&
@@ -74,14 +80,14 @@ export default function Home() {
                     </>
                   }
                 </div>
-                <DrawerFooter className="px-6 border-t pt-4 mt-4">
+                <DrawerFooter className="border-t pt-4 mt-4">
                   <DrawerClose>
                     <Button variant="secondary" className="w-full">Fechar</Button>
                   </DrawerClose>
-                </DrawerFooter>   
+                </DrawerFooter>
 
 
-                
+
               </div>
 
             </DrawerContent>
@@ -106,41 +112,44 @@ const MenuProfile = ({ user }: { user: any }) => {
     }
   }
   return (
-    <Drawer>
-      <div className="flex flex-row justify-between items-center">
-        <DrawerTrigger>
-          <div className="flex flex-row ">
-            <div className="uppercase w-[52px] h-[52px] bg-secondary rounded-full items-center justify-center flex flex-col">
-              {user?.name?.slice(0, 2)}
+    <div>
+      <Drawer>
+        <div className="flex flex-row justify-between items-center">
+          <DrawerTrigger>
+            <div className="flex flex-row ">
+              <div className="uppercase w-[52px] h-[52px] bg-secondary rounded-full items-center justify-center flex flex-col">
+                {user?.name?.slice(0, 2)}
+              </div>
+              <div className="flex flex-col pl-3 justify-center items-start">
+                <span className="font-semibold text-[18px] -mb-1">
+                  {user?.name}
+                </span>
+                <span className="font-regular text-[14px] opacity-70">
+                  {user?.email}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col pl-3 justify-center items-start">
-              <span className="font-semibold text-[18px] -mb-2">
-                {user?.name}
-              </span>
-              <span className="font-regular text-[14px] opacity-70">
-                {user?.email}
-              </span>
-            </div>
+          </DrawerTrigger>
+          <div className="border w-[42px] h-[42px] rounded-full cursor-pointer flex flex-col justify-center items-center" onClick={handleLogout} >
+            <LogOut size={18} color='#00000090' />
           </div>
-        </DrawerTrigger>
-        <div className="border w-[42px] h-[42px] rounded-full cursor-pointer flex flex-col justify-center items-center" onClick={handleLogout} >
-          <LogOut size={18} color='#00000090' />
         </div>
-      </div>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Editar perfil</DrawerTitle>
-          <DrawerDescription>Altere seu nome, celular e email.</DrawerDescription>
-        </DrawerHeader>
-        <Profile />
-        <DrawerFooter className="px-6 border-t pt-4 mt-4">
-          <DrawerClose>
-            <Button variant="secondary" className="w-full">Fechar</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-
-    </Drawer>
+        <DrawerContent>
+          <div className="mx-auto container">
+            <DrawerHeader>
+              <DrawerTitle>Editar perfil</DrawerTitle>
+              <DrawerDescription>Altere seu nome, celular e email.</DrawerDescription>
+            </DrawerHeader>
+            <Profile />
+            <DrawerFooter className=" border-t pt-4 mt-4">
+              <DrawerClose>
+                <Button variant="secondary" className="w-full">Fechar</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </div>
+        </DrawerContent>
+      </Drawer>
+    </div>
 
   )
 }

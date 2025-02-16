@@ -103,7 +103,7 @@ export const listBookingsMy = async (): Promise<ListBooking[]> => {
 };
 export const deleteBooking = async (id: string) => {
     try {
-        const res = await fetchWithAuth(`/booking/${id}` + id, { method: "DELETE" });
+        const res = await fetchWithAuth(`/booking/${id}`, { method: "DELETE" });
         return res;
     } catch (error) {
         console.error("Erro ao editar reserva:", error);

@@ -18,11 +18,12 @@ import {
   Input,
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
-  Button
+  Button,
+  Message
 } from "@/components/ui"
 
 import { useQuery } from "@tanstack/react-query"
-import {  ListRoom } from "@/app/__api/types"
+import { ListRoom } from "@/app/__api/types"
 import { addBooking, } from "@/app/__api/booking"
 import { listRooms } from "@/app/__api/rooms"
 
@@ -100,7 +101,7 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
     { id: '7', name: 'Sábado', }
   ];
 
-  const [selectedRepeat, setSelectedRepeat] = useState<string | null>('none');
+  const [selectedRepeat, setSelectedRepeat] = useState<string | null>('null');
 
   return (
     <div >
@@ -327,11 +328,10 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
                     )}
                   />
                 </div>
-                
+
                 <DrawerFooter>
                   <div className="flex flex-col w-full gap-4">
-                    {error && <div className='bg-red-200 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
-                    {success && <div className='bg-green-200 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
+                    <Message success={success} error={error} />
                     <Button>
                       <button type="submit" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Concluir reserva</button>
                     </Button>
