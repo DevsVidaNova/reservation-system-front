@@ -33,7 +33,7 @@ export default function Home() {
 
   return (
     <div className="bg-background ">
-      <div className="flex flex-row z-20  bg-[#ffffff30] backdrop-blur-sm justify-between px-4 py-2 border-b fixed w-screen">
+      <div className="flex flex-row z-20  bg-[#ffffff30] backdrop-blur-xs justify-between px-4 py-2 border-b fixed w-screen">
         <div className='container mx-auto flex flex-row justify-between'>
           <img src="/imgs/logo_black.png" alt="Vida Nova" className="w-[180px] z-20" style={{ marginLeft: -18, }} />
           <Drawer>
