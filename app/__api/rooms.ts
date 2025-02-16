@@ -1,45 +1,85 @@
-import { fetchApi, fetchWithAuth,  } from "@/hooks/api";
-import { Room, RoomAdd,  } from "./types";
+import { fetchApi, fetchWithAuth, } from "@/hooks/api";
+import { ListRoom, CreateRoom, } from "./types";
 
-//ALL CHECK
-export const listRooms = async (page: number) => {
+export const listRooms = async (): Promise<ListRoom[]> => {
     try {
-        const res: Room[] = await fetchApi("/rooms", { method: "GET" });
+        const res = await fetchApi<ListRoom[]>("/room", { method: "GET" });
         return res;
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
     }
 };
-export const showRoom = async (id: string) => {
+
+export const singleRoom = async (id: string): Promise<ListRoom> => {
     try {
-        const res: Room = await fetchApi("/rooms/"+id, { method: "GET",});
+        const res = await fetchApi<ListRoom>("/room/" + id, { method: "GET", });
         return res;
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
     }
 };
-export const addRoom = async (data: RoomAdd) => {
+
+export const addRoom = async (data: CreateRoom): Promise<CreateRoom> => {
     try {
-        const res: any = await fetchWithAuth("/rooms", { method: "POST", data: data });
+        const res = await fetchWithAuth<CreateRoom>("/room", { method: "POST", data: data });
         return res;
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
     }
 };
-export const editRoom = async (id: string, data: RoomAdd) => {
+
+export const editRoom = async (id: string, data: CreateRoom): Promise<CreateRoom> => {
     try {
-        const res: any = await fetchWithAuth("/rooms/"+id, { method: "PUT", data: data });
+        const res: any = await fetchWithAuth(`/room/${id}`, { method: "PUT", data: data });
         return res;
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
     }
 };
+
 export const deleteRoom = async (id: string) => {
     try {
-        const res: any = await fetchWithAuth("/rooms/"+id, { method: "DELETE" });
+        const res: any = await fetchWithAuth(`/room/${id}`, { method: "DELETE" });
         return res;
-    } catch (error: any) {
-        throw new Error(error.message);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
     }
 };
 
+export const searchRoom = async (name: string): Promise<ListRoom> => {
+    try {
+        const res = await fetchApi<ListRoom>("/room/search", {
+            method: "POST",
+            data: {
+                name: name
+            }
+        });
+        return res;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
+    }
+};

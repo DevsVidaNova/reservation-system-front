@@ -3,8 +3,8 @@ import { ListBooking, CreateBooking } from "./types";
 
 export const listBookings = async (): Promise<ListBooking[]> => {
     try {
-        const res = await fetchApi("/booking", { method: "GET", });
-        return res as ListBooking[];
+        const res = await fetchApi<ListBooking[]>("/booking", { method: "GET", });
+        return res;
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -14,13 +14,26 @@ export const listBookings = async (): Promise<ListBooking[]> => {
     }
 };
 
+export const singleBooking = async (id: string): Promise<ListBooking> => {
+    try {
+        const res = await fetchWithAuth<ListBooking>(`/booking/${id}`, { method: "GET", });
+        return res;
+    } catch (error) {
+        console.error("Erro ao editar reserva:", error);
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao editar reserva");
+        }
+    }
+};
+
 export const addBooking = async (data: CreateBooking): Promise<CreateBooking> => {
     try {
-        const res = await fetchWithAuth("/booking", { method: "POST", data: data });
-        return res as CreateBooking;
+        const res = await fetchWithAuth<CreateBooking>("/booking", { method: "POST", data: data });
+        return res;
     } catch (error) {
         console.error("Erro ao adicionar reserva:", error);
-
         if (error instanceof Error) {
             throw new Error(error.message);
         } else {
@@ -31,8 +44,8 @@ export const addBooking = async (data: CreateBooking): Promise<CreateBooking> =>
 
 export const editBooking = async (id: string, data: CreateBooking): Promise<CreateBooking> => {
     try {
-        const res = await fetchWithAuth(`/booking/${id}` + id, { method: "PUT", data: data });
-        return res as CreateBooking;
+        const res = await fetchWithAuth<CreateBooking>(`/booking/${id}` + id, { method: "PUT", data: data });
+        return res
     } catch (error) {
         console.error("Erro ao editar reserva:", error);
         if (error instanceof Error) {
@@ -45,22 +58,8 @@ export const editBooking = async (id: string, data: CreateBooking): Promise<Crea
 
 export const myBooking = async (): Promise<ListBooking[]> => {
     try {
-        const res = await fetchWithAuth("/booking/my", { method: "GET", });
-        return res as ListBooking[];
-    } catch (error) {
-        console.error("Erro ao editar reserva:", error);
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Erro desconhecido ao editar reserva");
-        }
-    }
-};
-
-export const singleBooking = async (id: string): Promise<ListBooking> => {
-    try {
-        const res = await fetchWithAuth(`/booking/${id}`, { method: "GET", });
-        return res as ListBooking;
+        const res = await fetchWithAuth<ListBooking[]>("/booking/my", { method: "GET", });
+        return res;
     } catch (error) {
         console.error("Erro ao editar reserva:", error);
         if (error instanceof Error) {
@@ -87,7 +86,7 @@ export const deleteBooking = async (id: string) => {
 
 export const searchBooking = async ( userId?: string, date?: string, room?: string, repeat?: string, dayRepeat?: string): Promise<ListBooking[]> => {
     try {
-        const res = await fetchWithAuth(`/booking/filter`, {
+        const res = await fetchWithAuth<ListBooking[]>(`/booking/filter`, {
             method: "POST",
             data: {
                 userId,
@@ -97,7 +96,7 @@ export const searchBooking = async ( userId?: string, date?: string, room?: stri
                 dayRepeat
             }
         });
-        return res as ListBooking[];
+        return res
     } catch (error) {
         console.error("Erro ao editar reserva:", error);
         if (error instanceof Error) {
