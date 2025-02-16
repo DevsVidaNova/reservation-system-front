@@ -118,7 +118,7 @@ export function ScaleAdd({ refetch }: { refetch: () => void }) {
         try {
             const res = await addScale(values); 
             if (res) {
-                setsuccess('Reserva feita com sucesso!');
+                setsuccess('Escala criada com sucesso!');
                 refetch();
                 setTimeout(() => {
                     setsuccess('');
