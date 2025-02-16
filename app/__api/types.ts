@@ -3,12 +3,13 @@
 export type CreateBooking = {
     description: string,
     room: string,
-    date: string | undefined | Date,
+    date?: string | undefined | Date,
     start_time: string,
     end_time: string,
-    repeat: string | undefined | null,
-    dayRepeat: string | undefined | null,
+    repeat?: string | undefined | null,
+    dayRepeat?: string | undefined | null,
 }
+
 export type ListBooking = {
     id: number,
     description: string,

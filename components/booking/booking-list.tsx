@@ -59,7 +59,7 @@ export function BookingList() {
                             <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
                         </TabsList>
                     </div>
-                    <div className='md:block hidden'>
+                    <div className='md:block hidden '>
                         {user ?
                             <BookingForm refetch={refetch} /> :
                             <Link href="/auth/login">
@@ -180,29 +180,30 @@ const BookingItem = ({ data }: { data: ListBooking[], }) => {
 const SkeletonBookings = () => {
     return (
         <div className='gap-8 z-0'>
-            <Skeleton className='h-2 w-full' />
-
-            <div className="border rounded-lg flex-row flex justify-between w-full my-4">
-                <div className='flex flex-row w-[100%]'>
-                    <div className='flex-col w-[80px] h-full py-3 flex md:px-6 md:py-2 w-[20%] justify-center items-center border-r'>
-                    </div>
-                    <div className='flex-col h-[100%] flex px-4 py-4 gap-2 justify-center w-[80%]'>
-                        <div className='flex-row flex gap-2'>
-                            <div className='flex-row flex gap-2 items-center opacity-70'>
-                            </div>
-                            <div className='flex-row flex gap-2 items-center opacity-70'>
+            {Array.from({ length: 10 }).map((_, index) => (
+                <div key={index} className="border rounded-lg flex-row flex justify-between w-full my-4">
+                    <div className='flex flex-row w-[100%]'>
+                        <div className='flex-col gap-2 w-[80px] h-full py-3 px-3 flex md:px-3 md:py-2 w-[20%] justify-center items-center border-r'>
+                            <Skeleton className='h-20 w-full' />
+                        </div>
+                        <div className='flex-col h-[100%] flex px-4 py-4 gap-2 justify-center w-[80%]'>
+                            <div className='flex-col flex gap-4 justify-center'>
+                                <div className='flex-row flex gap-4 '>
+                                    <Skeleton className='h-8 w-[40%]' />
+                                    <Skeleton className='h-8 w-[60%]' />
+                                </div>
+                                <div className='flex-row flex'>
+                                    <Skeleton className='h-6 w-full' />
+                                </div>
                             </div>
                         </div>
-                        <div className='flex-row flex gap-2 items-center opacity-70'>
+                    </div>
+                    <div className='flex flex-col border-l'>
+                        <div className='flex-row flex px-4 h-full items-center'>
+                            <Skeleton className='h-12 w-12 rounded-full' />
                         </div>
                     </div>
-                </div>
-                <div className='flex flex-col border-l'>
-                    <div className='flex-row flex px-4 h-full items-center'>
-
-                    </div>
-                </div>
-            </div>
+                </div>))}
         </div>
     )
 

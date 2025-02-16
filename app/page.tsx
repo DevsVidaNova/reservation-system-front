@@ -1,8 +1,6 @@
 'use client';
 import React from "react";
-import { useEffect, useState } from "react";
 import { BookingList } from "@/components/booking/booking-list"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { getUser } from "@/hooks/user";
 
@@ -15,21 +13,21 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
+  Button
+} from "@/components/ui/"
+
 import { AlignJustify, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { deleteToken } from "@/hooks/token";
 import Profile from "./dashboard/profile/page";
 
+import { useQuery } from '@tanstack/react-query'
+
 export default function Home() {
-  const [user, setuser] = useState({ isAdmin: false, name: '', email: '' });
-  useEffect(() => {
-    const verify = async () => {
-      const res: any = await getUser();
-      setuser(res);
-    }
-    verify();
-  }, []);
+  const { data: user, error: usererror, isLoading: userloading, } = useQuery({
+    queryKey: ['user'],
+    queryFn: getUser
+});
 
   return (
     <div className="bg-background ">
@@ -51,7 +49,7 @@ export default function Home() {
                 </DrawerHeader>
 
                 <div className="w-full flex-col flex gap-4 px-6">
-                  {user?.isAdmin &&
+                  {user?.role == 'admin' &&
                     <Link href="/dashboard" >
                       <Button className="w-full">
                         Painel de Controle
