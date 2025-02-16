@@ -13,7 +13,30 @@ export const listBookings = async (): Promise<ListBooking[]> => {
         }
     }
 };
-
+export const listBookingsWeek = async (): Promise<ListBooking[]> => {
+    try {
+        const res = await fetchApi<ListBooking[]>("/booking/week", { method: "GET", });
+        return res;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
+    }
+};
+export const listBookingsToday = async (): Promise<ListBooking[]> => {
+    try {
+        const res = await fetchApi<ListBooking[]>("/booking/today", { method: "GET", });
+        return res;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
+    }
+};
 export const singleBooking = async (id: string): Promise<ListBooking> => {
     try {
         const res = await fetchWithAuth<ListBooking>(`/booking/${id}`, { method: "GET", });
@@ -27,7 +50,6 @@ export const singleBooking = async (id: string): Promise<ListBooking> => {
         }
     }
 };
-
 export const addBooking = async (data: CreateBooking): Promise<CreateBooking> => {
     try {
         const res = await fetchWithAuth<CreateBooking>("/booking", { method: "POST", data: data });
@@ -41,7 +63,6 @@ export const addBooking = async (data: CreateBooking): Promise<CreateBooking> =>
         }
     }
 };
-
 export const editBooking = async (id: string, data: CreateBooking): Promise<CreateBooking> => {
     try {
         const res = await fetchWithAuth<CreateBooking>(`/booking/${id}` + id, { method: "PUT", data: data });
@@ -55,8 +76,7 @@ export const editBooking = async (id: string, data: CreateBooking): Promise<Crea
         }
     }
 };
-
-export const myBooking = async (): Promise<ListBooking[]> => {
+export const listBookingsMy = async (): Promise<ListBooking[]> => {
     try {
         const res = await fetchWithAuth<ListBooking[]>("/booking/my", { method: "GET", });
         return res;
@@ -69,7 +89,6 @@ export const myBooking = async (): Promise<ListBooking[]> => {
         }
     }
 };
-
 export const deleteBooking = async (id: string) => {
     try {
         const res = await fetchWithAuth(`/booking/${id}` + id, { method: "DELETE" });
@@ -83,7 +102,6 @@ export const deleteBooking = async (id: string) => {
         }
     }
 };
-
 export const searchBooking = async ( userId?: string, date?: string, room?: string, repeat?: string, dayRepeat?: string): Promise<ListBooking[]> => {
     try {
         const res = await fetchWithAuth<ListBooking[]>(`/booking/filter`, {

@@ -1,26 +1,4 @@
 
-//USER TYPES
-export type UserList = {
-    email: string;
-    phone: string;
-    name: string;
-    _id: string;
-};
-export type UserEdit = {
-    email: string;
-    phone: string;
-    name: string;
-    _id: string;
-    password: string;
-};
-export type RegisterUser = {
-    email: string;
-    password: string;
-    phone: string;
-    name: string;
-};
-
-
 //BOOKING
 export type CreateBooking = {
     description: string,
@@ -52,7 +30,6 @@ export type ListBooking = {
     day_repeat: string | null,
 }
 
-
 //ROOM
 export interface ListRoom {
     id: string, //id da sala
@@ -70,7 +47,6 @@ export interface CreateRoom {
     exclusive: boolean, //exclusivo ou não
     status: boolean,  //ativo ou não
 }
-
 
 //SCALE
 export interface ListScale {
@@ -151,6 +127,26 @@ export type Stats = {
     week: number, //quantidade de reservas para a semana
 }
 
+//USER TYPES
+export type UserList = {
+    email: string;
+    phone: string;
+    name: string;
+    _id: string;
+};
+export type UserEdit = {
+    email: string;
+    phone: string;
+    name: string;
+    _id: string;
+    password: string;
+};
+export type RegisterUser = {
+    email: string;
+    password: string;
+    phone: string;
+    name: string;
+};
 
 //TIMELINE
 export type Timeline = {

@@ -11,11 +11,12 @@ export const registerUser = async (data: RegisterUser) => {
         throw new Error(error.message);
     }
 };
+
 export const loginUser = async (email: string, password: string, session: boolean) => {
     try {
-        const res: LoginUser = await fetchApi("/api/auth/login", { method: "POST", data: { email, password } });
-        await createToken(res.token, session);
-        await createUser(res.user, session);
+        const res: any = await fetchApi("/auth/login", { method: "POST", data: { email, password } });
+        await createToken(res.session.session.access_token, session);
+        await createUser(res.profile, session);
         return res;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
@@ -46,6 +47,7 @@ export const editUser = async (id: string, data: any) => {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
     }
 };
+
 export const excludeUser = async () => {
     try {
         const res: any = await fetchWithAuth("/api/auth/deleteUser", { method: "DELETE" });
