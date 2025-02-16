@@ -43,7 +43,7 @@ export interface ListRoom {
 }
 export interface CreateRoom {
     name: string, //nome da sala
-    size: string, //quantidade de pessoas
+    size: number, //quantidade de pessoas
     description: string, //ex: sala de reunião
     exclusive: boolean, //exclusivo ou não
     status: boolean,  //ativo ou não

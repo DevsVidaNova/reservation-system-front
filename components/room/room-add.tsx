@@ -3,18 +3,22 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+    Drawer,Message,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+    Input,
+    
+    Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
+    Button
+} from "@/components/ui/"
+
 import { addRoom } from "@/app/__api/rooms"
 import { Checkbox } from "@/components/ui/checkbox"
 
@@ -66,82 +70,88 @@ export function RoomAddForm({ refetch }: { refetch: () => void }) {
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button variant="default" >Criar Sala</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[455px]">
-                <DialogHeader>
-                    <DialogTitle>Criar Sala</DialogTitle>
-                    <DialogDescription>Preencha os dados da sala para continuar.</DialogDescription>
-                </DialogHeader>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Nome da Sala</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Nome da sala" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="size"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Capacidade</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" placeholder="Quantidade de pessoas" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Descrição</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Descrição da sala" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                          <FormField control={form.control} name="exclusive" render={({ field }) => (
-                            <FormItem className="flex items-center space-x-2">
-                                <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                                <FormLabel>Exclusiva</FormLabel>
-                            </FormItem>
-                        )} />
-                        <FormField control={form.control} name="status" render={({ field }) => (
-                            <FormItem className="flex items-center space-x-2">
-                                <FormControl>
-                                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                </FormControl>
-                                <FormLabel className="">Ativa</FormLabel>
-                            </FormItem>
-                        )} />
-                        <DialogFooter className="border-t-2 pt-[16px]">
-                            <div className="flex flex-col w-full">
-                                {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
-                                {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
-                                <Button>
-                                    <button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Criar Sala</button>
-                                </Button>
-                            </div>
-                        </DialogFooter>
-                    </form>
-                </Form>
-            </DialogContent>
-        </Dialog>
+        <div>
+            <Drawer open={open} onOpenChange={setOpen}>
+                <DrawerTrigger asChild>
+                    <Button variant="default" >Criar Sala</Button>
+                </DrawerTrigger>
+                <DrawerContent>
+                    <div className="container mx-auto px-4">
+                        <DrawerHeader>
+                            <DrawerTitle>Criar Sala</DrawerTitle>
+                            <DrawerDescription>Preencha os dados da sala para continuar.</DrawerDescription>
+                        </DrawerHeader>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Nome da Sala</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Nome da sala" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="size"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Capacidade</FormLabel>
+                                            <FormControl>
+                                                <Input type="number" placeholder="Quantidade de pessoas" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Descrição</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Descrição da sala" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField control={form.control} name="exclusive" render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                                        <FormLabel>Exclusiva</FormLabel>
+                                    </FormItem>
+                                )} />
+                                <FormField control={form.control} name="status" render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl>
+                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                        </FormControl>
+                                        <FormLabel className="">Ativa</FormLabel>
+                                    </FormItem>
+                                )} />
+                                <DrawerFooter className="border-t-2 pt-[16px]">
+                                    <div className="flex flex-col w-full gap-4">
+                                        <Message success={success} error={error} />
+                                        <Button>
+                                            <button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Criar Sala</button>
+                                        </Button>
+                                        <DrawerClose>
+                                            <Button variant="secondary" className="w-full">Fechar</Button>
+                                        </DrawerClose>
+                                    </div>
+                                </DrawerFooter>
+                            </form>
+                        </Form>
+                    </div>
+                </DrawerContent>
+            </Drawer>
+        </div>
     )
 }

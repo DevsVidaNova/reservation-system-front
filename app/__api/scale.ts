@@ -42,6 +42,19 @@ export const singleScale = async (id: string): Promise<SingleScale> => {
     }
 };
 
+export const duplicateScale = async (id: string): Promise<SingleScale> => {
+    try {
+        const res = await fetchWithAuth<SingleScale>("/scale/duplicate/" + id, { method: "POST", });
+        return res;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
+        }
+    }
+};
+
 export const addScale = async (data: CreateScale): Promise<CreateScale> => {
     console.log('adicionando esala')
     try {
@@ -71,7 +84,7 @@ export const editScale = async (id: string, data: CreateScale): Promise<CreateSc
 
 export const deleteScale = async (id: string) => {
     try {
-        const res = await fetchWithAuth(`/room/${id}`, { method: "DELETE" });
+        const res = await fetchWithAuth(`/scale/${id}`, { method: "DELETE" });
         return res;
     } catch (error) {
         if (error instanceof Error) {

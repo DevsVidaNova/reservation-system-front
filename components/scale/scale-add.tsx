@@ -151,7 +151,7 @@ export function ScaleAdd({ refetch }: { refetch: () => void }) {
                                         name="name"
                                         render={({ field }) => (
                                             <FormItem className="w-full">
-                                                <FormLabel>Escala</FormLabel>
+                                                <FormLabel>Nome da escala *</FormLabel>
                                                 <FormControl>
                                                     <Input placeholder="Nome da escala" {...field} />
                                                 </FormControl>
@@ -165,7 +165,7 @@ export function ScaleAdd({ refetch }: { refetch: () => void }) {
                                             name="date"
                                             render={({ field }) => (
                                                 <FormItem className="min-w-[170px] max-w-[240px] relative">
-                                                    <FormLabel>Data</FormLabel>
+                                                    <FormLabel>Data *</FormLabel>
                                                     <div className="flex items-center space-x-2">
                                                         <FormControl>
                                                             <Input
@@ -237,7 +237,7 @@ export function ScaleAdd({ refetch }: { refetch: () => void }) {
                                     <div className="flex flex-col w-full gap-4">
                                       <Message success={success} error={error} /> 
                                         <Button>
-                                            <button type="submit" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Concluir escala</button>
+                                            <button type="submit" >Concluir escala</button>
                                        </Button>
                                         <DrawerClose>
                                             <Button variant="secondary" className="w-full">Fechar</Button>

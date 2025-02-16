@@ -155,7 +155,7 @@ const BookingItem = ({ data }: { data: ListBooking[], }) => {
                 return (
                     <div key={id} className="border rounded-lg flex-row flex justify-between w-full my-4">
                         <div className='flex flex-row w-[100%]'>
-                            <div className='flex-col w-[80px] h-full py-3 flex md:px-6 md:py-2 w-[20%] justify-center items-center border-r'>
+                            <div className='flex-col w-[80px] h-full py-3 flex md:px-6 md:py-2 justify-center items-center border-r'>
                                 <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{dayOfWeek.slice(0, 3)}</span>
                                 <span className='md:text-[36px] md:leading-[32px] text-[24px] leading-[26px] font-bold uppercase'>{currentDay}</span>
                                 <span className='md:text-[16px] md:leading-[24px] text-[14px] leading-[14px] uppercase'>{monthName.slice(0, 3)}</span>

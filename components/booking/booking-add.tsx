@@ -70,8 +70,6 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
   const [error, seterror] = useState('');
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-
     setsuccess('');
     seterror('');
 
