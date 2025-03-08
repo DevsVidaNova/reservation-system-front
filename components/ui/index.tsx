@@ -10,6 +10,7 @@ import {
     DialogDescription,
     DialogFooter,
     DialogHeader,
+    DialogClose,
     DialogTitle,
     DialogTrigger,
 } from "./dialog";
@@ -57,8 +58,22 @@ import {
     CommandList,
     CommandSeparator,
     CommandShortcut,
-  } from "./command"
+} from "./command"
+  
+import {
+    Table,
+    TableRow, 
+    TableHeader, 
+    TableHead,
+    TableBody,
+    TableCell,
+} from "./table"
+import { Label } from "./label";
+import { Title } from "./title";
+
 export {
+    Label,
+    Title,
     Message,
     Card,
     Calendar,
@@ -81,6 +96,7 @@ export {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogClose,
     Form,
     FormControl,
     FormField,
@@ -114,4 +130,10 @@ export {
     CommandList,
     CommandSeparator,
     CommandShortcut,
+    Table,
+    TableRow, 
+    TableHeader, 
+    TableHead,
+    TableBody,
+    TableCell,
 }

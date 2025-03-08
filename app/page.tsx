@@ -29,6 +29,9 @@ export default function Home() {
     queryFn: getUser
   });
 
+  const handleWhatsApp = () => {
+    window.open('https://wa.me/554792039515', '_blank')
+  }
   return (
     <div className="bg-background ">
       <div className="flex flex-row z-20  bg-[#ffffff30] backdrop-blur-xs justify-between px-4 py-2 border-b fixed w-screen">
@@ -71,12 +74,10 @@ export default function Home() {
                         <Button className="w-full">
                           Fazer Login
                         </Button>
-                      </Link>
-                      <Link href="/" >
-                        <Button className="w-full" variant='outline' >
+                      </Link> 
+                        <Button onClick={handleWhatsApp} className="w-full" variant='outline' >
                           Solicitar acesso
-                        </Button>
-                      </Link>
+                        </Button> 
                     </>
                   }
                 </div>

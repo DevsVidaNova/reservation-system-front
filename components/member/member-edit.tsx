@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -14,10 +14,11 @@ import {
     DrawerTitle,
     DrawerTrigger,
     DrawerClose,
-    Message,
-    Form, FormControl, FormField, FormItem, FormLabel, FormMessage
+    Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Message,
 } from "@/components/ui/"
-import { registerUser } from "@/app/__api/user"
+
+import { Pencil } from "lucide-react"
+import { editUserById, } from "@/app/__api/admin"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -29,15 +30,12 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Informe um e-mail válido.",
     }),
-    password: z.string().min(6, {
-        message: "A senha deve ter pelo menos 6 caracteres.",
-    }),
     role: z.string().optional(),
 })
 
-export function UserAddForm({ refetch }: { refetch: () => void }) {
-    const [error, seterror] = useState('');
+export function MemberEditForm({ id, refetch, defaultValue }: { id: string, refetch: () => void, defaultValue: any }) {
     const [success, setsuccess] = useState('');
+    const [error, seterror] = useState('');
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -45,19 +43,24 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
             name: "",
             phone: "",
             email: "",
-            password: "",
         },
     })
+    useEffect(() => {
+        if (defaultValue) {
+            form.setValue('name', defaultValue.name)
+            form.setValue('phone', defaultValue.phone)
+            form.setValue('email', defaultValue.email)
+            form.setValue('role', defaultValue.role)
+        }
+    }, [defaultValue])
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         seterror('')
         setsuccess('')
-        console.log(values)
         try {
-            const response = await registerUser(values)
+            const response = await editUserById(id, values)
             if (response) {
-                setsuccess('Usuário criado com sucesso!')
-                form.reset()
+                setsuccess('Usuário editado com sucesso!')
                 refetch()
             }
         } catch (error: any) {
@@ -67,15 +70,17 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
 
     return (
         <div>
-            <Drawer>
+            <Drawer >
                 <DrawerTrigger asChild >
-                    <Button variant="default">Criar usuário</Button>
+                    <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+                        <Pencil size={24} />
+                    </Button>
                 </DrawerTrigger>
                 <DrawerContent >
                     <div className="container mx-auto px-4">
                         <DrawerHeader>
-                            <DrawerTitle>Criar usuário</DrawerTitle>
-                            <DrawerDescription>Preencha os dados do usuário para continuar.</DrawerDescription>
+                            <DrawerTitle>Editar usuário</DrawerTitle>
+                            <DrawerDescription>Preencha os dados do usuário e clique em salvar.</DrawerDescription>
                         </DrawerHeader>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -129,19 +134,7 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
                                         </FormItem>
                                     )}
                                 />
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Senha</FormLabel>
-                                            <FormControl>
-                                                <Input type="password" placeholder="Senha" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+
                                 <FormField
                                     control={form.control}
                                     name="role"
@@ -159,7 +152,7 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
                                     <div className="flex flex-col w-full gap-4">
                                         <Message success={success} error={error} />
                                         <Button>
-                                            <button type='submit' className="text-[18px] font-semibold py-6 rounded-full w-full cursor-pointer">Criar usuário</button>
+                                            <button type='submit' className="text-[18px] font-semibold py-6 rounded-full w-full">Salvar usuário</button>
                                         </Button>
                                         <DrawerClose>
                                             <Button variant="secondary" className="w-full">Fechar</Button>

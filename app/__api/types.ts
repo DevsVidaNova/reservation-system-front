@@ -28,7 +28,7 @@ export type ListBooking = {
         phone: string | null
     },
     repeat: string | null,
-    day_repeat: number |  null | string,
+    day_repeat: number | null | string,
 }
 
 //ROOM
@@ -49,6 +49,65 @@ export interface CreateRoom {
     status: boolean,  //ativo ou não
 }
 
+//MEMBER
+export interface ListMember {
+    id: string;
+    full_name: string;
+    birth_date: string;
+    gender: 'Masculino' | 'Feminino' | 'Outro';
+    cpf: string;
+    rg: string;
+    phone: string;
+    email: string;
+    street: string;
+    number: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    cep: string;
+    mother_name: string;
+    father_name: string;
+    marital_status: 'Casado' | 'Solteiro' | 'Divorciado' | 'Viúvo';
+    has_children: boolean;
+    children_count: number;
+    available_days: string[]; // Ex: ["Segunda", "Quarta", "Sexta"]
+    available_hours: string[]; // Ex: ["18:00-20:00", "14:00-16:00"]
+    interests: string[];
+    skills: string[];
+    health_restrictions: string;
+    previous_volunteering: boolean;
+    previous_volunteering_place: string;
+}
+export interface CreateMember {
+    full_name: string;
+    birth_date: string;
+    gender: 'Masculino' | 'Feminino' | 'Outro';
+    cpf: string;
+    rg: string;
+    phone: string;
+    email: string;
+    street: string;
+    number: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    cep: string;
+    mother_name: string;
+    father_name: string;
+    marital_status: 'Casado' | 'Solteiro' | 'Divorciado' | 'Viúvo';
+    has_children: boolean;
+    children_count: number;
+    /*   available_days: string[]; // Ex: ["Segunda", "Quarta", "Sexta"]
+       available_hours: string[]; // Ex: ["18:00-20:00", "14:00-16:00"]
+       interests: string[];
+       skills: string[];
+       health_restrictions: string;
+       previous_volunteering: boolean;
+       previous_volunteering_place: string | undefined | null;
+       */
+}
+
+
 //SCALE
 export interface ListScale {
     id: string,
@@ -62,7 +121,7 @@ export interface ListScale {
 interface Person {
     id: string;
     name: string;
-    phone: string|null;
+    phone: string | null;
     email: string;
     confirmed: boolean;
 }
@@ -89,12 +148,12 @@ export interface SingleScale {
     scale_confirmations: ScaleConfirmation[];
     percentage_confirmed: string;
 }
-export interface CreateScale { 
+export interface CreateScale {
     name: string,
     date: string,
-    direction: string|null|undefined,
-    band?: string|null|undefined,
-    projection?: string|null|undefined,
+    direction: string | null | undefined,
+    band?: string | null | undefined,
+    projection?: string | null | undefined,
     sound?: string | null | undefined,
     light?: string | null | undefined,
     transmission?: string | null | undefined,

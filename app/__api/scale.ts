@@ -4,7 +4,6 @@ import { ListScale, SingleScale, CreateScale } from "./types";
 export const listScales = async (): Promise<ListScale[]> => {
     try {
         const res = await fetchWithAuth<ListScale[]>("/scale", { method: "GET" });
-        console.log(res)
         return res;
     } catch (error) {
         console.log(error)
