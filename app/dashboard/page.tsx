@@ -1,16 +1,47 @@
 "use client"
 import React from "react"
-import { BookMarked, BookPlus, Calendar1, MapPin, UserPlus, Users } from 'lucide-react'
+import { BookMarked, BookPlus, Calendar1, Church, MapPin, TrendingUp, UserPlus, Users } from 'lucide-react'
 import { Analytics, } from '../__api/types'
 import { useQuery } from '@tanstack/react-query'
 import { listAnalytics, } from '@/app/__api/dashboard'
+import { getMembersAnalytics } from "../__api/members"
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  RadialBarChart,
+  RadialBar,
+  PieChart,
+  Pie,
+  Cell,
+  Treemap
+} from 'recharts';
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui"
+import { ChartConfig } from "@/components/ui/chart"
+
 export default function Dashboard() {
   const { data, error, isLoading } = useQuery<Analytics>({
     queryKey: ['stats'],
     queryFn: listAnalytics,
   });
 
-  const { rooms, bookings, users, week } = data || {};
+  const { rooms, bookings, users, week, members } = data || {};
 
   if (isLoading) return <p>Carregando...</p>
   if (error) return <p>Erro ao carregar usuários</p>
@@ -43,73 +74,197 @@ export default function Dashboard() {
           </div>
           <div className='flex-col flex border rounded-lg px-4 py-4 '>
             <div className="flex flex-row justify-between align-center items-center">
-              <Calendar1 size={24} />
-              <span className='text-[24px] font-bold'>{week}</span>
+              <Church size={24} />
+              <span className='text-[24px] font-bold'>{members}</span>
             </div>
-            <span className='opacity-70 text-[16px] font-regular'>Para semana</span>
+            <span className='opacity-70 text-[16px] font-regular'>Membros</span>
           </div>
         </div>
-
+        <h2 className='text-[32px] font-bold'>Membros</h2>
+        <MemberCharts />
       </div>
     </div>
   )
 }
 
-/*
 
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
- <h2 className='text-[32px] font-bold'>Ações</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="w-full">
-            <CardHeader>
-              <div className="flex flex-row justify-between items-center">
-                <UserPlus size={42} />
-              </div>
-              <CardTitle>Adicionar novo usuário</CardTitle>
-              <CardDescription className="text-[16px] font-normal" style={{ lineHeight: 1 }}>
-                Usuários podem criar reservas sozinhos. Para um novo usuário você precisará dos seguintes dados: nome, telefone, e-mail e senha.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/dashboard/users">
-                <Button className="w-full">Criar usuário</Button>
-              </Link>
-            </CardContent>
-          </Card>
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const { label, value, percentage } = payload[0].payload;
+    return (
+      <div className="custom-tooltip p-2 bg-white border rounded shadow-md">
+        <span className="label text-xl">{label}</span>
+        <p className="value">Valor: {value}</p>
+        <p className="percentage">Porcentagem: {percentage}%</p>
+      </div>
+    );
+  }
+  return null;
+};
 
-          <Card className="w-full">
-            <CardHeader>
-              <div className="flex flex-row justify-between items-center">
-                <BookPlus size={42} />
-              </div>
-              <CardTitle>Adicionar nova sala</CardTitle>
-              <CardDescription className="text-[16px] font-normal" style={{ lineHeight: 1 }}>
-                Salas servem para serem reservadas. Para uma nova sala você precisará dos seguintes dados: nome, quantidade de pessoas, descrição e exclusividade.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/dashboard/rooms">
-                <Button className="w-full">Criar sala</Button>
-              </Link>
-            </CardContent>
-          </Card>
+const MemberCharts = () => {
+  const { data, error, isLoading } = useQuery<any>({
+    queryKey: ['members charts'],
+    queryFn: getMembersAnalytics,
+  });
 
-          <Card className="w-full">
-            <CardHeader>
-              <div className="flex flex-row justify-between items-center">
-                <BookMarked size={42} />
-              </div>
-              <CardTitle>Reservar sala</CardTitle>
-              <CardDescription className="text-[16px] font-normal" style={{ lineHeight: 1 }}>
-                Quando reservada, a sala ficará disponível para realizar atividades. Para reservar uma sala, você precisará dos seguintes dados: sala, descrição, dia, hora de início e hora de fim.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/dashboard/bookings">
-                <Button className="w-full">Reservar sala</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-*/
+  console.log(data)
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading chart data</div>;
+  }
+
+  const chartConfig = {
+    marital: {
+      label: <span>Estado Civil</span>,
+      color: "hsl(var(--chart-1))",
+    },
+    gender: {
+      label: <span>Gênero</span>,
+      color: "hsl(var(--chart-2))",
+    },
+    children: {
+      label: <span>Quantidade de Filhos</span>,
+      color: "hsl(var(--chart-3))",
+    },
+    age: {
+      label: <span>Faixa Etária</span>,
+      color: "hsl(var(--chart-4))",
+    },
+    city: {
+      label: <span>Cidade</span>,
+      color: "hsl(var(--chart-5))",
+    },
+    state: {
+      label: <span>Estado</span>,
+      color: "hsl(var(--chart-6))",
+    },
+  } satisfies ChartConfig;
+
+  const formatChartData = (data: any) => {
+    return data.map((item: any) => ({
+      label: item.label,
+      value: item.value,
+      percentage: item.percentage,
+      fill: item.fill,
+    }));
+  };
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+      {/* Gráfico de Estado Civil (BarChart) */}
+      <Card className="flex flex-col">
+        <CardHeader className="pb-4">
+          <CardTitle>Estado Civil</CardTitle>
+          <CardDescription>Gráfico de Barras</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1  -ml-6">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={formatChartData(data.marital)}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="label" />
+              <YAxis />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="value" fill="hsl(var(--chart-1))" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Gráfico de Gênero (RadialBarChart) */}
+      <Card className="flex flex-col">
+        <CardHeader className="pb-4">
+          <CardTitle>Gênero</CardTitle>
+          <CardDescription>Gráfico de Pizza</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1 ">
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={formatChartData(data.gender)}
+                dataKey="value"
+                label
+                nameKey="label"
+                outerRadius="80%"
+                fill="hsl(var(--chart-4))"
+              >
+                {data.age.map((entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Gráfico de Quantidade de Filhos (BarChart) */}
+      <Card className="flex flex-col">
+        <CardHeader className="pb-4">
+          <CardTitle>Quantidade de Filhos</CardTitle>
+          <CardDescription>Gráfico de Barras</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1 -ml-6">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={formatChartData(data.children)}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="label" />
+              <YAxis />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="value" fill="hsl(var(--chart-3))" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Gráfico de Faixa Etária (PieChart) */}
+      <Card className="flex flex-col">
+        <CardHeader className="pb-4">
+          <CardTitle>Faixa Etária</CardTitle>
+          <CardDescription>Gráfico de Pizza</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1 ">
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={formatChartData(data.age)}
+                dataKey="value"
+                label
+                nameKey="label"
+                outerRadius="80%"
+                fill="hsl(var(--chart-4))"
+              >
+                {data.age.map((entry: any, index: number) => (
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Gráfico de Estado (BarChart) */}
+      <Card className="flex flex-col">
+        <CardHeader className="pb-4">
+          <CardTitle>Estados</CardTitle>
+          <CardDescription>Gráfico de Barras</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1  -ml-6">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={formatChartData(data.state)}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="label" />
+              <YAxis />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="value" fill="hsl(var(--chart-6))" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

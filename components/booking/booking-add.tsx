@@ -58,8 +58,24 @@ const formSchema = z
     }
   );
 
+const repeats = [
+  { id: 'null', name: 'Nenhum dia', },
+  { id: 'day', name: 'Diariamente', },
+  { id: 'week', name: 'Semanalmente', },
+  { id: 'month', name: 'Mensalmente', }
+];
+
+const days = [
+  { id: '0', name: 'Domingo', },
+  { id: '1', name: 'Segunda', },
+  { id: '2', name: 'Terça', },
+  { id: '3', name: 'Quarta', },
+  { id: '4', name: 'Quinta', },
+  { id: '5', name: 'Sexta', },
+  { id: '6', name: 'Sábado', }
+];
 export function BookingForm({ refetch }: { refetch: () => void }) {
-  const form = useForm<z.infer<typeof formSchema>>({ resolver: zodResolver(formSchema) })
+  const form = useForm<z.infer<typeof formSchema>>({ resolver: zodResolver(formSchema), defaultValues: { repeat: 'null' } });
   const [openCalendar, setOpenCalendar] = useState(false);
 
   const { data: rooms, error: errorList, isLoading, } = useQuery<ListRoom[]>({
@@ -84,24 +100,7 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
     }
   }
 
-  const repeats = [
-    { id: 'null', name: 'Nenhum dia', },
-    { id: 'day', name: 'Diariamente', },
-    { id: 'week', name: 'Semanalmente', },
-    { id: 'month', name: 'Mensalmente', }
-  ];
-
-  const days = [
-    { id: '1', name: 'Domingo', },
-    { id: '2', name: 'Segunda', },
-    { id: '3', name: 'Terça', },
-    { id: '4', name: 'Quarta', },
-    { id: '5', name: 'Quinta', },
-    { id: '6', name: 'Sexta', },
-    { id: '7', name: 'Sábado', }
-  ];
-
-  const [selectedRepeat, setSelectedRepeat] = useState<string | null>('null');
+  const hasRepeat = form.watch("repeat");
 
   return (
     <div >
@@ -143,7 +142,7 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
                               <SelectValue placeholder="Selecione uma sala" />
                             </SelectTrigger>
                             <Link href="/gallery">
-                              <div className="w-[62px] h-[60px] border rounded-[4px] items-center justify-center flex-col flex">
+                              <div className="w-[52px] h-[48px] border rounded-[4px] items-center justify-center flex-col flex">
                                 <HelpCircle size={24} />
                               </div>
                             </Link>
@@ -228,13 +227,11 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
                     name="repeat"
                     render={({ field }) => (
                       <FormItem >
-                        <FormLabel>Repetir</FormLabel>
+                        <div className="mb-2">
+                          <FormLabel>Repetir</FormLabel>
+                        </div>
                         <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            const selected = repeats?.find((r) => r.name === value);
-                            setSelectedRepeat(selected?.id || null);
-                          }}
+                          onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
@@ -264,7 +261,8 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
 
 
                 </div>
-                {selectedRepeat != "null" && (
+
+                {hasRepeat != 'null' && (
                   <FormField
                     control={form.control}
                     name="day_repeat"

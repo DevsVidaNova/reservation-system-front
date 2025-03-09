@@ -47,17 +47,35 @@ const formSchema = z
     end_time: z.string({
       required_error: "Por favor, insira a hora de término",
     }),
-    date: z.string().optional(),
+    date: z.string().optional().nullable(),
     repeat: z.string().optional(),
     day_repeat: z.string().optional(),
   })
   .refine(
-    (data) => data.day_repeat || (data.date && data.date.length === 10),
+    (data) => data.day_repeat || (data.date && typeof data.date === 'string' && data.date.length === 10),
     {
       message: "Informe uma data válida ou escolha um intervalo de repetição.",
       path: ["date"],
     }
   );
+
+
+const repeats = [
+  { id: 'null', name: 'Nenhum dia', },
+  { id: 'day', name: 'Diariamente', },
+  { id: 'week', name: 'Semanalmente', },
+  { id: 'month', name: 'Mensalmente', }
+];
+
+const days = [
+  { id: '0', name: 'Domingo', },
+  { id: '1', name: 'Segunda', },
+  { id: '2', name: 'Terça', },
+  { id: '3', name: 'Quarta', },
+  { id: '4', name: 'Quinta', },
+  { id: '5', name: 'Sexta', },
+  { id: '6', name: 'Sábado', }
+];
 
 export function BookingEditForm({ id, refetch, defaultValues }: { id: any, refetch: () => void, defaultValues: any }) {
   const [open, setOpen] = useState(false)
@@ -66,15 +84,16 @@ export function BookingEditForm({ id, refetch, defaultValues }: { id: any, refet
     queryKey: ['list rooms'],
     queryFn: listRooms
   })
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      description: "",
-      room: "",
-      date: "",
-      start_time: "",
-      end_time: "",
+      description: defaultValues.description,
+      room: defaultValues.room.id,
+      date: defaultValues?.date ? defaultValues.date : null,
+      start_time: defaultValues.start_time,
+      end_time: defaultValues.end_time,
+      repeat: defaultValues.repeat ? defaultValues.repeat : 'null',
+      day_repeat: days.find((day) => day.name.slice(0, 3) === defaultValues.repeat_day)?.id,
     },
   })
   const [success, setsuccess] = useState('');
@@ -93,48 +112,7 @@ export function BookingEditForm({ id, refetch, defaultValues }: { id: any, refet
       seterror(error.message)
     }
   }
-  const formatDate = (isoString: string) => {
-    const date = new Date(isoString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-  const formatTime = (isoString: string) => {
-    const date = new Date(isoString);
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
-
-  useEffect(() => {
-    if (defaultValues) {
-      form.setValue('description', defaultValues.description)
-      form.setValue('room', defaultValues.room)
-      form.setValue('date', formatDate(defaultValues.date));
-      form.setValue('start_time', formatTime(defaultValues.start_time))
-      form.setValue('end_time', formatTime(defaultValues.end_time))
-    }
-  }, [defaultValues])
-
-  const repeats = [
-    { id: 'null', name: 'Nenhum dia', },
-    { id: 'day', name: 'Diariamente', },
-    { id: 'week', name: 'Semanalmente', },
-    { id: 'month', name: 'Mensalmente', }
-  ];
-
-  const days = [
-    { id: '1', name: 'Domingo', },
-    { id: '2', name: 'Segunda', },
-    { id: '3', name: 'Terça', },
-    { id: '4', name: 'Quarta', },
-    { id: '5', name: 'Quinta', },
-    { id: '6', name: 'Sexta', },
-    { id: '7', name: 'Sábado', }
-  ];
-
-  const [selectedRepeat, setSelectedRepeat] = useState<string | null>('none');
+  const hasRepeat = form.watch("repeat");
 
   const [openCalendar, setOpenCalendar] = useState(false);
 
@@ -181,7 +159,7 @@ export function BookingEditForm({ id, refetch, defaultValues }: { id: any, refet
                               <SelectValue placeholder="Selecione uma sala" />
                             </SelectTrigger>
                             <Link href="/gallery">
-                              <div className="w-[62px] h-[60px] border rounded-[4px] items-center justify-center flex-col flex">
+                              <div className="w-[52px] h-[48px] border rounded-[4px] items-center justify-center flex-col flex">
                                 <HelpCircle size={24} />
                               </div>
                             </Link>
@@ -266,12 +244,13 @@ export function BookingEditForm({ id, refetch, defaultValues }: { id: any, refet
                     name="repeat"
                     render={({ field }) => (
                       <FormItem >
-                        <FormLabel>Repetir</FormLabel>
+                        <div className="mb-2">
+                          <FormLabel>Repetir</FormLabel>
+                        </div>
                         <Select
                           onValueChange={(value) => {
                             field.onChange(value);
-                            const selected = repeats?.find((r) => r.name === value);
-                            setSelectedRepeat(selected?.id || null);
+
                           }}
                           defaultValue={field.value}
                         >
@@ -302,14 +281,14 @@ export function BookingEditForm({ id, refetch, defaultValues }: { id: any, refet
 
 
                 </div>
-                {selectedRepeat != "null" && (
+                {hasRepeat != 'null' && (
                   <FormField
                     control={form.control}
                     name="day_repeat"
                     render={({ field }) => (
                       <FormItem >
                         <div style={{ marginBottom: 6, marginTop: -6 }}>
-                          <FormLabel >Qual dia deve se repetir?</FormLabel>
+                          <FormLabel >Qual dia deve se repetir? </FormLabel>
                         </div>
                         <Select onValueChange={field.onChange} defaultValue={field.value} >
                           <FormControl>
@@ -370,7 +349,7 @@ export function BookingEditForm({ id, refetch, defaultValues }: { id: any, refet
                   <div className="flex flex-col w-full gap-4">
                     <Message success={success} error={error} />
                     <Button>
-                      <button type="submit" >Salvar reserva</button>
+                      <button type="submit" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Salvar reserva</button>
                     </Button>
                     <DrawerClose>
                       <Button variant="secondary" className="w-full">Fechar</Button>

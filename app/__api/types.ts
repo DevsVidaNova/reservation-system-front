@@ -3,7 +3,7 @@
 export type CreateBooking = {
     description: string,
     room: string,
-    date?: string | undefined | Date,
+    date?: string | undefined | null | Date,
     start_time: string,
     end_time: string,
     repeat?: string | undefined | null,
@@ -19,6 +19,8 @@ export type ListBooking = {
         size: string,
     },
     date: string,
+    day_of_week: string,
+	month:string,
     start_time: string,
     end_time: string,
     user: {
@@ -51,33 +53,43 @@ export interface CreateRoom {
 
 //MEMBER
 export interface ListMember {
-    id: string;
-    full_name: string;
-    birth_date: string;
-    gender: 'Masculino' | 'Feminino' | 'Outro';
-    cpf: string;
-    rg: string;
-    phone: string;
-    email: string;
-    street: string;
-    number: string;
-    neighborhood: string;
-    city: string;
-    state: string;
-    cep: string;
-    mother_name: string;
-    father_name: string;
-    marital_status: 'Casado' | 'Solteiro' | 'Divorciado' | 'Viúvo';
-    has_children: boolean;
-    children_count: number;
-    available_days: string[]; // Ex: ["Segunda", "Quarta", "Sexta"]
-    available_hours: string[]; // Ex: ["18:00-20:00", "14:00-16:00"]
-    interests: string[];
-    skills: string[];
-    health_restrictions: string;
-    previous_volunteering: boolean;
-    previous_volunteering_place: string;
+    pagination: {
+        total: number,
+        page: number,
+        pageSize: number,
+        totalPages: number
+    }
+    members: SingleMember[]
 }
+export interface Pagination{
+    total: number,
+    page: number,
+    pageSize: number,
+    totalPages: number
+}
+
+export interface SingleMember {
+        id: string;
+        full_name: string;
+        birth_date: string;
+        gender: 'Masculino' | 'Feminino' | 'Outro';
+        cpf: string;
+        rg: string;
+        phone: string;
+        email: string;
+        street: string;
+        number: string;
+        neighborhood: string;
+        city: string;
+        state: string;
+        cep: string;
+        mother_name: string;
+        father_name: string;
+        marital_status: 'Casado' | 'Solteiro' | 'Divorciado' | 'Viúvo';
+        has_children: boolean;
+        children_count: number;
+    }
+
 export interface CreateMember {
     full_name: string;
     birth_date: string;
@@ -185,6 +197,7 @@ export type Analytics = {
     bookings: number, //quantidade de reservas
     users: number, //quantidade de usuários
     week: number, //quantidade de reservas para a semana
+    members: number
 }
 
 //USER TYPES

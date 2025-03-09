@@ -77,7 +77,9 @@ export const addBooking = async (data: CreateBooking): Promise<CreateBooking> =>
 };
 export const editBooking = async (id: string, data: CreateBooking): Promise<CreateBooking> => {
     try {
-        const res = await fetchWithAuth<CreateBooking>(`/booking/${id}` + id, { method: "PUT", data: data });
+        const res = await fetchWithAuth<CreateBooking>(`/booking/${id}`, {
+            method: "PUT", data: data,
+        });
         return res
     } catch (error) {
         console.error("Erro ao editar reserva:", error);
@@ -114,7 +116,7 @@ export const deleteBooking = async (id: string) => {
         }
     }
 };
-export const searchBooking = async ( userId?: string, date?: string, room?: string, repeat?: string, dayRepeat?: string): Promise<ListBooking[]> => {
+export const searchBooking = async (userId?: string, date?: string, room?: string, repeat?: string, dayRepeat?: string): Promise<ListBooking[]> => {
     try {
         const res = await fetchWithAuth<ListBooking[]>(`/booking/filter`, {
             method: "POST",
@@ -133,6 +135,18 @@ export const searchBooking = async ( userId?: string, date?: string, room?: stri
             throw new Error(error.message);
         } else {
             throw new Error("Erro desconhecido ao editar reserva");
+        }
+    }
+};
+export const listBookingsCalendar = async (): Promise<ListBooking[]> => {
+    try {
+        const res = await fetchApi<ListBooking[]>("/booking/calendar", { method: "GET", });
+        return res;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        } else {
+            throw new Error("Erro desconhecido ao listar reservas");
         }
     }
 };

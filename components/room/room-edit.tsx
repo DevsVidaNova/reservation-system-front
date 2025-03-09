@@ -85,7 +85,6 @@ export function RoomEditForm({ id, refetch, defaultValues }: { id: string, refet
                 </DrawerTrigger>
                 <DrawerContent >
                     <div className="container mx-auto px-4">
-
                         <DrawerHeader>
                             <DrawerTitle>Editar Sala</DrawerTitle>
                             <DrawerDescription>Preencha os dados da sala e clique em salvar.</DrawerDescription>

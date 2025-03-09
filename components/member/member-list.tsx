@@ -1,31 +1,14 @@
 'use client'
 import { useState } from 'react';
-import { Calendar, Clock, EllipsisVertical, MapPin, Phone, Trash } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Calendar, Clock, EllipsisVertical, MapPin, Phone, Trash } from 'lucide-react';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ListMember } from '../../app/__api/types';
+import { ListMember, SingleMember } from '../../app/__api/types';
 import { MemberAddForm } from './member-add';
 import { deleteMember } from '../../app/__api/members';
 
 
 import {
   Button,
-  Input,
-  DialogTrigger,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
   PopoverContent,
   PopoverTrigger,
   Popover,
@@ -36,11 +19,18 @@ import {
   TableHead,
   TableBody,
   TableCell,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/"
 import { MemberEditForm } from './member-edit';
 
 
-export function MemberList({ users, refetch, }: { users: ListMember[], refetch: () => void, }) {
+export function MemberList({ users, refetch, handleNext, handlePrevious, page }: { users: SingleMember[], refetch: () => void, handleNext: () => void, handlePrevious: () => void, page: number }) {
   return (
     <>
       <div className=' flex flex-col  gap-4'>
@@ -51,7 +41,7 @@ export function MemberList({ users, refetch, }: { users: ListMember[], refetch: 
           </div>
         </div>
         <div>
-          <TableUsers users={users || []} refetch={refetch} />
+          <TableUsers handleNext={handleNext} handlePrevious={handlePrevious} page={page} users={users || []} refetch={refetch} />
         </div>
       </div>
       <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
@@ -61,16 +51,10 @@ export function MemberList({ users, refetch, }: { users: ListMember[], refetch: 
   )
 }
 
-const TableUsers = ({ users, refetch, }: { users: ListMember[], refetch: () => void, }) => {
+const TableUsers = ({ users, refetch, handleNext, handlePrevious, page }: { users: SingleMember[], refetch: () => void, handleNext: () => void, handlePrevious: () => void, page: number }) => {
   if (!users) return <p>Carregando...</p>
 
-  const [confirmation, setconfirmation] = useState('');
-  const [openExclude, setOpenExclude] = useState(false)
-
-  const handleExclude = async (id: string, confirmation: string) => {
-    if (confirmation !== 'sim') {
-      return
-    }
+  const handleExclude = async (id: string) => {
     try {
       await deleteMember(id)
       refetch()
@@ -79,7 +63,7 @@ const TableUsers = ({ users, refetch, }: { users: ListMember[], refetch: () => v
     }
   }
 
-  const CardMember = ({ user }: { user: ListMember }) => {
+  const CardMember = ({ user }: { user: SingleMember }) => {
     return (
       <TableRow key={user.email}>
         <TableCell className='text-[12px] md:text-[18px] leading-none font-medium'>{user.full_name}</TableCell>
@@ -87,32 +71,10 @@ const TableUsers = ({ users, refetch, }: { users: ListMember[], refetch: () => v
         <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none font-medium' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
         <TableCell className=''>
           <div className=' md:flex hidden gap-3 flex-row '>
-            <Dialog open={openExclude} onOpenChange={setOpenExclude}>
-              <DialogTrigger asChild >
-                <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
-                  <Trash size={24} />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[455px]">
-                <DialogHeader>
-                  <DialogTitle>Excluir usuário</DialogTitle>
-                  <DialogDescription>Tem certeza que quer excluir o usuário? Digite "sim" para confirmar</DialogDescription>
-                  <Input
-                    id='confirmation'
-                    label='Confirmação'
-                    placeholder='Leia a mensagem acima'
-                    value={confirmation}
-                    onChange={(e) => setconfirmation(e.target.value)}
-                  />
-                </DialogHeader>
-                <DialogFooter className="border-t-2 pt-[16px]">
-                  <DialogClose asChild>
-                    <Button onClick={() => handleExclude(user.id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir usuário</Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-            <MemberEditForm id={user.id} refetch={refetch} defaultValue={user} />
+            <Button onClick={() => handleExclude(user.id)} variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+              <Trash size={24} />
+            </Button>
+            <MemberEditForm id={user.id} refetch={refetch} defaultValues={user} />
           </div>
           <div className='block md:hidden'>
             <Popover>
@@ -121,32 +83,10 @@ const TableUsers = ({ users, refetch, }: { users: ListMember[], refetch: () => v
               </PopoverTrigger>
               <PopoverContent className='w-[144px] mr-4'>
                 <div className='gap-2 flex flex-row items-center justify-center'>
-                  <Dialog open={openExclude} onOpenChange={setOpenExclude}>
-                    <DialogTrigger asChild >
-                      <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
-                        <Trash size={24} />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[455px]">
-                      <DialogHeader>
-                        <DialogTitle>Excluir usuário</DialogTitle>
-                        <DialogDescription>Tem certeza que quer excluir o usuário? Digite "sim" para confirmar</DialogDescription>
-                        <Input
-                          id='confirmation'
-                          label='Confirmação'
-                          placeholder='Leia a mensagem acima'
-                          value={confirmation}
-                          onChange={(e) => setconfirmation(e.target.value)}
-                        />
-                      </DialogHeader>
-                      <DialogFooter className="border-t-2 pt-[16px]">
-                        <DialogClose asChild>
-                          <Button onClick={() => handleExclude(user.id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir usuário</Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                  <MemberEditForm id={user.id} refetch={refetch} defaultValue={user} />
+                  <Button onClick={() => handleExclude(user.id)} variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+                    <Trash size={24} />
+                  </Button>
+                  <MemberEditForm id={user.id} refetch={refetch} defaultValues={user} />
                 </div>
               </PopoverContent>
             </Popover>
@@ -157,8 +97,8 @@ const TableUsers = ({ users, refetch, }: { users: ListMember[], refetch: () => v
   }
 
   return (
-    <Card className='overflow-hidden'>
-      <Table>
+    <Card className='overflow-hidden mb-30'>
+      <Table className='border-b'>
         <TableHeader >
           <TableRow className='opacity-70'>
             <TableHead >Nome</TableHead>
@@ -168,11 +108,24 @@ const TableUsers = ({ users, refetch, }: { users: ListMember[], refetch: () => v
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users?.map((user, index) => (
+          {users?.map((user: any, index) => (
             <CardMember user={user} key={index} />
           ))}
         </TableBody>
       </Table>
+      <Pagination className='py-2 '>
+        <PaginationContent className='gap-2'>
+          <PaginationItem onClick={handlePrevious} className='h-10 w-10 justify-center items-center border rounded-md flex bg-accent cursor-pointer'>
+            <ArrowLeft size={18} />
+          </PaginationItem>
+          <PaginationItem className='bg-black text-white rounded-md'>
+            <PaginationLink >{page}</PaginationLink>
+          </PaginationItem>
+          <PaginationItem onClick={handleNext} className='h-10 w-10 justify-center items-center border rounded-md flex bg-accent cursor-pointer'>
+            <ArrowRight size={18} />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </Card>
   )
 }

@@ -3,7 +3,6 @@ import { Input } from "./input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 import { Checkbox } from "./checkbox";
 import { Skeleton } from "./skeleton";
-import {Card} from "./card";
 import {
     Dialog,
     DialogContent,
@@ -59,24 +58,54 @@ import {
     CommandSeparator,
     CommandShortcut,
 } from "./command"
-  
+
 import {
     Table,
-    TableRow, 
-    TableHeader, 
+    TableRow,
+    TableHeader,
     TableHead,
     TableBody,
     TableCell,
 } from "./table"
 import { Label } from "./label";
 import { Title } from "./title";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "./pagination";
 
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "./chart"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "./card"
 export {
     Label,
     Title,
     Message,
     Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
     Calendar,
+    ChartContainer, ChartTooltip,
+    ChartTooltipContent,
     Popover,
     PopoverContent,
     PopoverTrigger,
@@ -131,9 +160,16 @@ export {
     CommandSeparator,
     CommandShortcut,
     Table,
-    TableRow, 
-    TableHeader, 
+    TableRow,
+    TableHeader,
     TableHead,
     TableBody,
     TableCell,
-}
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious
+};

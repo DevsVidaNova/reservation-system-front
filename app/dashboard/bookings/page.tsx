@@ -60,8 +60,8 @@ export default function BookingsPage() {
                 <div className='justify-between flex-row flex w-full'>
                     <div className='flex-row flex gap-2 mx-auto md:mx-1'>
                         <TabsList>
-                            <TabsTrigger value="hoje" >Hoje</TabsTrigger>
                             <TabsTrigger value="semana" >Semana</TabsTrigger>
+                            <TabsTrigger value="mes" >Mês</TabsTrigger>
                             <TabsTrigger value="tudo" >Tudo</TabsTrigger>
                             <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
                         </TabsList>
@@ -114,52 +114,17 @@ const BookingItem = ({ data, refetch, }: { data: ListBooking[], refetch: () => v
     return (
         <div className='gap-8'>
             {data?.map((booking: ListBooking) => {
-                const { end_time, start_time, room, user, date, id, description, repeat, day_repeat } = booking;
-
-                let dayOfWeek = '';
-                let monthName = '';
-                let formattedDate = '';
-                let currentDay = ""
-
-                const days = [
-                    { id: 1, name: 'Domingo', },
-                    { id: 2, name: 'Segunda', },
-                    { id: 3, name: 'Terça', },
-                    { id: 4, name: 'Quarta', },
-                    { id: 5, name: 'Quinta', },
-                    { id: 6, name: 'Sexta', },
-                    { id: 7, name: 'Sábado', }
-                ];
-                if (date) {
-                    const [day, month, year] = date.split('/');
-                    formattedDate = `${year}-${month}-${day}`;
-                    currentDay = day
-                    dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
-                    monthName = new Date(formattedDate).toLocaleDateString('pt-BR', { month: 'long' });
-                } else {
-                    if (day_repeat) {
-                        const dayOfWeekObj = days.find(day => day.id == day_repeat);
-                        if (dayOfWeekObj) {
-                            dayOfWeek = dayOfWeekObj.name;
-                        }
-                        if (repeat === 'month') {
-                            monthName = 'Mês'
-                        } else if (repeat === 'week') {
-                            monthName = 'semanal';
-                        } else {
-                            monthName = 'diario';
-                        }
-                        currentDay = "↻"
-                    }
-                }
+                const { end_time, start_time, room, user, date, id, description, repeat, day_repeat, day_of_week, month } = booking;
+                const repeats = [{ id: 'day', name: 'DIA' }, { id: 'week', name: 'SEM' }, { id: 'month', name: 'MÊS' }];
+                const repeatName = repeats.find((r) => r.id === repeat)?.name;
 
                 return (
                     <Card key={id} className="md:p-2 p-0 flex-row flex align-center justify-between items-center w-full my-4">
                         <div className='flex flex-row items-center gap-2'>
                             <div className='flex-col w-[80px] h-full py-3 flex md:px-6 md:py-2 justify-center items-center border-r'>
-                                <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{dayOfWeek.slice(0, 3)}</span>
-                                <span className='md:text-[36px] md:leading-[32px] text-[24px] leading-[26px] font-bold uppercase'>{currentDay}</span>
-                                <span className='md:text-[16px] md:leading-[24px] text-[14px] leading-[14px] uppercase'>{monthName.slice(0, 3)}</span>
+                                <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{day_of_week || day_repeat}</span>
+                                <span className='md:text-[36px] md:leading-[32px] text-[24px] leading-[26px] font-bold uppercase'>{date ? date?.slice(0, 2) : '↻'}</span>
+                                <span className='md:text-[16px] md:leading-[24px] text-[14px] leading-[14px] uppercase'>{month ? month : repeatName}</span>
                             </div>
                             <div className='flex-col h-[100%] flex px-4 py-4 gap-2 justify-center w-[80%]'>
                                 <div className='flex-row flex gap-2'>

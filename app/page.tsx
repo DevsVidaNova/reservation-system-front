@@ -59,13 +59,6 @@ export default function Home() {
                       </Button>
                     </Link>}
 
-                  {user &&
-                    <Link href="/scales">
-                      <Button className="w-full" variant='outline'>
-                        Minhas Escalas
-                      </Button>
-                    </Link>
-                  }
                   {user && <MenuProfile user={user} />}
 
                   {!user &&
@@ -74,10 +67,10 @@ export default function Home() {
                         <Button className="w-full">
                           Fazer Login
                         </Button>
-                      </Link> 
-                        <Button onClick={handleWhatsApp} className="w-full" variant='outline' >
-                          Solicitar acesso
-                        </Button> 
+                      </Link>
+                      <Button onClick={handleWhatsApp} className="w-full" variant='outline' >
+                        Solicitar acesso
+                      </Button>
                     </>
                   }
                 </div>
