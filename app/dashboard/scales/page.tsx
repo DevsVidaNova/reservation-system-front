@@ -1,74 +1,42 @@
 'use client'
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-    Button
-} from "@/components/ui/"
-
-import { Clock, MapPin, Phone, Trash, User, EllipsisVertical, BookDashed, Captions, Copy } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query'
-
-import { BookingEditForm } from "@/components/booking/booking-edit";
-
-import { ScaleAdd } from "@/components/scale/scale-add";
-import { deleteScale, duplicateScale, listMyScales, listScales } from "@/app/__api/scale";
-import { ListScale } from "@/app/__api/types";
-import { ScaleShow } from "../../../components/scale/scale-show";
-import { ScaleEdit } from "../../../components/scale/scale-edit";
+import { listScales } from "@/app/__api/scale";
+import { Pagination, SingleScale } from "@/app/__api/types";
+import { ScaleList } from "@/components/scale/scale-list";
 
 export default function ScalesPage() {
 
-    const { data: scales, error, isLoading, refetch } = useQuery({
-        queryKey: ['scales list'],
-        queryFn: listScales,
+    const [page, setPage] = useState(1);
+
+    const { data, error, isLoading, refetch } = useQuery<{ scales: SingleScale[]; pagination: Pagination }>({
+        queryKey: ['scales', page],
+        queryFn: () => listScales(page),
     });
 
-    const { data: myscales, error: myerror, isLoading: myloading, refetch: myrefetch } = useQuery({
-        queryKey: ['my scales list'],
-        queryFn: listMyScales,
-    });
+    const handleNext = () => {
+        if (data && data.pagination && data.pagination.page < data.pagination.totalPages) {
+            setPage((prev) => prev + 1);
+        }
+    };
+
+    const handlePrevious = () => {
+        if (data && data.pagination && data?.pagination.page > 1) {
+            setPage((prev) => prev - 1);
+        }
+    };
+
+    if (isLoading) return <div className="flex flex-col w-full px-4 py-4 container"><p>Carregando...</p></div>
+    if (error) return <div className="flex flex-col w-full px-4 py-4 container"><p>Erro ao carregar escalas</p></div>
 
     return (
-        <div className="z-0 mx-auto py-6 container">
-            <Tabs defaultValue="all" className="w-full px-3">
-                <div className='justify-between flex-row flex w-full'>
-                    <div className='flex-row flex gap-2 mx-auto md:mx-1'>
-                        <TabsList>
-                            <TabsTrigger value="all">Escalas</TabsTrigger>
-                            <TabsTrigger value="my">Minhas escalas</TabsTrigger>
-                        </TabsList>
-                    </div>
-                    <div className="md:block hidden">
-                        <ScaleAdd refetch={refetch} />
-                    </div>
-                </div>
-                <TabsContent value="all">
-                    <ScaleItem data={scales || []} refetch={refetch} />
-                </TabsContent>
-                <TabsContent value="my">
-                    <ScaleItem data={myscales || []} refetch={myrefetch} />
-                </TabsContent>
-            </Tabs>
-            <div style={{ height: 150, }}></div>
-            <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
-                <ScaleAdd refetch={refetch} />
-            </div>
+        <div className="flex flex-col w-full px-3 py-4 container">
+            <ScaleList handlePrevious={handlePrevious} page={page} handleNext={handleNext} data={data?.scales || []} refetch={refetch} />
         </div>
     )
 }
+
+/*
 
 const ScaleItem = ({ data, refetch, }: { data: ListScale[], refetch: () => void, }) => {
     if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border p-6 justify-center rounded-xl my-6'>
@@ -148,3 +116,5 @@ const ScaleItem = ({ data, refetch, }: { data: ListScale[], refetch: () => void,
 
     )
 }
+    
+*/

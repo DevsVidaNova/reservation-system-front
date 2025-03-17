@@ -27,7 +27,7 @@ export default function Members() {
   };
 
   if (isLoading) return <div className="flex flex-col w-full px-4 py-4 container"><p>Carregando...</p></div>
-  if (error) return <div className="flex flex-col w-full px-4 py-4 container"><p>Erro ao carregar usuários</p></div>
+  if (error) return <div className="flex flex-col w-full px-4 py-4 container"><p>Erro ao carregar membros</p></div>
 
   return (
     <div className="flex flex-col w-full px-3 py-4 container">

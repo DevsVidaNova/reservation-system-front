@@ -130,22 +130,22 @@ export interface ListScale {
     },
     confirmations: number
 }
-interface Person {
+export interface Person {
     id: string;
-    name: string;
+    full_name: string;
     phone: string | null;
     email: string;
-    confirmed: boolean;
 }
 interface ScaleConfirmation {
     user_id: string;
     confirmed: boolean;
 }
 export interface SingleScale {
-    date: string;
     id: string;
     name: string;
-    band: Person | Person[] | null;
+    date: string;
+    description: string;
+    band: Person | null;
     projection: Person | Person[] | null;
     light: Person | Person[] | null;
     transmission: Person | Person[] | null;
@@ -154,9 +154,9 @@ export interface SingleScale {
     sound: Person | Person[] | null;
     training_sound: Person | Person[] | null;
     photography: Person | Person[] | null;
-    stories: Person | Person[] | null;
-    dynamic: Person | Person[] | null;
-    direction: Person | Person[] | null;
+    stories: Person | null;
+    dynamic: Person | null;
+    direction: Person | null;
     scale_confirmations: ScaleConfirmation[];
     percentage_confirmed: string;
 }

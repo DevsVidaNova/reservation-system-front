@@ -1,25 +1,13 @@
 import { fetchWithAuth, } from "@/hooks/api";
 import { ListScale, SingleScale, CreateScale } from "./types";
+import { Pagination } from '@/app/__api/types';
 
-export const listScales = async (): Promise<ListScale[]> => {
+export const listScales = async (page: number): Promise<{scales: SingleScale[]; pagination: Pagination }> => {
     try {
-        const res = await fetchWithAuth<ListScale[]>("/scale", { method: "GET" });
+        const res = await fetchWithAuth<{ scales: SingleScale[]; pagination: Pagination }>(`/scale?page=${page}`, { method: "GET" });
         return res;
     } catch (error) {
         console.log(error)
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Erro desconhecido ao listar reservas");
-        }
-    }
-};
-
-export const listMyScales = async (): Promise<ListScale[]> => {
-    try {
-        const res = await fetchWithAuth<ListScale[]>("/scale/my", { method: "GET" });
-        return res;
-    } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
         } else {
@@ -55,7 +43,6 @@ export const duplicateScale = async (id: string): Promise<SingleScale> => {
 };
 
 export const addScale = async (data: CreateScale): Promise<CreateScale> => {
-    console.log('adicionando esala')
     try {
         const res = await fetchWithAuth<CreateScale>("/scale", { method: "POST", data: data });
         return res;
