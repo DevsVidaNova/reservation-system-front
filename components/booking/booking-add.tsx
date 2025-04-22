@@ -171,7 +171,7 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 relative">
                   <FormField
                     control={form.control}
                     name="date"
@@ -202,11 +202,11 @@ export function BookingForm({ refetch }: { refetch: () => void }) {
                           </Button>
                         </div>
                         {openCalendar && (
-                          <div className="absolute z-10 -left-[86px] top-[300px] bg-white shadow-md rounded">
-                            <Calendar
-                              mode="single"
-                              selected={field.value ? new Date(field.value) : undefined}
-                              onSelect={(date) => {
+                          <div className="absolute z-50 top-full mt-2 left-0 bg-white shadow-md rounded">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) =>{
                                 if (date) {
                                   const formattedDate = format(date, "dd/MM/yyyy");
                                   field.onChange(formattedDate);
