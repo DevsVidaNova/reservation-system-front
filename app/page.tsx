@@ -1,6 +1,6 @@
 'use client';
 import React from "react";
-import { BookingList } from "@/components/booking/booking-list"
+import  BookingsPage  from "@/components/booking/booking-list"
 import Link from "next/link"
 import { getUser } from "@/hooks/user";
 
@@ -22,6 +22,7 @@ import { deleteToken } from "@/hooks/token";
 import Profile from "./dashboard/profile/page";
 
 import { useQuery } from '@tanstack/react-query'
+import { BookingForm } from "@/components/booking/booking-add";
 
 export default function Home() {
   const { data: user, error: usererror, isLoading: userloading, } = useQuery({
@@ -89,7 +90,7 @@ export default function Home() {
         </div>
       </div>
       <div className="pt-[90px] container mx-auto px-4 z-0">
-        <BookingList />
+        <BookingsPage />
       </div>
     </div>
   )
