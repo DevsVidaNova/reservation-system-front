@@ -1,184 +1,236 @@
-'use client'
-import { useState } from 'react';
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "@/components/ui/tabs"
-import { Booking } from "@/app/api/types";
-import { BookDashed, Clock, MapPin, Phone, User } from 'lucide-react';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { useQuery } from '@tanstack/react-query'
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import ptBrLocale from '@fullcalendar/core/locales/pt-br';
+import { useMemo, useState, useRef, useEffect } from 'react';
+import { addDays, addMonths, isBefore } from 'date-fns';
+import { listBookings } from '@/app/__api/booking';
+import { listRooms } from '@/app/__api/rooms';
+import { ListBooking } from '@/app/__api/types';
 import { BookingForm } from './booking-add';
-import Link from "next/link"
-import { listBookings } from '@/app/api/booking';
-import { getUser } from '@/hooks/user';
+import { Plus, Loader } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { BookingEditPopup } from './booking-edit-popup';
 
-export function BookingList() {
-
-    const [myBookings, setmyBookings] = useState([]);
-    const [user, setuser] = useState({ id: '', name: '', email: '', isAdmin: false, phone: '' });
-    const { data: bookings, error, isLoading, refetch } = useQuery({
-        queryKey: ['bookings list'],
-        queryFn: async () => {
-            const res = await listBookings();
-            const user = await getUser();
-            console.log(res)
-            const myBookings = res?.filter((booking: any) => booking?.user?._id === user?.id);
-            setuser(user);
-            setmyBookings(myBookings);
-            return res;
-        },
-    });
-    const todayDate = new Date().toISOString().split('T')[0];
-    const todayBookings = bookings?.filter((booking: Booking) => booking.date === todayDate);
-    const currentWeekBookings = bookings ? bookings.filter((booking: Booking) => { const now = new Date(); const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay())); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); if (!booking.date) return false; const bookingDate = new Date(booking.date); return bookingDate >= startOfWeek && bookingDate <= endOfWeek; }) : [];
-
-    if (isLoading) {
-        return <div>Carregando reservas aguarde...</div>
-    }
-    if (error) {
-        return <div>Error: {error.message}</div>
-    }
-    return (
-        <div className='z-10 mx-auto'>
-            <Tabs defaultValue="semana" className=" w-full">
-                <div className='justify-between flex-row flex w-full container'>
-                    <div className='flex-row flex gap-2 mx-auto md:mx-0'>
-                        <TabsList>
-                            <TabsTrigger value="hoje" >Hoje</TabsTrigger>
-                            <TabsTrigger value="semana" >Semana</TabsTrigger>
-                            <TabsTrigger value="tudo" >Tudo</TabsTrigger>
-                            <TabsTrigger value="my" >Minhas reservas</TabsTrigger>
-                        </TabsList>
-                    </div>
-                    <div className='md:block hidden'>
-                        {user ?
-                            <BookingForm refetch={refetch} /> :
-                            <Link href="/auth/login">
-                                <Button  >Fazer Reserva</Button>
-                            </Link>
-                        }
-                    </div>
-                </div>
-                <TabsContent value="hoje">
-                    <AvaliableDays data={todayBookings} />
-                </TabsContent>
-                <TabsContent value="semana">
-                    <AvaliableDays data={currentWeekBookings} />
-                </TabsContent>
-                <TabsContent value="tudo">
-                    <AvaliableDays data={bookings} />
-                </TabsContent>
-                <TabsContent value="my">
-                    <AvaliableDays data={myBookings} />
-                </TabsContent>
-            </Tabs>
-            <div style={{ height: 150, }}></div>
-            <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
-                {user ?
-                    <BookingForm refetch={refetch} /> :
-                    <Link href="/auth/login">
-                        <Button  >Fazer Reserva</Button>
-                    </Link>
-                }
-            </div>
-        </div>
-    )
+function normalizeTime(time: string): string {
+  if (!time) return '00:00:00';
+  return time.length === 5 ? `${time}:00` : time;
 }
 
-const AvaliableDays = ({ data, }: { data: any, }) => {
-    if (data?.length === 0) return <div className='flex flex-col items-center border p-6 rounded-xl my-6 self-center'>
-        <div className='flex flex-col justify-center items-center gap-2'>
-            <BookDashed size={64} />
-            <h2 className='text-[24px] font-bold text-center' style={{ lineHeight: 1, }}>Não encontramos nenhuma reserva</h2>
-            <span className='opacity-70 text-[18px] text-center'>Sem reservas criadas por enquanto...</span>
+function parseDate(dateStr: string): string {
+  if (!dateStr) return '';
+  if (dateStr.includes('-')) return dateStr;
+  const [day, month, year] = dateStr.split('/');
+  return `${year}-${month}-${day}`;
+}
+
+function getColorFromRoomName(roomName: string): string {
+  const colors = ['#f87171', '#facc15', '#4ade80', '#60a5fa', '#c084fc', '#fb923c', '#a3e635', '#38bdf8', '#f472b6', '#34d399', '#fcd34d', '#818cf8'];
+  const hash = roomName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return colors[hash % colors.length];
+}
+
+function getDayNumber(dayName?: string): number {
+  if (!dayName || typeof dayName !== 'string') return -1;
+  const map: { [key: string]: number } = {
+    'domingo': 0, 'segunda': 1, 'terça': 2, 'quarta': 3, 'quinta': 4, 'sexta': 5, 'sábado': 6,
+    'dom': 0, 'seg': 1, 'ter': 2, 'qua': 3, 'qui': 4, 'sex': 5, 'sab': 6, 'sáb': 6,
+    'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6,
+  };
+  const cleaned = dayName.trim().toLowerCase().replace('-feira', '');
+  return map[cleaned] ?? -1;
+}
+
+export default function BookingsPage() {
+  const calendarRef = useRef<any>(null);
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+
+  const {
+    data: bookings,
+    refetch: refetchRaw,
+    isFetching: isFetchingBookings
+  } = useQuery<ListBooking[]>({
+    queryKey: ['bookings list'],
+    queryFn: listBookings
+  });
+
+  const refetchBookings = async () => {
+    const oldDate = currentDate;
+    await refetchRaw();
+  
+    setTimeout(() => {
+      if (calendarRef.current && oldDate) {
+        calendarRef.current.getApi().gotoDate(oldDate);
+      }
+    }, 100); // Pequeno delay garante que o FullCalendar já esteja montado
+  };
+  
+
+  const { data: rooms } = useQuery({ queryKey: ['rooms'], queryFn: listRooms });
+
+  const [selectedRooms, setSelectedRooms] = useState<Set<string>>(new Set());
+  const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      calendarRef.current?.getApi().scrollToTime('09:00:00');
+    }, 200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const toggleRoom = (roomId: string) => {
+    setSelectedRooms(prev => {
+      const newSet = new Set(prev);
+      newSet.has(roomId) ? newSet.delete(roomId) : newSet.add(roomId);
+      return newSet;
+    });
+  };
+
+  const events = useMemo(() => {
+    if (!Array.isArray(bookings)) return [];
+    const allEvents = [];
+    const startDate = new Date();
+    const endDate = addMonths(startDate, 6);
+
+    bookings.forEach((booking) => {
+      if (!booking.start_time || !booking.end_time || !booking.room?.id) return;
+      if (selectedRooms.size > 0 && !selectedRooms.has(booking.room.id)) return;
+      const bgColor = getColorFromRoomName(booking.room.name);
+
+      const baseEvent = {
+        title: booking.description ?? 'Evento',
+        backgroundColor: bgColor,
+        borderColor: bgColor,
+        textColor: '#000000',
+        extendedProps: { booking },
+      };
+
+      if (booking.date) {
+        const parsedDate = parseDate(booking.date);
+        const start = new Date(`${parsedDate}T${normalizeTime(booking.start_time)}`);
+        const end = new Date(`${parsedDate}T${normalizeTime(booking.end_time)}`);
+        allEvents.push({ ...baseEvent, id: booking.id, start, end });
+      }
+
+      if (typeof booking.repeat === 'string' && typeof booking.repeat_day === 'string') {
+        const repeatType = booking.repeat.toLowerCase();
+        const repeatDay = getDayNumber(booking.repeat_day);
+        if (repeatDay === -1) return;
+        let current = new Date(startDate);
+
+        while (isBefore(current, endDate)) {
+          const isMatch =
+            repeatType === 'day' ||
+            (repeatType === 'week' && current.getDay() === repeatDay) ||
+            (repeatType === 'month' && current.getDate() === repeatDay);
+
+          if (isMatch) {
+            const dateStr = current.toISOString().split('T')[0];
+            const start = new Date(`${dateStr}T${normalizeTime(booking.start_time)}`);
+            const end = new Date(`${dateStr}T${normalizeTime(booking.end_time)}`);
+            allEvents.push({
+              ...baseEvent,
+              id: `${booking.id}-${dateStr}`,
+              title: `${baseEvent.title} (repetido)`,
+              start,
+              end,
+            });
+          }
+          current = addDays(current, 1);
+        }
+      }
+    });
+
+    return allEvents;
+  }, [bookings, selectedRooms]);
+
+  return (
+    <div className="flex flex-col md:flex-row min-h-screen">
+      <aside className="md:w-72 bg-gray-100 border-r px-4 py-6 hidden md:block">
+        <h2 className="text-lg font-bold mb-4">Salas</h2>
+        {rooms?.map((room) => {
+          const color = getColorFromRoomName(room.name);
+          return (
+            <label key={room.id} className="flex items-center space-x-2 mb-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={selectedRooms.size === 0 || selectedRooms.has(room.id)}
+                onChange={() => toggleRoom(room.id)}
+              />
+              <span className="flex items-center space-x-1">
+                <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: color }}></span>
+                <span className="text-sm">{room.name}</span>
+              </span>
+            </label>
+          );
+        })}
+        <button className="mt-4 text-blue-600 underline text-sm" onClick={() => setSelectedRooms(new Set())}>
+          Limpar Filtros
+        </button>
+      </aside>
+
+      <main className="flex-grow w-full p-6 min-w-0 relative">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">Agenda de Reservas</h1>
+          {isFetchingBookings && (
+            <div className="flex items-center gap-2 text-sm text-gray-500 animate-pulse">
+              <Loader size={18} className="animate-spin" /> Atualizando...
+            </div>
+          )}
         </div>
+
+        {isFetchingBookings && (
+          <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50">
+            <Loader size={32} className="animate-spin text-gray-600" />
+          </div>
+        )}
+
+        <div className="overflow-x-hidden">
+          <FullCalendar
+            key={bookings?.length}
+            ref={calendarRef}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="timeGridWeek"
+            locale={ptBrLocale}
+            weekends={true}
+            height="auto"
+            slotMinTime="09:00:00"
+            slotMaxTime="23:59:00"
+            headerToolbar={{
+              start: 'prev,next today',
+              center: 'title',
+              end: 'dayGridMonth,timeGridWeek,timeGridDay'
+            }}
+            events={events}
+            eventClick={(info) => {
+              const { booking } = info.event.extendedProps;
+              if (booking?.id) setSelectedBooking(booking);
+            }}
+            eventDidMount={(info) => {
+              info.el.classList.add('transition-transform', 'hover:scale-[1.02]', 'hover:shadow-md', 'rounded-md');
+            }}
+            datesSet={(arg) => {
+              setCurrentDate(arg.start); // Salva a posição atual do calendário
+            }}
+          />
+        </div>
+
+        {selectedBooking && (
+          <BookingEditPopup
+            booking={selectedBooking}
+            onClose={() => setSelectedBooking(null)}
+            onSaved={() => refetchBookings()}
+          />
+        )}
+
+        <div className="absolute top-6 right-6 z-10">
+          <BookingForm refetch={refetchBookings} />
+        </div>
+      </main>
     </div>
-    if (!data) return <div>Carregando...</div>
-    return (
-        <div className='gap-8 z-0'>
-            {data?.map((booking: Booking) => {
-                const { endTime, startTime, room, user, date, _id, description } = booking
-                const [year, month, day] = (date?.split('-') || ['0000', '00', '00']);
-                const formattedDate = `${year}-${month}-${day}`;
-
-                const timeStart = new Date(startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                const timeEnd = new Date(endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                const dayOfWeek = new Date(formattedDate).toLocaleDateString('pt-BR', { weekday: 'long' });
-                const monthName = new Date(formattedDate).toLocaleDateString('pt-BR', { month: 'long' });
-
-                return (
-                    <div key={_id} className="border rounded-lg flex-row flex justify-between w-full my-4">
-                        <div className='flex flex-row w-[100%]'>
-                            <div className='flex-col w-[80px] h-full py-3 flex md:px-6 md:py-2 w-[20%] justify-center items-center border-r'>
-                                <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{dayOfWeek.slice(0, 3)}</span>
-                                <span className='md:text-[36px] md:leading-[32px] text-[24px] leading-[26px] font-bold uppercase'>{day}</span>
-                                <span className='md:text-[16px] md:leading-[24px] text-[14px] leading-[14px] uppercase'>{monthName.slice(0, 3)}</span>
-                            </div>
-                            <div className='flex-col h-[100%] flex px-4 py-4 gap-2 justify-center w-[80%]'>
-                                <div className='flex-row flex gap-2'>
-                                    <div className='flex-row flex gap-2 items-center opacity-70'>
-                                        <Clock size={12} />
-                                        <span className='text-[12px] md:text-[18px] md:leading-[24px] leading-[12px]'>{timeStart} - {timeEnd}</span>
-                                    </div>
-                                    <div className='flex-row flex gap-2 items-center opacity-70'>
-                                        <User size={12} />
-                                        <span className='text-[12px] md:text-[18px] md:leading-[24px] leading-[12px]'>{user?.name.length > 16 ? user?.name.slice(0, 16) + '...' : user?.name}</span>
-                                    </div>
-                                </div>
-                                <div className='flex-row flex gap-2 items-center opacity-70'>
-                                    <MapPin size={12} />
-                                    <span className='text-[12px] md:text-[18px] md:leading-[24px] leading-[12px]'>{room} - {description?.length > 24 ? description?.slice(0, 21) + '...' : description}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='flex flex-col border-l'>
-                            <div className='flex-row flex px-4 h-full items-center'>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" className="h-12 w-12">
-                                            <Phone className="h-16 w-16" />
-                                            <span className="sr-only">Abrir menu</span>
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuLabel>Contato</DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem>
-                                            <a
-                                                href={`https://wa.me/55${user?.phone?.replace(/[()\s-]/g, '')}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center"
-                                            >
-                                                WhatsApp
-                                            </a>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            <a href={`tel:+55${user?.phone}`} className="flex items-center">
-                                                Ligar
-                                            </a>
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </div>
-                        </div>
-
-                    </div>
-                )
-            }
-            )}
-        </div>
-
-    )
+  );
 }

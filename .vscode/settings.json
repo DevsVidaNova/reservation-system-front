@@ -22,11 +22,11 @@
         "**/components.json": true,
         "**/next.config.mjs": true,
         "**/eslint.config.js": true,
-        "**/public": false,
+        "**/public": true,
         "**/app/favicon.ico": true,
         "**/app/global.css": true,
         "**/app/layout.tsx": false,
         "**/app/page.js": true,
         "**/lib": true,
     }
-}
+}   

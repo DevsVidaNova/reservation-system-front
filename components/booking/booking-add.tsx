@@ -1,295 +1,345 @@
-"use client"
-import { useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { format } from "date-fns"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Calendar } from "@/components/ui/calendar"
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { parse, format as formatDateFns } from "date-fns";
+
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { addBooking, } from "@/app/api/booking"
-import { useQuery } from "@tanstack/react-query"
-import { Room } from "@/app/api/types"
-import { listRooms } from "@/app/api/rooms"
-import { HelpCircle, Users } from "lucide-react"
-import Link from "next/link"
+  Calendar,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  Input,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
+  Button,
+  Message
+} from "@/components/ui";
 
-const blockedSchedules = [
-  { day: 'Friday', room: 'Espaço Multi', start: '19:30', end: '21:00', event: 'Start' },
-  { day: 'Friday', room: 'Salão de Culto', start: '20:00', end: '22:00', event: 'Role' },
-  { day: 'Saturday', room: 'Salão de Culto', start: '20:00', end: '22:00', event: 'Deeper' },
-  { day: 'Sunday', room: 'Espaço Multi', start: '09:00', end: '12:00', event: 'EBD e Culto Kids' },
-  { day: 'Sunday', room: 'Salão de Culto', start: '09:00', end: '22:00', event: 'Culto' }
+import { useQuery } from "@tanstack/react-query";
+import { ListRoom } from "@/app/__api/types";
+import { addBooking } from "@/app/__api/booking";
+import { listRooms } from "@/app/__api/rooms";
+
+import { CalendarSearch, CalendarX2, HelpCircle, Users } from "lucide-react";
+import Link from "next/link";
+
+const formSchema = z
+  .object({
+    description: z.string().min(2, { message: "A descrição deve ter pelo menos 2 palavras." }),
+    room: z.string({ required_error: "Por favor, selecione uma sala." }),
+    start_time: z.string({ required_error: "Por favor, insira a hora de início." }),
+    end_time: z.string({ required_error: "Por favor, insira a hora de término" }),
+    date: z.string().optional(),
+    repeat: z.string().optional(),
+    day_repeat: z.string().optional(),
+  })
+  .refine(
+    (data) => data.day_repeat || (data.date && data.date.length === 10),
+    {
+      message: "Informe uma data válida ou escolha um intervalo de repetição.",
+      path: ["date"],
+    }
+  );
+
+const repeats = [
+  { id: "null", name: "Nenhum dia" },
+  { id: "day", name: "Diariamente" },
+  { id: "week", name: "Semanalmente" },
+  { id: "month", name: "Mensalmente" },
 ];
 
-const formSchema = z.object({
-  description: z.string().min(2, {
-    message: "A descrição deve ter pelo menos 2 palavras.",
-  }),
-  room: z.string({
-    required_error: "Por favor, selecione uma sala.",
-  }),
-  date: z.string({
-    required_error: "Por favor, selecione uma data.",
-  }).refine((val) => {
-    const [day, month, year] = val.split("/").map(Number);
-    const selectedDate = new Date(year, month - 1, day);5
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0); // Remove time part for comparison
-    return selectedDate >= currentDate;
-  }, {
-    message: "A data não pode ser anterior à data atual.",
-  }),
-  startTime: z.string().nonempty("Por favor, selecione uma hora de início."),
-  endTime: z.string().nonempty("Por favor, selecione uma hora de término."),
-})
+const days = [
+  { id: "0", name: "Domingo" },
+  { id: "1", name: "Segunda" },
+  { id: "2", name: "Terça" },
+  { id: "3", name: "Quarta" },
+  { id: "4", name: "Quinta" },
+  { id: "5", name: "Sexta" },
+  { id: "6", name: "Sábado" },
+];
 
 export function BookingForm({ refetch }: { refetch: () => void }) {
-  const [open, setOpen] = useState(false)
-
-  const { data: rooms, error: errorList, isLoading, } = useQuery<Room[]>({
-    queryKey: ['list rooms'],
-    queryFn: async () => {
-      const res = await listRooms(1);
-      return res;
-    },
-  });
-
-  /*
-  function isBlocked(date, room, startTime, endTime) {
-    const day = new Date(date.split("/").reverse().join("-")).toLocaleDateString('en-US', { weekday: 'long' });
-  
-    return blockedSchedules.some(schedule => {
-      return (
-        schedule.day === day &&
-        schedule.room === room &&
-        (
-          (startTime >= schedule.start && startTime < schedule.end) ||
-          (endTime > schedule.start && endTime <= schedule.end) ||
-          (startTime <= schedule.start && endTime >= schedule.end)
-        )
-      );
-    });
-  }
-  */
-
-  
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      description: "",
-      room: "",
-      date: "",
-      startTime: "",
-      endTime: "",
-    },
-  })
-  const [success, setsuccess] = useState('');
-  const [error, seterror] = useState('');
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setsuccess('')
-    seterror('')
+    defaultValues: { repeat: "null" }
+  });
 
-    /* 
-    if (isBlocked(values.date, values.room, values.startTime, values.endTime)) {
-      seterror('Este horário está indisponível para reserva devido a um evento programado.');
-      return;
-    }
-    */
-    
-    try {
-      const response = await addBooking(values)
-      if (response.message === "Conflito de horários para essa sala.") {
-        seterror('Conflito de horários para essa sala. Por favor, tente outro horário.')
-        return
-      }
-      console.log(response)
-      if (response) {
-        setsuccess('Reserva feita com sucesso!')
-        setTimeout(() => {
-          setOpen(false)
-          setsuccess('')
-          seterror('')
-          form.reset()
-          refetch()
-        }, 1500);
-      } 
-    } catch (error: any) {
-      seterror(error.message)
-    }
-  }
   const [openCalendar, setOpenCalendar] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  const { data: rooms } = useQuery<ListRoom[]>({
+    queryKey: ["list rooms"],
+    queryFn: listRooms
+  });
+
+  const hasRepeat = form.watch("repeat");
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setSuccess("");
+    setError("");
+    setLoading(true);
+  
+    try {
+      const payload = {
+        ...values,
+        date: values.date ?? undefined,
+        repeat: values.repeat === "null" ? null : values.repeat,
+        day_repeat: values.repeat === "null" ? null : values.day_repeat,
+      };
+  
+      const res = await addBooking(payload);
+  
+      if (res?.error) {
+        if (/reserva nesse horário/i.test(res.error)) {
+          setError("⚠️ Já existe uma reserva nesse horário para essa sala.");
+        } else {
+          setError(`❌ Erro ao salvar: ${res.error}`);
+        }
+        return;
+      }
+  
+      setSuccess("✅ Reserva feita com sucesso!");
+      await refetch();
+      form.reset({ repeat: "null" });
+    } catch (err: any) {
+      console.error("❌ Erro inesperado:", err);
+      setError("Erro inesperado ao salvar a reserva.");
+    } finally {
+      setLoading(false);
+    }
+  }  
+  
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild >
-        <Button variant="default" className="bg-amber-400 z-20  hover:bg-amber-100 hover:text-amber-500">Fazer Reserva</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[455px]">
+    <Drawer>
+      <DrawerTrigger asChild>
+        <Button className="bg-amber-500 z-20 hover:bg-amber-100 hover:text-amber-500">
+          Fazer Reserva
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <div className="container mx-auto px-4">
+          <DrawerHeader>
+            <DrawerTitle>Reserva de Sala</DrawerTitle>
+            <DrawerDescription>Preencha os detalhes para fazer sua reserva.</DrawerDescription>
+          </DrawerHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
-        <DialogHeader>
-          <DialogTitle>Reserva de Sala</DialogTitle>
-          <DialogDescription>Preencha os detalhes para fazer sua reserva.</DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descrição</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Descrição da reserva" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="room"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sala</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} >
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
                     <FormControl>
-                      <div className="flex-row flex gap-2">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma sala" />
-                        </SelectTrigger>
-                        <Link href="/gallery">
-                          <div className="w-[62px] h-[60px] border rounded-[4px] items-center justify-center flex-col flex">
-                            <HelpCircle size={24} />
-                          </div>
-                        </Link>
-                      </div>
+                      <Input placeholder="Descrição da reserva" {...field} />
                     </FormControl>
-                    <SelectContent >
-                      {rooms?.map((room: Room) => {
-                        const { _id, name, size, description, exclusive, status, } = room
-                        return (
-                          <SelectItem value={name}>
-                            <div className="flex flex-col">
-                              <span className="font-semibold text-[14px]">
-                                {name} {exclusive ? " (Exclusiva)" : ""}
-                              </span>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="room"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sala</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <div className="flex gap-2">
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma sala" />
+                          </SelectTrigger>
+                          <Link href="/gallery">
+                            <div className="w-[52px] h-[48px] border rounded flex items-center justify-center">
+                              <HelpCircle size={24} />
                             </div>
-                            <div className="flex flex-row items-center gap-2 opacity-60">
-                              <Users size={14} /> {size} pessoas
+                          </Link>
+                        </div>
+                      </FormControl>
+                      <SelectContent>
+                        {rooms?.map((room) => (
+                          <SelectItem key={room.id} value={room.id}>
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-sm">
+                                {room.name} {room.exclusive ? " (Exclusiva)" : ""}
+                              </span>
+                              <div className="flex gap-2 items-center text-xs opacity-60">
+                                <Users size={14} /> {room.size} pessoas
+                              </div>
                             </div>
                           </SelectItem>
-                        )
-                      })}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Data</FormLabel>
-                  <div className="flex items-center space-x-2">
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="dd/mm/yyyy"
-                        value={field.value || ''}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^0-9/]/g, ""); // Permite apenas números e "/"
-                          const formattedValue = value
-                            .replace(/^(\d{2})$/g, "$1/") // Adiciona "/" após o dia
-                            .replace(/^(\d{2}\/\d{2})$/g, "$1/"); // Adiciona "/" após o mês
-                          if (formattedValue.length <= 10) {
-                            field.onChange(formattedValue); // Atualiza o valor apenas se estiver no limite
-                          }
-                        }}
-                        maxLength={10} // Limita o tamanho do input a "dd/mm/yyyy"
-                      />
-                    </FormControl>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                    <Button type="button" className="w-full rounded-[6px] h-[48px]" onClick={() => setOpenCalendar(!openCalendar)}>
-                      {openCalendar ? 'Fechar calendário' : 'Abrir calendário'}
-                    </Button>
-                  </div>
-                  {openCalendar && (
-                    <div className="absolute z-10 mt-2 bg-white shadow-md rounded">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={(date) => {
-                          if (date) {
-                            const formattedDate = format(date, "dd/MM/yyyy"); // Formata a data no padrão desejado
-                            field.onChange(formattedDate); // Define o valor formatado
-                          }
-                          setOpenCalendar(false); // Fecha o calendário após seleção
-                        }}
-                        initialFocus
-                      />
-                    </div>
+              <div className="grid grid-cols-2 gap-4 relative">
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Data</FormLabel>
+                      <div className="flex items-center gap-2">
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="dd/mm/yyyy"
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              let value = e.target.value.replace(/\D/g, "");
+                              if (value.length > 8) return;
+                              if (value.length > 4) value = value.replace(/^(\d{2})(\d{2})(\d{0,4})/, "$1/$2/$3");
+                              else if (value.length > 2) value = value.replace(/^(\d{2})(\d{0,2})/, "$1/$2");
+                              field.onChange(value);
+                            }}
+                            maxLength={10}
+                          />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          className="w-[48px] h-[48px] rounded"
+                          onClick={() => setOpenCalendar(!openCalendar)}
+                        >
+                          {openCalendar ? <CalendarX2 /> : <CalendarSearch />}
+                        </Button>
+                      </div>
+                      {openCalendar && (
+                        <div className="absolute z-50 top-full mt-2 left-0 bg-white shadow-md rounded">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? parse(field.value, "dd/MM/yyyy", new Date()) : undefined}
+                            onSelect={(date) => {
+                              if (date) {
+                                const formattedDate = formatDateFns(date, "dd/MM/yyyy");
+                                field.onChange(formattedDate);
+                              }
+                              setOpenCalendar(false);
+                            }}
+                            initialFocus
+                          />
+                        </div>
+                      )}
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="startTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Hora Início</FormLabel>
-                    <FormControl>
-                      <Input type="time" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="endTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Hora Final</FormLabel>
-                    <FormControl>
-                      <Input type="time" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <DialogFooter>
-              <div className="flex flex-col w-full gap-4">
-                {error && <div className='bg-red-200 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
-                {success && <div className='bg-green-200 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
-                <Button>
-                  <button type="submit" style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }}>Concluir reserva</button>
-                </Button>
-              </div>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  )
-}
+                />
 
+                <FormField
+                  control={form.control}
+                  name="repeat"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Repetir</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-[48px]">
+                            <SelectValue placeholder="Nenhum dia" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {repeats.map(({ id, name }) => (
+                            <SelectItem value={id} key={id}>{name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {hasRepeat !== 'null' && (
+                <FormField
+                  control={form.control}
+                  name="day_repeat"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Qual dia deve se repetir?</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-[48px]">
+                            <SelectValue placeholder="Segunda" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {days.map(({ id, name }) => (
+                            <SelectItem value={id} key={id}>{name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="start_time"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hora Início</FormLabel>
+                      <FormControl>
+                        <Input type="time" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="end_time"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hora Final</FormLabel>
+                      <FormControl>
+                        <Input type="time" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <DrawerFooter>
+                <div className="flex flex-col w-full gap-4">
+                  <Message success={success} error={error} />
+                  <Button type="submit" disabled={loading} className="w-full">
+                    {loading ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <CalendarSearch className="animate-spin" size={16} />
+                        Salvando...
+                      </div>
+                    ) : (
+                      "Concluir reserva"
+                    )}
+                  </Button>
+                  <DrawerClose>
+                    <Button variant="secondary" className="w-full">Fechar</Button>
+                  </DrawerClose>
+                </div>
+              </DrawerFooter>
+            </form>
+          </Form>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+}

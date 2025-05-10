@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from 'react'
+import {  useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, } from "@/components/ui/card"
 import { UserAddForm } from '@/components/user/user-add'
@@ -7,11 +7,11 @@ import { useQuery } from '@tanstack/react-query'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { UserList } from '@/app/api/types'
+import { ListUser } from '@/app/__api/types'
 import { EllipsisVertical, Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
-import { excludeUserById, listUsers } from '@/app/api/admin'
+import { excludeUserById, listUsers } from '@/app/__api/admin'
 import { UserEditForm } from '@/components/user/user-edit'
 import {
   Popover,
@@ -20,31 +20,22 @@ import {
 } from "@/components/ui/popover"
 
 export default function Users() {
-  const [page, setpage] = useState(1);
-  const { data: users, error, isLoading, refetch } = useQuery<UserList[]>({
-    queryKey: ['bookings'],
-    queryFn: async () => {
-      const res = await listUsers(page);
-      return res;
-    },
+  const { data: users, error, isLoading, refetch } = useQuery<ListUser[]>({
+    queryKey: ['users'],
+    queryFn: listUsers
   });
-  useEffect(() => {
-    if (page > 1) {
-      refetch()
-    }
-  }, [page])
 
   if (isLoading) return <div className="flex flex-col w-full px-4 py-4 container"><p>Carregando...</p></div>
   if (error) return <div className="flex flex-col w-full px-4 py-4 container"><p>Erro ao carregar usuários</p></div>
 
   return (
     <div className="flex flex-col w-full px-3 py-4 container">
-      <ListUsers users={users || []} refetch={refetch} setpage={setpage} page={page} />
+      <ListUsers users={users || []} refetch={refetch}  />
     </div>
   )
 }
 
-const ListUsers = ({ users, refetch, setpage, page }: { users: UserList[], refetch: () => void, setpage: (page: number) => void; page: number, }) => {
+const ListUsers = ({ users, refetch, }: { users: ListUser[], refetch: () => void,  }) => {
   return (
     <>
       <div className=' flex flex-col  gap-4'>
@@ -55,7 +46,7 @@ const ListUsers = ({ users, refetch, setpage, page }: { users: UserList[], refet
           </div>
         </div>
         <div>
-          <TableUsers users={users || []} refetch={refetch} page={page} setpage={setpage} />
+          <TableUsers users={users || []} refetch={refetch} />
         </div>
       </div>
       <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
@@ -65,13 +56,13 @@ const ListUsers = ({ users, refetch, setpage, page }: { users: UserList[], refet
   )
 }
 
-const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refetch: () => void, setpage: (page: number) => void; page: number, }) => {
+const TableUsers = ({ users, refetch, }: { users: ListUser[], refetch: () => void, }) => {
   if (!users) return <p>Carregando...</p>
 
   const [confirmation, setconfirmation] = useState('');
   const [openExclude, setOpenExclude] = useState(false)
 
-  const handleExcludeUser = async (id: string, confirmation: string) => {
+  const handleExclude = async (id: string, confirmation: string) => {
     if (confirmation !== 'sim') {
       return
     }
@@ -98,9 +89,9 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
         <TableBody>
           {users?.map(user => (
             <TableRow key={user.email}>
-              <TableCell className='text-[12px] md:text-[18px] leading-none'>{user.name}</TableCell>
-              <TableCell className='text-[12px] md:text-[18px] leading-none'>{user.phone}</TableCell>
-              <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
+              <TableCell className='text-[12px] md:text-[18px] leading-none font-medium'>{user.name}</TableCell>
+              <TableCell className='text-[12px] md:text-[18px] leading-none font-medium'>{user.phone}</TableCell>
+              <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none font-medium' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
               <TableCell className=''>
                 <div className=' md:flex hidden gap-3 flex-row '>
                   <Dialog open={openExclude} onOpenChange={setOpenExclude}>
@@ -123,12 +114,12 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
                       </DialogHeader>
                       <DialogFooter className="border-t-2 pt-[16px]">
                         <DialogClose asChild>
-                          <Button onClick={() => handleExcludeUser(user._id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir usuário</Button>
+                          <Button onClick={() => handleExclude(user.user_id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir usuário</Button>
                         </DialogClose>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <UserEditForm id={user._id} refetch={refetch} defaultValue={user} />
+                  <UserEditForm id={user.user_id} refetch={refetch} defaultValue={user} />
                   </div>
                 <div className='block md:hidden'>
                   <Popover>
@@ -157,12 +148,12 @@ const TableUsers = ({ users, refetch, setpage, page }: { users: UserList[], refe
                             </DialogHeader>
                             <DialogFooter className="border-t-2 pt-[16px]">
                               <DialogClose asChild>
-                                <Button onClick={() => handleExcludeUser(user._id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir usuário</Button>
+                                <Button onClick={() => handleExclude(user.user_id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir usuário</Button>
                               </DialogClose>
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
-                        <UserEditForm id={user._id} refetch={refetch} defaultValue={user} />
+                        <UserEditForm id={user.user_id} refetch={refetch} defaultValue={user} />
                       </div>
                     </PopoverContent>
                   </Popover>

@@ -62,15 +62,27 @@ export const singleBooking = async (id: string): Promise<ListBooking> => {
         }
     }
 };
-export const addBooking = async (data: CreateBooking): Promise<CreateBooking> => {
+export async function addBooking(payload: any) {
     try {
-        const res = await fetchWithAuth<CreateBooking>("/booking", { method: "POST", data: data });
-        return res;
-    } catch (error) {
-        console.error("Erro ao adicionar reserva:", error);
-        throw new Error(error.error);
+      const response = await fetch("/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        return { error: data?.error || "Erro ao salvar reserva" };
+      }
+  
+      return data;
+    } catch (err) {
+      console.error("Erro na API addBooking:", err);
+      return { error: "Erro de conexão com o servidor." };
     }
-};
+  }
+  
 export const editBooking = async (id: string, data: CreateBooking): Promise<CreateBooking> => {
     try {
         const res = await fetchWithAuth<CreateBooking>(`/booking/${id}`, {

@@ -1,11 +1,12 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getToken } from "../hooks/token";
 
-const baseURL = "https://backagenda.onrender.com";
+//const baseURL = "https://www.espacovidanova.com.br/api";
+const baseURL = "http://localhost:8080";
 
 interface FetchApiOptions extends AxiosRequestConfig {
   headers?: Record<string, string>;
-  data?: Record<string, unknown>;
+  data?: Record<string, any>;
   params?: Record<string, string | number | boolean | unknown>;
 }
 
@@ -36,10 +37,10 @@ export async function fetchApi<T = unknown>(
   }
 }
 
-export async function fetchWithAuth<T = unknown>(
+export async function fetchWithAuth<T = Record<string, unknown>>(
   url: string,
   options: FetchApiOptions = {}
-): Promise<T> {
+): Promise<T> { 
   try {
     const token = await getToken();
     if (!token) {
@@ -57,10 +58,10 @@ export async function fetchWithAuth<T = unknown>(
       data: options.data || undefined,
     });
 
-    return response.data;
+    return response.data;  
   } catch (error: any) {
-    console.log(error.request)
     console.error(`Error fetching with auth at ${url}:`, error.response?.data || error.message);
     throw error.response?.data || error;
   }
 }
+

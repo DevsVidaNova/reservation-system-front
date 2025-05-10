@@ -3,20 +3,23 @@ import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
+
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { editRoom,  } from "@/app/api/rooms"
+    Drawer, Message,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+    Input,
+    Checkbox,
+    Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
+    Button
+} from "@/components/ui/"
+
+import { editRoom, } from "@/app/__api/rooms"
 import { Pencil } from "lucide-react"
 
 const formSchema = z.object({
@@ -48,7 +51,7 @@ export function RoomEditForm({ id, refetch, defaultValues }: { id: string, refet
     useEffect(() => {
         if (defaultValues) {
             form.setValue("name", defaultValues.name)
-            form.setValue("size", defaultValues.size)
+            form.setValue("size", parseInt(defaultValues.size))
             form.setValue("description", defaultValues.description)
             form.setValue("exclusive", defaultValues.exclusive)
             form.setValue("status", defaultValues.status)
@@ -73,71 +76,77 @@ export function RoomEditForm({ id, refetch, defaultValues }: { id: string, refet
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
-                    <Pencil size={24} />
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[455px]">
-                <DialogHeader>
-                    <DialogTitle>Editar Sala</DialogTitle>
-                    <DialogDescription>Preencha os dados da sala e clique em salvar.</DialogDescription>
-                </DialogHeader>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField control={form.control} name="name" render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Nome</FormLabel>
-                                <FormControl><Input placeholder="Nome da sala" {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
+        <div>
+            <Drawer open={open} onOpenChange={setOpen}>
+                <DrawerTrigger asChild>
+                    <Button variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+                        <Pencil size={24} />
+                    </Button>
+                </DrawerTrigger>
+                <DrawerContent >
+                    <div className="container mx-auto px-4">
+                        <DrawerHeader>
+                            <DrawerTitle>Editar Sala</DrawerTitle>
+                            <DrawerDescription>Preencha os dados da sala e clique em salvar.</DrawerDescription>
+                        </DrawerHeader>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                <FormField control={form.control} name="name" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Nome</FormLabel>
+                                        <FormControl><Input placeholder="Nome da sala" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
 
-                        <FormField control={form.control} name="size" render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Capacidade</FormLabel>
-                                <FormControl>
-                                    <Input type="number" placeholder="Quantidade de pessoas" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
+                                <FormField control={form.control} name="size" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Capacidade</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" placeholder="Quantidade de pessoas" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
 
-                        <FormField control={form.control} name="description" render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Descrição</FormLabel>
-                                <FormControl><Input placeholder="Descrição da sala" {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
+                                <FormField control={form.control} name="description" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Descrição</FormLabel>
+                                        <FormControl><Input placeholder="Descrição da sala" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
 
-                        <FormField control={form.control} name="exclusive" render={({ field }) => (
-                            <FormItem className="flex items-center space-x-2">
-                                <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                                <FormLabel>Exclusiva</FormLabel>
-                            </FormItem>
-                        )} />
+                                <FormField control={form.control} name="exclusive" render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                                        <FormLabel>Exclusiva</FormLabel>
+                                    </FormItem>
+                                )} />
 
-                        <FormField control={form.control} name="status" render={({ field }) => (
-                            <FormItem className="flex items-center space-x-2">
-                                <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
-                                <FormLabel>Ativa</FormLabel>
-                            </FormItem>
-                        )} />
+                                <FormField control={form.control} name="status" render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2">
+                                        <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                                        <FormLabel>Ativa</FormLabel>
+                                    </FormItem>
+                                )} />
 
-                        <DialogFooter className="border-t-2 pt-[16px]">
-                            <div className="flex flex-col w-full">
-                                {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
-                                {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
-                                <Button>
-                                    <button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Salvar sala</button>
-                                </Button>
-                            </div>
-                        </DialogFooter>
-                    </form>
-                </Form>
-            </DialogContent>
-        </Dialog>
+                                <DrawerFooter className="border-t-2 pt-[16px]">
+                                    <div className="flex flex-col w-full gap-4">
+                                        <Message success={success} error={error} />
+                                        <Button>
+                                            <button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Salvar sala</button>
+                                        </Button>
+                                        <DrawerClose>
+                                            <Button variant="secondary" className="w-full">Fechar</Button>
+                                        </DrawerClose>
+                                    </div>
+                                </DrawerFooter>
+                            </form>
+                        </Form>
+                    </div>
+                </DrawerContent>
+            </Drawer>
+        </div>
     )
 }

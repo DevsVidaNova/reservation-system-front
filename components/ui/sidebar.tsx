@@ -1,4 +1,4 @@
-import { BookCheck, Calendar, Home, LogOut, Users } from "lucide-react"
+import { AlarmClockCheck, BookCheck, Calendar, CalendarRange, Captions, Church, Home, LogOut, Users } from "lucide-react"
 import Link from "next/link"
 import { useRouter, usePathname } from 'next/navigation'
 import { deleteToken } from '@/hooks/token';
@@ -40,9 +40,19 @@ export function AppSidebar() {
             icon: <BookCheck />,
         },
         {
+            title: "Escalas",
+            url: "/dashboard/scales",
+            icon: <Captions />,
+        },
+        {
             title: "Usuários",
             url: "/dashboard/users",
             icon: <Users />,
+        },
+        {
+            title: "Membros",
+            url: "/dashboard/members",
+            icon: <Church />,
         },
         {
             title: "Alterar tema",

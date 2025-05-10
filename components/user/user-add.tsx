@@ -3,19 +3,21 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { registerUser } from "@/app/api/user"
+    Button,
+    Input,
+    Drawer,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+    DrawerClose,
+    Message,
+    Form, FormControl, FormField, FormItem, FormLabel, FormMessage
+} from "@/components/ui/"
+import { registerUser } from "@/app/__api/user"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -30,10 +32,10 @@ const formSchema = z.object({
     password: z.string().min(6, {
         message: "A senha deve ter pelo menos 6 caracteres.",
     }),
+    role: z.string().optional(),
 })
 
 export function UserAddForm({ refetch }: { refetch: () => void }) {
-    const [open, setOpen] = useState(false)
     const [error, seterror] = useState('');
     const [success, setsuccess] = useState('');
 
@@ -50,11 +52,11 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         seterror('')
         setsuccess('')
+        console.log(values)
         try {
             const response = await registerUser(values)
             if (response) {
                 setsuccess('Usuário criado com sucesso!')
-                setOpen(false)
                 form.reset()
                 refetch()
             }
@@ -64,92 +66,112 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild >
-                <Button variant="default">Criar usuário</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[455px]">
-
-                <DialogHeader>
-                    <DialogTitle>Criar usuário</DialogTitle>
-                    <DialogDescription>Preencha os dados do usuário para continuar.</DialogDescription>
-                </DialogHeader>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Nome Completo</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Nome completo" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Celular (com DDD)</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="(47) 99123-4567"
-                                            {...field}
-                                            onChange={(e) => {
-                                                const value = e.target.value
-                                                    .replace(/\D/g, "")
-                                                    .replace(/^(\d{2})(\d)/g, "($1) $2")
-                                                    .replace(/(\d{5})(\d)/, "$1-$2")
-                                                    .slice(0, 15)
-                                                field.onChange(value)
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>E-mail</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="E-mail" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Senha</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" placeholder="Senha" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}  
-                        />
-                        <DialogFooter className="border-t-2 pt-[16px] ">
-                            <div className="flex flex-col w-full">
-                                {success && <div className='bg-green-200 mb-4 py-2 px-4 rounded-md '><p className="text-green-500">{success}</p></div>}
-                                {error && <div className='bg-red-200 mb-4 py-2 px-4 rounded-md '><p className="text-red-500">{error}</p></div>}
-                                <Button type="submit" className="text-[18px] font-semibold py-6 rounded-full w-full">Criar usuário</Button>
-                            </div>
-                        </DialogFooter>
-                    </form>
-                </Form>
-            </DialogContent>
-        </Dialog>
+        <div>
+            <Drawer>
+                <DrawerTrigger asChild >
+                    <Button variant="default">Criar usuário</Button>
+                </DrawerTrigger>
+                <DrawerContent >
+                    <div className="container mx-auto px-4">
+                        <DrawerHeader>
+                            <DrawerTitle>Criar usuário</DrawerTitle>
+                            <DrawerDescription>Preencha os dados do usuário para continuar.</DrawerDescription>
+                        </DrawerHeader>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Nome Completo</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Nome completo" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="phone"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Celular (com DDD)</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="(47) 99123-4567"
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value
+                                                            .replace(/\D/g, "")
+                                                            .replace(/^(\d{2})(\d)/g, "($1) $2")
+                                                            .replace(/(\d{5})(\d)/, "$1-$2")
+                                                            .slice(0, 15)
+                                                        field.onChange(value)
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>E-mail</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="E-mail" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Senha</FormLabel>
+                                            <FormControl>
+                                                <Input type="password" placeholder="Senha" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="role"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Cargo</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="User ou admin" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <DrawerFooter className="border-t-2 pt-[16px] ">
+                                    <div className="flex flex-col w-full gap-4">
+                                        <Message success={success} error={error} />
+                                        <Button>
+                                            <button type='submit' className="text-[18px] font-semibold py-6 rounded-full w-full cursor-pointer">Criar usuário</button>
+                                        </Button>
+                                        <DrawerClose>
+                                            <Button variant="secondary" className="w-full">Fechar</Button>
+                                        </DrawerClose>
+                                    </div>
+                                </DrawerFooter>
+                            </form>
+                        </Form>
+                    </div>
+                </DrawerContent>
+            </Drawer>
+        </div>
     )
 }
 

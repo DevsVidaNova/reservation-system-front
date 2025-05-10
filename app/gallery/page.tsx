@@ -38,7 +38,7 @@ const items = [
           {items.map((item, index) => (
             <CarouselItem key={index}>
               <Card>
-                <CardContent className="flex aspect-[3/2] items-center justify-center p-2">
+                <CardContent className="flex aspect-3/2 items-center justify-center p-2">
                   <Image
                     src={item.image || "/placeholder.svg"}
                     alt={item.title}

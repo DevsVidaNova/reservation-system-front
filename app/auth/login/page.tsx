@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent,  } from "@/components/ui/card"
-import { loginUser } from '@/app/api/user'
+import { loginUser } from '@/app/__api/user'
 import { Checkbox } from "@/components/ui/checkbox"
 import Link from "next/link"
 
@@ -20,6 +20,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setsucces('')
     setIsLoading(true)
     if (!email || !password) {
       setError('Por favor, preencha todos os campos.')
@@ -30,13 +31,13 @@ export default function Login() {
       const res = await loginUser(email, password, session)
       setsucces('Login efetuado com sucesso.')
       setTimeout(() => {
-        if (res?.user.isAdmin) {
+        if (res?.profile.role == 'admin') {
           router.push('/dashboard')
         } else {
           router.push('/')
         }
       }, 1500);
-    } catch (error: any) {
+    } catch (error) {
       setError('E-mail ou senha incorretos.')
     } finally {
       setIsLoading(false)
@@ -44,7 +45,7 @@ export default function Login() {
   }
   
   const handleWhatsApp = () => {
-  
+    window.open('https://wa.me/554792039515', '_blank')
   }
 
   return (

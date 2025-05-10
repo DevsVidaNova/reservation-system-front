@@ -4,13 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Card, } from "@/components/ui/card"
 import { useQuery } from '@tanstack/react-query'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { EllipsisVertical, Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-
-import { Room } from '@/app/api/types'
-import { deleteRoom, listRooms } from '@/app/api/rooms'
+import { ListRoom } from '@/app/__api/types'
+import { deleteRoom, listRooms } from '@/app/__api/rooms'
 import { RoomAddForm } from '@/components/room/room-add'
 import { RoomEditForm } from '@/components/room/room-edit'
 import {
@@ -18,14 +16,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-
-
 export default function Rooms() {
   const [page, setpage] = useState(1);
-  const { data: rooms, error, isLoading, refetch } = useQuery<Room[]>({
+  const { data: rooms, error, isLoading, refetch } = useQuery<ListRoom[]>({
     queryKey: ['list rooms'],
     queryFn: async () => {
-      const res = await listRooms(page);
+      const res = await listRooms();
       return res;
     },
   });
@@ -45,7 +41,7 @@ export default function Rooms() {
   )
 }
 
-const ListRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch: () => void, setpage: (page: number) => void; page: number, }) => {
+const ListRooms = ({ rooms, refetch, setpage, page }: { rooms: ListRoom[], refetch: () => void, setpage: (page: number) => void; page: number, }) => {
   return (
     <>
       <div className='flex flex-col gap-4'>
@@ -67,13 +63,13 @@ const ListRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch: 
   )
 }
 
-const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch: () => void, setpage: (page: number) => void; page: number, }) => {
+const TableRooms = ({ rooms, refetch,}: { rooms: ListRoom[], refetch: () => void, setpage: (page: number) => void; page: number, }) => {
   if (!rooms) return <p>Carregando...</p>
 
   const [confirmation, setconfirmation] = useState('');
   const [openExclude, setOpenExclude] = useState(false)
 
-  const handleExcludeUser = async (id: string, confirmation: string) => {
+  const handleExclude = async (id: string, confirmation: string) => {
     if (confirmation !== 'sim') {
       return
     }
@@ -102,9 +98,9 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
         </TableHeader>
         <TableBody>
           {rooms?.map(room => {
-            const { _id, name, size, description, exclusive, status, } = room
+            const { id, name, size, description, exclusive, status, } = room
             return (
-              <TableRow key={_id}>
+              <TableRow key={id}>
                 <TableCell className='text-[12px] md:text-[18px] leading-none'>{name}</TableCell>
                 <TableCell className='text-[12px] md:text-[18px] leading-none'>{size}</TableCell>
                 <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none' style={{ wordBreak: 'break-word' }}>{description?.length > 100 ? description.slice(0, 97) + '...' : description}</TableCell>
@@ -135,12 +131,12 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
                           </DialogHeader>
                           <DialogFooter className="border-t-2 pt-[16px]">
                             <DialogClose asChild>
-                              <Button onClick={() => handleExcludeUser(_id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir sala</Button>
+                              <Button onClick={() => handleExclude(id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir sala</Button>
                             </DialogClose>
                           </DialogFooter>
                         </DialogContent>
                       </Dialog>
-                      <RoomEditForm id={_id} refetch={refetch} defaultValues={room} />
+                      <RoomEditForm id={id} refetch={refetch} defaultValues={room} />
                     </div>
                   </div>
 
@@ -171,12 +167,12 @@ const TableRooms = ({ rooms, refetch, setpage, page }: { rooms: Room[], refetch:
                               </DialogHeader>
                               <DialogFooter className="border-t-2 pt-[16px]">
                                 <DialogClose asChild>
-                                  <Button onClick={() => handleExcludeUser(_id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir sala</Button>
+                                  <Button onClick={() => handleExclude(id, confirmation)} style={{ flexGrow: 1, padding: '25px 40px', borderRadius: 100 }} className="text-[18px] font-semibold ">Excluir sala</Button>
                                 </DialogClose>
                               </DialogFooter>
                             </DialogContent>
                           </Dialog>
-                          <RoomEditForm id={_id} refetch={refetch} defaultValues={room} />
+                          <RoomEditForm id={id} refetch={refetch} defaultValues={room} />
                         </div>
                       </PopoverContent>
                     </Popover>
