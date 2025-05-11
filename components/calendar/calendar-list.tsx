@@ -15,7 +15,6 @@ import { addDays, addMonths, isBefore } from "date-fns";
 import { listBookings } from "@/app/__api/booking";
 import { listRooms } from "@/app/__api/rooms";
 import { ListBooking } from "@/app/__api/types";
-import { BookingForm } from "../booking/booking-add";
 import { BookingAddPopup } from "../booking/booking-add-popup";
 import { BookingEditPopup } from "../booking/booking-edit-popup";
 
