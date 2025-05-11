@@ -1,24 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogPortal,
-  DialogOverlay,
-} from "@/components/ui/dialog";
+import { Dialog, DialogPortal } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { parse, format } from "date-fns";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { editBooking, deleteBooking } from "@/app/__api/booking";
 import { useQuery } from "@tanstack/react-query";
 import { listRooms } from "@/app/__api/rooms";
@@ -32,7 +21,7 @@ const formSchema = z.object({
   end_time: z.string(),
   date: z.string().optional(),
   repeat: z.string().optional(),
-  day_repeat: z.string().optional(),
+  day_repeat: z.string().optional()
 });
 
 const days = [
@@ -42,24 +31,16 @@ const days = [
   { id: "3", name: "Quarta" },
   { id: "4", name: "Quinta" },
   { id: "5", name: "Sexta" },
-  { id: "6", name: "Sábado" },
+  { id: "6", name: "Sábado" }
 ];
 
-export function BookingEditPopup({
-  booking,
-  onClose,
-  onSaved,
-}: {
-  booking: any;
-  onClose: () => void;
-  onSaved: () => void;
-}) {
+export function BookingEditPopup({ booking, onClose, onSaved }: { booking: any; onClose: () => void; onSaved: () => void }) {
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const { data: rooms } = useQuery({
     queryKey: ["rooms"],
-    queryFn: listRooms,
+    queryFn: listRooms
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -69,24 +50,19 @@ export function BookingEditPopup({
       room: booking.room?.id || "",
       start_time: booking.start_time,
       end_time: booking.end_time,
-      date: booking.date || "",
+      date: booking.repeat_day ? "" : booking.date || "",
       repeat: booking.repeat || "null",
-      day_repeat: booking.repeat_day || "",
-    },
+      day_repeat: days.find(day => day.name.slice(0, 3) === booking.repeat_day)?.id || ""
+    }
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
-      const formattedDate = values.date
-        ? format(parse(values.date, "dd/MM/yyyy", new Date()), "yyyy-MM-dd")
-        : undefined;
-
       await editBooking(booking.id, {
         ...values,
-        date: formattedDate,
         repeat: values.repeat === "null" ? null : values.repeat,
-        day_repeat: values.repeat === "null" ? null : values.day_repeat,
+        day_repeat: values.repeat === "null" ? null : values.day_repeat
       });
 
       onSaved();
@@ -99,9 +75,6 @@ export function BookingEditPopup({
   }
 
   async function onDelete() {
-    const confirmDelete = window.confirm("Excluir?");
-    if (!confirmDelete) return;
-
     setDeleting(true);
     try {
       await deleteBooking(booking.id);
@@ -126,31 +99,17 @@ export function BookingEditPopup({
     <Dialog open onOpenChange={onClose}>
       <DialogPortal forceMount>
         <AnimatePresence>
-          <motion.div
-            key="overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-md"
-          />
+          <motion.div key="overlay" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }} className="fixed inset-0 z-40 bg-black/40 backdrop-blur-md" />
         </AnimatePresence>
 
         <AnimatePresence>
-          <motion.div
-            key="popup"
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed z-50 left-1/2 top-1/2 w-[95%] max-w-lg -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6"
-          >
-            <button
-              onClick={onClose}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition"
-            >
+          <motion.div key="popup" initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }} className="fixed z-50 left-1/2 top-1/2 w-[95%] max-w-lg -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6">
+            <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition">
               <X size={20} />
             </button>
+
+            <img src="/imgs/banner1.png" alt="banner" className="w-full h-34 rounded-lg object-cover" />
+            <h2 className="text-2xl font-semibold mt-4 mb-2">Editar Reserva</h2>
 
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div>
@@ -171,20 +130,12 @@ export function BookingEditPopup({
 
               <div>
                 <label className="block text-sm font-medium mb-1">Data</label>
-                <Input
-                  placeholder="dd/mm/yyyy"
-                  value={form.watch("date") || ""}
-                  onChange={handleDateInput}
-                  maxLength={10}
-                />
+                <Input placeholder="dd/mm/yyyy" value={form.watch("date") || ""} onChange={handleDateInput} maxLength={10} />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-1">Repetir</label>
-                <Select
-                  value={form.watch("repeat") || "null"}
-                  onValueChange={(val) => form.setValue("repeat", val)}
-                >
+                <Select value={form.watch("repeat") || "null"} onValueChange={val => form.setValue("repeat", val)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Repetição" />
                   </SelectTrigger>
@@ -200,15 +151,12 @@ export function BookingEditPopup({
               {form.watch("repeat") !== "null" && (
                 <div>
                   <label className="block text-sm font-medium mb-1">Dia da Semana</label>
-                  <Select
-                    value={form.watch("day_repeat") || ""}
-                    onValueChange={(val) => form.setValue("day_repeat", val)}
-                  >
+                  <Select value={form.watch("day_repeat") || ""} onValueChange={val => form.setValue("day_repeat", val)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Escolha o dia" />
                     </SelectTrigger>
                     <SelectContent>
-                      {days.map((day) => (
+                      {days.map(day => (
                         <SelectItem key={day.id} value={day.id}>
                           {day.name}
                         </SelectItem>
@@ -220,15 +168,12 @@ export function BookingEditPopup({
 
               <div>
                 <label className="block text-sm font-medium mb-1">Sala</label>
-                <Select
-                  value={form.watch("room")}
-                  onValueChange={(val) => form.setValue("room", val)}
-                >
+                <Select value={form.watch("room")} onValueChange={val => form.setValue("room", val)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Sala" />
                   </SelectTrigger>
                   <SelectContent>
-                    {rooms?.map((room) => (
+                    {rooms?.map(room => (
                       <SelectItem key={room.id} value={room.id}>
                         {room.name}
                       </SelectItem>
@@ -241,14 +186,14 @@ export function BookingEditPopup({
                 <Button type="submit" disabled={loading} className="flex-1">
                   Salvar
                 </Button>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={onDelete}
-                  disabled={deleting}
-                  className="flex-1"
-                >
+                <Button variant="destructive" onClick={onDelete} disabled={deleting} className="flex-1">
                   {deleting ? "Excluindo..." : "Excluir"}
+                </Button>
+              </div>
+
+              <div className="flex gap-2">
+                <Button variant="secondary" onClick={onClose} className="flex-1 grow-1">
+                  Voltar
                 </Button>
               </div>
             </form>

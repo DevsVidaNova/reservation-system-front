@@ -14,7 +14,7 @@ import { ListBooking } from '@/app/__api/types';
 import { BookingForm } from './booking-add';
 import { Plus, Loader } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BookingEditPopup } from './booking-edit-popup';
+import { BookingEditPopup } from './booking-add-popup';
 
 function normalizeTime(time: string): string {
   if (!time) return '00:00:00';

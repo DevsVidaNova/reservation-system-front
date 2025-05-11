@@ -33,7 +33,7 @@ import Link from "next/link";
 
 const formSchema = z
   .object({
-    description: z.string().min(2, { message: "A descrição deve ter pelo menos 2 palavras." }),
+    description: z.string({ required_error: "A descrição deve ter pelo menos 2 palavras."}).min(2, { message: "A descrição deve ter pelo menos 2 palavras." }),
     room: z.string({ required_error: "Por favor, selecione uma sala." }),
     start_time: z.string({ required_error: "Por favor, insira a hora de início." }),
     end_time: z.string({ required_error: "Por favor, insira a hora de término" }),

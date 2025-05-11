@@ -30,7 +30,7 @@ export type ListBooking = {
         phone: string | null
     },
     repeat: string | null,
-    day_repeat: number | null | string,
+    repeat_day:  null | string | undefined,
 }
 
 //ROOM
@@ -300,3 +300,142 @@ export type Timeline = {
         }
     ]
 }
+
+
+
+//CALENDAR
+export type CalendarEvent = {
+  event: {
+    allDay: boolean;
+    title: string;
+    start: string; // ISO 8601
+    end: string;   // ISO 8601
+    id: string;
+    backgroundColor: string;
+    borderColor: string;
+    textColor: string;
+    extendedProps: {
+      booking: {
+        id: number;
+        description: string;
+        room: {
+          id: string;
+          name: string;
+          size: number;
+        };
+        date: string | null;
+        day_of_week: string;
+        month: string | null;
+        start_time: string;
+        end_time: string;
+        repeat: string;
+        repeat_day: string;
+        user: {
+          id: string;
+          name: string;
+          email: string;
+          phone: string;
+        };
+      };
+    };
+  };
+  view: {
+    type: string;
+    dateEnv: {
+      timeZone: string;
+      canComputeOffset: boolean;
+      calendarSystem: Record<string, unknown>;
+      locale: {
+        codeArg: string;
+        codes: string[];
+        week: {
+          dow: number;
+          doy: number;
+        };
+        simpleNumberFormat: Record<string, unknown>;
+        options: {
+          buttonText: Record<string, string>;
+          buttonHints: Record<string, string>;
+          weekText: string;
+          weekTextLong: string;
+          allDayText: string;
+          noEventsText: string;
+          navLinkHint: string;
+          closeHint: string;
+          timeHint: string;
+          eventHint: string;
+          direction: string;
+        };
+      };
+      weekDow: number;
+      weekDoy: number;
+      weekText: string;
+      weekTextLong: string;
+      cmdFormatter: unknown;
+      defaultSeparator: string;
+    };
+  };
+  timeText: string;
+  textColor: string;
+  backgroundColor: string;
+  borderColor: string;
+  isDraggable: boolean;
+  isStartResizable: boolean;
+  isEndResizable: boolean;
+  isMirror: boolean;
+  isStart: boolean;
+  isEnd: boolean;
+  isPast: boolean;
+  isFuture: boolean;
+  isToday: boolean;
+  isSelected: boolean;
+  isDragging: boolean;
+  isResizing: boolean;
+};
+
+export type CalendarDateClickArg = {
+  date: string | Date;
+  dateStr: string;
+  allDay: boolean;
+  dayEl: HTMLElement;
+  jsEvent: {
+    isTrusted: boolean;
+    [key: string]: any;
+  };
+  view: {
+    type: string;
+    dateEnv: {
+      timeZone: string;
+      canComputeOffset: boolean;
+      calendarSystem: Record<string, any>;
+      locale: {
+        codeArg: string;
+        codes: string[];
+        week: {
+          dow: number;
+          doy: number;
+        };
+        simpleNumberFormat: Record<string, any>;
+        options: {
+          buttonText: Record<string, string>;
+          buttonHints: Record<string, string>;
+          weekText: string;
+          weekTextLong: string;
+          allDayText: string;
+          noEventsText: string;
+          navLinkHint: string;
+          closeHint: string;
+          timeHint: string;
+          eventHint: string;
+          direction: string;
+        };
+      };
+      weekDow: number;
+      weekDoy: number;
+      weekText: string;
+      weekTextLong: string;
+      cmdFormatter: any;
+      defaultSeparator: string;
+    };
+  };
+};

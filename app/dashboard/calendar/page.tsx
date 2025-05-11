@@ -5,8 +5,8 @@ import 'dayjs/locale/pt-br';
 dayjs.locale('pt-br');
 import { useQuery } from '@tanstack/react-query';
 import { listBookings } from '@/app/__api/booking';
-import Calendar from '@/components/calendarv2/calendar';
-import TodayEventsList from '@/components/calendarv2/today';
+import Calendar from '@/components/calendarv_old/calendar';
+import TodayEventsList from '@/components/calendarv_old/today';
 import { ListBooking } from '@/app/__api/types';
 
 export default function CalendarPage() {
