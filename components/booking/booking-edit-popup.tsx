@@ -173,7 +173,7 @@ export function BookingEditPopup({ booking, onClose, onSaved }: { booking: any; 
                     <SelectValue placeholder="Sala" />
                   </SelectTrigger>
                   <SelectContent>
-                    {rooms?.map(room => (
+                    {rooms?.data?.map(room => (
                       <SelectItem key={room.id} value={room.id}>
                         {room.name}
                       </SelectItem>

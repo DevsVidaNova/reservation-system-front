@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { ListUser } from '@/app/__api/types'
+import { ListUser, User } from '@/app/__api/types'
 import { EllipsisVertical, Trash } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
@@ -18,11 +18,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import Pagination from "@/components/pagination";
 
 export default function Users() {
-  const { data: users, error, isLoading, refetch } = useQuery<ListUser[]>({
-    queryKey: ['users'],
-    queryFn: listUsers
+  const [page, setpage] = useState(1);
+  const { data, error, isLoading, refetch } = useQuery<ListUser>({
+    queryKey: [`list users ${page}`],
+    queryFn: async () => {
+      return await listUsers(page)
+    },
   });
 
   if (isLoading) return <div className="flex flex-col w-full px-4 py-4 container"><p>Carregando...</p></div>
@@ -30,12 +34,12 @@ export default function Users() {
 
   return (
     <div className="flex flex-col w-full px-3 py-4 container">
-      <ListUsers users={users || []} refetch={refetch}  />
+      {data && <ListUsers users={data} refetch={refetch} setpage={setpage} page={page} />}
     </div>
   )
 }
 
-const ListUsers = ({ users, refetch, }: { users: ListUser[], refetch: () => void,  }) => {
+const ListUsers = ({ users, refetch, setpage, page, }: { users: ListUser, refetch: () => void,  setpage: (page: number) => void; page: number }) => {
   return (
     <>
       <div className=' flex flex-col  gap-4'>
@@ -45,8 +49,9 @@ const ListUsers = ({ users, refetch, }: { users: ListUser[], refetch: () => void
             <UserAddForm refetch={refetch} />
           </div>
         </div>
-        <div>
-          <TableUsers users={users || []} refetch={refetch} />
+        <div> 
+          <TableUsers users={users?.data || []} refetch={refetch} />
+          <Pagination page={page} setpage={setpage} data={users} />
         </div>
       </div>
       <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
@@ -56,7 +61,7 @@ const ListUsers = ({ users, refetch, }: { users: ListUser[], refetch: () => void
   )
 }
 
-const TableUsers = ({ users, refetch, }: { users: ListUser[], refetch: () => void, }) => {
+const TableUsers = ({ users, refetch, }: { users: User[], refetch: () => void, }) => {
   if (!users) return <p>Carregando...</p>
 
   const [confirmation, setconfirmation] = useState('');
@@ -74,7 +79,6 @@ const TableUsers = ({ users, refetch, }: { users: ListUser[], refetch: () => voi
     }
   }
 
-
   return (
     <Card className='overflow-hidden'>
       <Table>
@@ -89,9 +93,9 @@ const TableUsers = ({ users, refetch, }: { users: ListUser[], refetch: () => voi
         <TableBody>
           {users?.map(user => (
             <TableRow key={user.email}>
-              <TableCell className='text-[12px] md:text-[18px] leading-none font-medium'>{user.name}</TableCell>
-              <TableCell className='text-[12px] md:text-[18px] leading-none font-medium'>{user.phone}</TableCell>
-              <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none font-medium' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
+              <TableCell className='text-[12px] md:text-[18px] leading-none font-light text-neutral-600'>{user.name}</TableCell>
+              <TableCell className='text-[12px] md:text-[18px] leading-none font-light text-neutral-600'>{user.phone}</TableCell>
+              <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none font-light text-neutral-600' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
               <TableCell className=''>
                 <div className=' md:flex hidden gap-3 flex-row '>
                   <Dialog open={openExclude} onOpenChange={setOpenExclude}>
@@ -169,10 +173,3 @@ const TableUsers = ({ users, refetch, }: { users: ListUser[], refetch: () => voi
     </Card>
   )
 }
-/*
- <div className='flex flex-row w-full border-t px-2 py-2 items-center gap-2 justify-center'>
-        <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page == 1 ? 1 : page - 1)}>{page - 1}</div>
-        <div className='bg-primary text-background rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer'  >{page}</div>
-        <div className='border rounded-lg text-[16px] w-[42px] h-[42px] items-center justify-center flex flex-col cursor-pointer' onClick={() => setpage(page + 1)} >{page + 1}</div>
-      </div>
-*/

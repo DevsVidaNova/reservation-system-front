@@ -34,7 +34,7 @@ export type ListBooking = {
 }
 
 //ROOM
-export interface ListRoom {
+export interface Room {
     id: string, //id da sala
     name: string, //nome da sala
     size: string, //quantidade de pessoas
@@ -42,6 +42,16 @@ export interface ListRoom {
     exclusive: boolean, //exclusivo ou não
     status: boolean,  //ativo ou não
     created_at: string, //data de criação
+}
+
+export interface ListRoom {
+    data: Room[], 
+    total: number, //nome da sala
+    page: number, //quantidade de pessoas
+    to: number, //quantidade de pessoas
+    totalPages: number, //ex: sala de reunião
+    hasNext: boolean, //exclusivo ou não
+    hasPrev: boolean,  //ativo ou não
 }
 export interface CreateRoom {
     name: string, //nome da sala
@@ -53,13 +63,13 @@ export interface CreateRoom {
 
 //MEMBER
 export interface ListMember {
-    pagination: {
-        total: number,
-        page: number,
-        pageSize: number,
-        totalPages: number
-    }
-    members: SingleMember[]
+    total: number,
+    page: number,
+    to: number,  
+    totalPages: number,
+    hasNext: boolean,
+    hasPrev: boolean, 
+    data: SingleMember[]
 }
 export interface Pagination{
     total: number,
@@ -201,7 +211,18 @@ export type Analytics = {
 }
 
 //USER TYPES
+
 export type ListUser = {
+    total: number,
+    page: number,
+    to: number,  
+    totalPages: number,
+    hasNext: boolean,
+    hasPrev: boolean, 
+    data: User[]
+};
+
+export type User = {
     id: string;
     name: string;
     role: string;

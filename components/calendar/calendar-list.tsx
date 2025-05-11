@@ -3,7 +3,6 @@ import { useMemo, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import "./style.css";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DayCellContentArg, EventContentArg, SlotLabelContentArg, DayHeaderContentArg, DateSelectArg } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -21,10 +20,11 @@ import { BookingEditPopup } from "../booking/booking-edit-popup";
 
 import { Loader } from "lucide-react";
 
-import { Sidebar, SidebarContent, SidebarGroup } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Title, Label, Checkbox } from "../ui";
 import { CalendarControls } from "./calendar-controls";
 import dayjs from "dayjs";
+import Pagination from "../pagination";
 
 function normalizeTime(time: string): string {
   if (!time) return "00:00:00";
@@ -120,7 +120,6 @@ export default function CalendarList() {
       end_time: formatTime(info.event.end),
       date: formatDate(info.event.start)
     };
-    console.log(updatedBooking);
     setSelectedBooking(updatedBooking);
   };
 
@@ -131,7 +130,6 @@ export default function CalendarList() {
       end_time: formatTime(info.event.end),
       date: formatDate(info.event.start)
     };
-    console.log(updatedBooking);
     setSelectedBooking(updatedBooking);
   };
 
@@ -305,46 +303,53 @@ function DayItem({ item }: { item: DayCellContentArg }) {
   }
 }
 
-function EventItem({ item, onSelect }: { item: EventContentArg; onSelect: (booking: any) => void }) {
+function EventItem({ item, onSelect }: { readonly item: EventContentArg; readonly onSelect: (booking: any) => void }) {
   const booking = item.event.extendedProps.booking;
   return (
-    <div onClick={() => onSelect(booking)} style={{ backgroundColor: item?.backgroundColor }} className="rounded-md h-full w-full flex flex-col break-words p-2 cursor-pointer">
+    <button onClick={() => onSelect(booking)} style={{ backgroundColor: item?.backgroundColor }} className="rounded-md h-full w-full flex flex-col break-words p-2 cursor-pointer">
       <Title className="break-words truncate whitespace-nowrap text-neutral-900 text-xl ">{booking?.description.length > 20 ? booking?.description.slice(0, 16) + "..." : booking?.description}</Title>
       <Label className="break-words truncate whitespace-nowrap text-neutral-500 text-md">{booking?.room?.name}</Label>
-    </div>
+    </button>
   );
 }
 
-export function CalendarSidebar({ selectedRooms, toggleRoom, setSelectedRooms }: { selectedRooms: any; setSelectedRooms: () => void; toggleRoom: () => void }) {
-  const { data: rooms, isLoading: isLoadingRooms } = useQuery({
-    queryKey: ["rooms"],
-    queryFn: listRooms
+export function CalendarSidebar({ selectedRooms, toggleRoom }: { readonly selectedRooms: Set<string>; readonly toggleRoom: (roomId: string) => void }) {
+  const [page, setpage] = useState(1);
+  const { data: rooms, isLoading } = useQuery({
+    queryKey: [`list rooms ${page}`],
+    queryFn: async () => {
+      return await listRooms(page);
+    },
+    placeholderData: previousData => previousData
   });
+
+  if (isLoading) return <span>Carregando...</span>;
 
   return (
     <Sidebar>
-      <SidebarContent className="bg-background">
+      <SidebarContent className="bg-background ">
         <SidebarGroup>
           <div className="px-2 py-10">
             <Title className="text-2xl">Salas</Title>
-            
+
             <div className="flex flex-col gap-2 mt-4">
-            {rooms?.map(room => {
-              const color = getColorFromRoomName(room.name);
-              const isChecked = selectedRooms?.size === 0  || selectedRooms.has(room.id)
-              return (
-                <div key={room.id} className="border-1 rounded-md p-2 transition-all" style={{ borderColor: isChecked ? "#d7d7d7" : "#fff", backgroundColor: isChecked ? "#fff" : "#FFF"}} onClick={() => toggleRoom(room.id)}>
-                <label  className="flex items-center space-x-2 cursor-pointer">
-                  <Checkbox style={{ backgroundColor: color, border: "none", color: "#000"}} checked={isChecked} onCheckedChange={() => toggleRoom(room.id)} />
-                  <span className="flex items-center gap-2">
-                    <span className="text-sm">{room.name}</span>
-                  </span>
-                </label>
-                </div>
-              );
-            })}
+              {rooms?.data?.map(room => {
+                const color = getColorFromRoomName(room.name);
+                const isChecked = selectedRooms?.size === 0 || selectedRooms.has(room.id);
+                return (
+                  <button key={room.id} className="border-1 rounded-md p-2 transition-all" style={{ borderColor: isChecked ? "#d7d7d7" : "#fff", backgroundColor: isChecked ? "#fff" : "#FFF" }} onClick={() => toggleRoom(room.id)}>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <Checkbox style={{ backgroundColor: color, border: "none", color: "#000" }} checked={isChecked} onCheckedChange={() => toggleRoom(room.id)} />
+                      <span className="flex items-center gap-2">
+                        <span className="text-sm">{room.name}</span>
+                      </span>
+                    </label>
+                  </button>
+                );
+              })}
             </div>
-          </div>
+            <Pagination page={page} setpage={setpage} data={rooms} hideText={true}/>
+            </div>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

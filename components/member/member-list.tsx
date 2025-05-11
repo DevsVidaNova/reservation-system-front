@@ -1,11 +1,9 @@
 'use client'
-import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Calendar, Clock, EllipsisVertical, MapPin, Phone, Trash } from 'lucide-react';
-
-import { ListMember, SingleMember } from '../../app/__api/types';
+import { EllipsisVertical, Trash } from 'lucide-react';
+import { ListMember, SingleMember } from '@/app/__api/types';
 import { MemberAddForm } from './member-add';
-import { deleteMember } from '../../app/__api/members';
-
+import { deleteMember } from '@/app/__api/members';
+import  Pagination from '@/components/pagination/';
 
 import {
   Button,
@@ -19,18 +17,11 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/"
 import { MemberEditForm } from './member-edit';
 
 
-export function MemberList({ users, refetch, handleNext, handlePrevious, page }: { users: SingleMember[], refetch: () => void, handleNext: () => void, handlePrevious: () => void, page: number }) {
+export function MemberList({ users, refetch, setpage, page }: { readonly users: ListMember, readonly refetch: () => void, readonly page: number, readonly setpage: (page: number) => void; }) {
   return (
     <>
       <div className=' flex flex-col  gap-4'>
@@ -40,8 +31,9 @@ export function MemberList({ users, refetch, handleNext, handlePrevious, page }:
             <MemberAddForm refetch={refetch} />
           </div>
         </div>
-        <div>
-          <TableUsers handleNext={handleNext} handlePrevious={handlePrevious} page={page} users={users || []} refetch={refetch} />
+        <div className='mb-10'>
+          {users && <TableMembers users={users?.data} refetch={refetch} />}
+          <Pagination page={page} setpage={setpage} data={users} />
         </div>
       </div>
       <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
@@ -51,9 +43,7 @@ export function MemberList({ users, refetch, handleNext, handlePrevious, page }:
   )
 }
 
-const TableUsers = ({ users, refetch, handleNext, handlePrevious, page }: { users: SingleMember[], refetch: () => void, handleNext: () => void, handlePrevious: () => void, page: number }) => {
-  if (!users) return <p>Carregando...</p>
-
+const CardMember = ({ user, refetch }: { readonly user: SingleMember, readonly refetch: () => void }) => {
   const handleExclude = async (id: string) => {
     try {
       await deleteMember(id)
@@ -63,42 +53,44 @@ const TableUsers = ({ users, refetch, handleNext, handlePrevious, page }: { user
     }
   }
 
-  const CardMember = ({ user }: { user: SingleMember }) => {
-    return (
-      <TableRow key={user.email}>
-        <TableCell className='text-[12px] md:text-[18px] leading-none font-medium'>{user.full_name}</TableCell>
-        <TableCell className='text-[12px] md:text-[18px] leading-none font-medium'>{user.phone}</TableCell>
-        <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none font-medium' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
-        <TableCell className=''>
-          <div className=' md:flex hidden gap-3 flex-row '>
-            <Button onClick={() => handleExclude(user.id)} variant='outline' className='w-[38px] h-[42px] rounded-lg'>
-              <Trash size={24} />
-            </Button>
-            <MemberEditForm id={user.id} refetch={refetch} defaultValues={user} />
-          </div>
-          <div className='block md:hidden'>
-            <Popover>
-              <PopoverTrigger>
-                <EllipsisVertical size={24} />
-              </PopoverTrigger>
-              <PopoverContent className='w-[144px] mr-4'>
-                <div className='gap-2 flex flex-row items-center justify-center'>
-                  <Button onClick={() => handleExclude(user.id)} variant='outline' className='w-[38px] h-[42px] rounded-lg'>
-                    <Trash size={24} />
-                  </Button>
-                  <MemberEditForm id={user.id} refetch={refetch} defaultValues={user} />
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-        </TableCell>
-      </TableRow>
-    )
-  }
+  return (
+    <TableRow key={user.email}>
+      <TableCell className='text-[12px] md:text-[18px] leading-none text-neutral-600 font-light'>{user.full_name}</TableCell>
+      <TableCell className='text-[12px] md:text-[18px] leading-none text-neutral-600 font-light'>{user.phone}</TableCell>
+      <TableCell className='text-wrap min-w-[60px] text-[12px] md:text-[18px] leading-none text-neutral-600 font-light' style={{ wordBreak: 'break-word' }}>{user.email}</TableCell>
+      <TableCell className=''>
+        <div className=' md:flex hidden gap-3 flex-row '>
+          <Button onClick={() => handleExclude(user.id)} variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+            <Trash size={24} />
+          </Button>
+          <MemberEditForm id={user.id} refetch={refetch} defaultValues={user} />
+        </div>
+        <div className='block md:hidden'>
+          <Popover>
+            <PopoverTrigger>
+              <EllipsisVertical size={24} />
+            </PopoverTrigger>
+            <PopoverContent className='w-[144px] mr-4'>
+              <div className='gap-2 flex flex-row items-center justify-center'>
+                <Button onClick={() => handleExclude(user.id)} variant='outline' className='w-[38px] h-[42px] rounded-lg'>
+                  <Trash size={24} />
+                </Button>
+                <MemberEditForm id={user.id} refetch={refetch} defaultValues={user} />
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </TableCell>
+    </TableRow>
+  )
+}
+
+const TableMembers = ({ users, refetch, }: { readonly users: SingleMember[], readonly refetch: () => void }) => {
+  if (!users) return <p>Carregando...</p>
 
   return (
-    <Card className='overflow-hidden mb-30'>
-      <Table className='border-b'>
+    <Card>
+      <Table >
         <TableHeader >
           <TableRow className='opacity-70'>
             <TableHead >Nome</TableHead>
@@ -108,24 +100,11 @@ const TableUsers = ({ users, refetch, handleNext, handlePrevious, page }: { user
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users?.map((user: any, index) => (
-            <CardMember user={user} key={index} />
+          {users?.map((user: any) => (
+            <CardMember user={user} refetch={refetch} key={user?.id} />
           ))}
         </TableBody>
       </Table>
-      <Pagination className='py-2 '>
-        <PaginationContent className='gap-2'>
-          <PaginationItem onClick={handlePrevious} className='h-10 w-10 justify-center items-center border rounded-md flex bg-accent cursor-pointer'>
-            <ArrowLeft size={18} />
-          </PaginationItem>
-          <PaginationItem className='bg-black text-white rounded-md'>
-            <PaginationLink >{page}</PaginationLink>
-          </PaginationItem>
-          <PaginationItem onClick={handleNext} className='h-10 w-10 justify-center items-center border rounded-md flex bg-accent cursor-pointer'>
-            <ArrowRight size={18} />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
     </Card>
   )
 }

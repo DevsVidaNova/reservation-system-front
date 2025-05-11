@@ -1,10 +1,9 @@
 import { fetchWithAuth, } from "@/hooks/api";
-import { ListMember, CreateMember, Pagination, SingleMember } from "./types";
+import { ListMember, CreateMember } from "./types";
 
-export const listMembers = async (page: number): Promise<{ members: SingleMember[]; pagination: Pagination }> => {
+export const listMembers = async (page: number): Promise<ListMember> => {
     try {
-        const res = await fetchWithAuth<{ members: SingleMember[]; pagination: Pagination }>(`/members?page=${page}`, { method: "GET" });
-        return res;
+        return await fetchWithAuth<ListMember>(`/members?page=${page}`, { method: "GET" });
     } catch (error: any) {
         console.log(error)
         throw new Error(error.message);
@@ -13,8 +12,7 @@ export const listMembers = async (page: number): Promise<{ members: SingleMember
 
 export const singleMember = async (id: string): Promise<ListMember> => {
     try {
-        const res = await fetchWithAuth<ListMember>("/members/" + id, { method: "GET", });
-        return res;
+        return await fetchWithAuth<ListMember>("/members/" + id, { method: "GET", });
     } catch (error: any) {
         console.log(error)
         throw new Error(error.message);
@@ -23,8 +21,7 @@ export const singleMember = async (id: string): Promise<ListMember> => {
 
 export const addMember = async (data: CreateMember): Promise<CreateMember> => {
     try {
-        const res = await fetchWithAuth<CreateMember>("/members", { method: "POST", data: data });
-        return res;
+        return await fetchWithAuth<CreateMember>("/members", { method: "POST", data: data });
     } catch (error: any) {
         console.log(error)
         throw new Error(error.message);
@@ -33,8 +30,7 @@ export const addMember = async (data: CreateMember): Promise<CreateMember> => {
 
 export const editMember = async (id: string, data: CreateMember): Promise<CreateMember> => {
     try {
-        const res = await fetchWithAuth<CreateMember>(`/members/${id}`, { method: "PUT", data: data });
-        return res;
+        return await fetchWithAuth<CreateMember>(`/members/${id}`, { method: "PUT", data: data });
     } catch (error: any) {
         console.log(error)
         throw new Error(error.message);
@@ -43,8 +39,7 @@ export const editMember = async (id: string, data: CreateMember): Promise<Create
 
 export const deleteMember = async (id: string) => {
     try {
-        const res = await fetchWithAuth(`/members/${id}`, { method: "DELETE" });
-        return res;
+        return await fetchWithAuth(`/members/${id}`, { method: "DELETE" });
     } catch (error: any) {
         console.log(error)
         throw new Error(error.message);
@@ -53,13 +48,12 @@ export const deleteMember = async (id: string) => {
 
 export const searchMember = async (name: string): Promise<ListMember> => {
     try {
-        const res = await fetchWithAuth<ListMember>("/members/search", {
+        return await fetchWithAuth<ListMember>("/members/search", {
             method: "POST",
             data: {
                 name: name
             }
         });
-        return res;
     } catch (error: any) {
         console.log(error)
         throw new Error(error.message);
@@ -68,13 +62,12 @@ export const searchMember = async (name: string): Promise<ListMember> => {
 
 export const filterMember = async (name: string): Promise<ListMember> => {
     try {
-        const res = await fetchWithAuth<ListMember>("/members/filter", {
+        return await fetchWithAuth<ListMember>("/members/filter", {
             method: "POST",
             data: {
                 name: name
             }
         });
-        return res;
     } catch (error: any) {
         console.log(error)
         throw new Error(error.message);
@@ -83,10 +76,9 @@ export const filterMember = async (name: string): Promise<ListMember> => {
 
 export const getMembersAnalytics = async (): Promise<any> => {
     try {
-        const res = await fetchWithAuth<any>("/members/analytics", {
+        return await fetchWithAuth<any>("/members/analytics", {
             method: "GET",
         });
-        return res;
     } catch (error: any) {
         console.log(error)
         throw new Error(error.message);
