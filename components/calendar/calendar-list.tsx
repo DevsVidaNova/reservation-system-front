@@ -1,27 +1,28 @@
 "use client";
-import { useMemo, useState, useRef, useEffect } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import "./style.css";
-import { motion, AnimatePresence } from "framer-motion";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DayCellContentArg, EventContentArg, SlotLabelContentArg, DayHeaderContentArg, DateSelectArg } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
+import interactionPlugin from "@fullcalendar/interaction";
 import ptBrLocale from "@fullcalendar/core/locales/pt-br";
 import { addDays, addMonths, isBefore } from "date-fns";
 
 import { listBookings } from "@/app/__api/booking";
+
 import { listRooms } from "@/app/__api/rooms";
 import { ListBooking } from "@/app/__api/types";
 import { BookingAddPopup } from "../booking/booking-add-popup";
 import { BookingEditPopup } from "../booking/booking-edit-popup";
 
-import { Plus, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader } from "@/components/ui/sidebar";
-import { Title, Label, Card, CardTitle, CardDescription } from "../ui";
+import { Sidebar, SidebarContent, SidebarGroup } from "@/components/ui/sidebar";
+import { Title, Label, Checkbox } from "../ui";
 import { CalendarControls } from "./calendar-controls";
 import dayjs from "dayjs";
 
@@ -100,11 +101,6 @@ export default function CalendarList() {
       }
     }, 100); // Pequeno delay garante que o FullCalendar já esteja montado
   };
-
-  const { data: rooms, isLoading: isLoadingRooms } = useQuery({
-    queryKey: ["rooms"],
-    queryFn: listRooms
-  });
 
   const [selectedRooms, setSelectedRooms] = useState<Set<string>>(new Set());
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
@@ -204,55 +200,61 @@ export default function CalendarList() {
   }
 
   return (
-    <div className="w-screen h-screen p-4">
-      <CalendarControls calendarRef={calendarRef} />
-      <FullCalendar
-        key={bookings?.length}
-        ref={calendarRef}
-        headerToolbar={false}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        locale={ptBrLocale}
-        weekends
-        selectable
-        select={info => {
-          setSelectDate(info);
-        }}
-        height="800px"
-        //SLOT
-        slotMinTime="08:00:00"
-        slotMaxTime="23:59:00"
-        slotDuration="01:00:00"
-        slotLabelInterval="01:00:00"
-        slotLabelFormat={{
-          hour: "2-digit",
-          minute: "2-digit"
-        }}
-        slotLabelContent={arg => <SlotLabel item={arg} />}
-        //EVENT
+    <SidebarProvider>
+      <CalendarSidebar selectedRooms={selectedRooms} toggleRoom={toggleRoom} />
+      <main className="overflow-y-hidden h-screen">
+        <SidebarTrigger />
+        <div className="w-screen h-screen p-4">
+          <CalendarControls calendarRef={calendarRef} />
+          <FullCalendar
+            key={bookings?.length}
+            ref={calendarRef}
+            headerToolbar={false}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            locale={ptBrLocale}
+            weekends
+            selectable
+            select={info => {
+              setSelectDate(info);
+            }}
+            height="800px"
+            //SLOT
+            slotMinTime="08:00:00"
+            slotMaxTime="23:59:00"
+            slotDuration="01:00:00"
+            slotLabelInterval="01:00:00"
+            slotLabelFormat={{
+              hour: "2-digit",
+              minute: "2-digit"
+            }}
+            slotLabelContent={arg => <SlotLabel item={arg} />}
+            //EVENT
 
-        events={events}
-        eventTimeFormat={{
-          hour: "2-digit",
-          minute: "2-digit",
-          meridiem: "short"
-        }}
-        eventContent={arg => <EventItem item={arg} onSelect={setSelectedBooking} />}
-        eventDrop={info => handleDrag(info)}
-        eventResize={info => handleResize(info)}
-        eventResizableFromStart
-        datesSet={arg => {
-          setCurrentDate(arg.start);
-        }}
-        editable
-        dayCellContent={arg => <DayItem item={arg} />}
-        dayHeaderContent={arg => <CustomDayHeader item={arg} />}
-        allDaySlot={false}
-      />
+            events={events}
+            eventTimeFormat={{
+              hour: "2-digit",
+              minute: "2-digit",
+              meridiem: "short"
+            }}
+            eventContent={arg => <EventItem item={arg} onSelect={setSelectedBooking} />}
+            eventDrop={info => handleDrag(info)}
+            eventResize={info => handleResize(info)}
+            eventResizableFromStart
+            datesSet={arg => {
+              setCurrentDate(arg.start);
+            }}
+            editable
+            dayCellContent={arg => <DayItem item={arg} />}
+            dayHeaderContent={arg => <CustomDayHeader item={arg} />}
+            allDaySlot={false}
+          />
 
-      {selectDate && <BookingAddPopup start={selectDate.start} end={selectDate.end} onClose={() => setSelectDate(null)} onSaved={() => refetchBookings()} />}
-      {selectedBooking && <BookingEditPopup booking={selectedBooking} onClose={() => setSelectedBooking(null)} onSaved={() => refetchBookings()} />}
-    </div>
+          {selectDate && <BookingAddPopup start={selectDate.start} end={selectDate.end} onClose={() => setSelectDate(null)} onSaved={() => refetchBookings()} />}
+          {selectedBooking && <BookingEditPopup booking={selectedBooking} onClose={() => setSelectedBooking(null)} onSaved={() => refetchBookings()} />}
+        </div>
+      </main>
+    </SidebarProvider>
   );
 }
 
@@ -294,38 +296,57 @@ function SlotLabel({ item }: { item: SlotLabelContentArg }) {
 }
 
 function DayItem({ item }: { item: DayCellContentArg }) {
-  if(item?.dayNumberText){
-    return <div className="text-2xl text-neutral-600 h-8 w-8 flex justify-center rounded-md items-center bg-blue-50">
-    <Title>{item?.dayNumberText}</Title>
-  </div>;
+  if (item?.dayNumberText) {
+    return (
+      <div className="text-2xl text-neutral-600 h-8 w-8 flex justify-center rounded-md items-center bg-blue-50">
+        <Title>{item?.dayNumberText}</Title>
+      </div>
+    );
   }
 }
 
 function EventItem({ item, onSelect }: { item: EventContentArg; onSelect: (booking: any) => void }) {
   const booking = item.event.extendedProps.booking;
   return (
-    <div onClick={() => onSelect(booking)} style={{ backgroundColor: item?.backgroundColor}} className="rounded-md h-full w-full flex flex-col break-words p-2 cursor-pointer">
+    <div onClick={() => onSelect(booking)} style={{ backgroundColor: item?.backgroundColor }} className="rounded-md h-full w-full flex flex-col break-words p-2 cursor-pointer">
       <Title className="break-words truncate whitespace-nowrap text-neutral-900 text-xl ">{booking?.description.length > 20 ? booking?.description.slice(0, 16) + "..." : booking?.description}</Title>
       <Label className="break-words truncate whitespace-nowrap text-neutral-500 text-md">{booking?.room?.name}</Label>
     </div>
   );
 }
 
-export function CalendarSidebar() {
+export function CalendarSidebar({ selectedRooms, toggleRoom, setSelectedRooms }: { selectedRooms: any; setSelectedRooms: () => void; toggleRoom: () => void }) {
+  const { data: rooms, isLoading: isLoadingRooms } = useQuery({
+    queryKey: ["rooms"],
+    queryFn: listRooms
+  });
+
   return (
     <Sidebar>
-      <SidebarHeader />
-      <SidebarContent>
-        <SidebarGroup />
+      <SidebarContent className="bg-background">
         <SidebarGroup>
-          <Title>Próximo evento</Title>
-          <Card>
-            <CardTitle>Sábado</CardTitle>
-            <CardDescription>Dia das mães</CardDescription>
-          </Card>
+          <div className="px-2 py-10">
+            <Title className="text-2xl">Salas</Title>
+            
+            <div className="flex flex-col gap-2 mt-4">
+            {rooms?.map(room => {
+              const color = getColorFromRoomName(room.name);
+              const isChecked = selectedRooms?.size === 0  || selectedRooms.has(room.id)
+              return (
+                <div key={room.id} className="border-1 rounded-md p-2 transition-all" style={{ borderColor: isChecked ? "#d7d7d7" : "#fff", backgroundColor: isChecked ? "#fff" : "#FFF"}} onClick={() => toggleRoom(room.id)}>
+                <label  className="flex items-center space-x-2 cursor-pointer">
+                  <Checkbox style={{ backgroundColor: color, border: "none", color: "#000"}} checked={isChecked} onCheckedChange={() => toggleRoom(room.id)} />
+                  <span className="flex items-center gap-2">
+                    <span className="text-sm">{room.name}</span>
+                  </span>
+                </label>
+                </div>
+              );
+            })}
+            </div>
+          </div>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
     </Sidebar>
   );
 }

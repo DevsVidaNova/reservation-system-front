@@ -66,8 +66,6 @@ export function CalendarControls({ calendarRef }: { calendarRef: any }) {
             <ChevronRight size={24} />
           </button>
         </div>
-
-        <Button onClick={handleNewBooking}>Novo agendamento</Button>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import { BookMarked, BookPlus, Calendar1, Church, MapPin, TrendingUp, UserPlus, Users } from 'lucide-react'
+import { BookMarked, Church, MapPin, Users } from 'lucide-react'
 import { Analytics, } from '../__api/types'
 import { useQuery } from '@tanstack/react-query'
 import { listAnalytics, } from '@/app/__api/dashboard'
@@ -12,26 +12,17 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
-  RadialBarChart,
-  RadialBar,
   PieChart,
   Pie,
-  Cell,
-  Treemap
-} from 'recharts';
+  Cell} from 'recharts';
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui"
 import { ChartConfig } from "@/components/ui/chart"
 
