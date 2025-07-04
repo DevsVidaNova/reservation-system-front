@@ -25,9 +25,9 @@ import { useQuery } from "@tanstack/react-query"
 import { CalendarSearch, CalendarX2, Pencil, } from "lucide-react"
 
 
-import { ListUser } from "@/app/__api/types"
-import { listUsers } from "@/app/__api/admin"
-import { addScale } from "@/app/__api/scale"
+import { ListUser } from "@/types"
+import { listUsers } from "@/services/admin.service"
+import { addScale } from "@/services/scale.service"
 import { Combobox } from '@/components/ui/combobox';
 
 const formSchema = z

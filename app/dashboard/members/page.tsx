@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ListMember } from "@/app/__api/types";
-import { listMembers } from "@/app/__api/members";
+import { ListMember } from "@/types";
+import { listMembers } from "@/services/members.service";
 import { MemberList } from "@/components/member/member-list";
 
 export default function Members() {

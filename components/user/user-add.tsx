@@ -17,7 +17,7 @@ import {
     Message,
     Form, FormControl, FormField, FormItem, FormLabel, FormMessage
 } from "@/components/ui/"
-import { registerUser } from "@/app/__api/user"
+import { addUser } from "@/services/user.service"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -54,7 +54,7 @@ export function UserAddForm({ refetch }: { refetch: () => void }) {
         setsuccess('')
         console.log(values)
         try {
-            const response = await registerUser(values)
+            const response = await addUser(values)
             if (response) {
                 setsuccess('Usuário criado com sucesso!')
                 form.reset()

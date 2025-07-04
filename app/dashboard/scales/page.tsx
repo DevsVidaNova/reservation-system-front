@@ -1,8 +1,8 @@
 'use client'
 import { useState } from "react";
 import { useQuery } from '@tanstack/react-query'
-import { listScales } from "@/app/__api/scale";
-import { Pagination, SingleScale } from "@/app/__api/types";
+import { listScales } from "@/services/scale.service";
+import { Pagination, SingleScale } from "@/types";
 import { ScaleList } from "@/components/scale/scale-list";
 
 export default function ScalesPage() {

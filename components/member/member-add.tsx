@@ -29,7 +29,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/";
-import { addMember } from "../../app/__api/members";
+import { addMember } from "@/services/members.service";
 import { Check } from "lucide-react";
 
 

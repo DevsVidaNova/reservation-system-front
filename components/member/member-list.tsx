@@ -1,8 +1,8 @@
 'use client'
 import { EllipsisVertical, Trash } from 'lucide-react';
-import { ListMember, SingleMember } from '@/app/__api/types';
+import { ListMember, SingleMember } from '@/types';
 import { MemberAddForm } from './member-add';
-import { deleteMember } from '@/app/__api/members';
+import { deleteMember } from '@/services/members.service';
 import  Pagination from '@/components/pagination/';
 
 import {

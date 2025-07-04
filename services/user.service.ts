@@ -64,4 +64,3 @@ export const excludeUser = async () => {
         throw new Error(error instanceof Error ? error.message : 'An unknown error occurred');
     }
 };
-

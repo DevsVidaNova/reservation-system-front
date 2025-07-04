@@ -11,18 +11,20 @@ import interactionPlugin from "@fullcalendar/interaction";
 import ptBrLocale from "@fullcalendar/core/locales/pt-br";
 import { addDays, addMonths, isBefore } from "date-fns";
 
-import { listBookings } from "@/app/__api/booking";
-
-import { listRooms } from "@/app/__api/rooms";
-import { ListBooking } from "@/app/__api/types";
+import { listBookings } from "@/services/booking.service";
+import { listRooms } from "@/services/rooms.service";
+import { ListBooking } from "@/types";
 import { BookingAddPopup } from "../booking/booking-add-popup";
 import { BookingEditPopup } from "../booking/booking-edit-popup";
 
-import { Loader } from "lucide-react";
+import { Loader, Menu } from "lucide-react";
 
 import { Sidebar, SidebarContent, SidebarGroup, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 import { Title, Label, Checkbox } from "../ui";
 import { CalendarControls } from "./calendar-controls";
+import { useIsMobile } from "@/hooks/use-mobile";
 import dayjs from "dayjs";
 import Pagination from "../pagination";
 
@@ -81,6 +83,8 @@ export default function CalendarList() {
   const calendarRef = useRef<any>(null);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [selectDate, setSelectDate] = useState<DateSelectArg | null>();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const {
     data: bookings,
@@ -193,6 +197,79 @@ export default function CalendarList() {
     return (
       <div className="flex items-center gap-2 text-sm text-gray-500 animate-pulse">
         <Loader size={18} className="animate-spin" /> Atualizando...
+      </div>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <div className="h-screen">
+        <div className="flex items-center justify-between p-4 border-b">
+          <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+            <DrawerTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Menu className="h-4 w-4" />
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent className="max-h-[80vh]">
+              <DrawerHeader>
+                <DrawerTitle>Salas</DrawerTitle>
+              </DrawerHeader>
+              <div className="px-4 pb-4">
+                <CalendarSidebarContent selectedRooms={selectedRooms} toggleRoom={toggleRoom} />
+              </div>
+            </DrawerContent>
+          </Drawer>
+          <CalendarControls calendarRef={calendarRef} />
+        </div>
+        <div className="p-4">
+          <FullCalendar
+            key={bookings?.length}
+            ref={calendarRef}
+            headerToolbar={false}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            locale={ptBrLocale}
+            weekends
+            selectable
+            select={info => {
+              setSelectDate(info);
+            }}
+            height="calc(100vh - 200px)"
+            //SLOT
+            slotMinTime="08:00:00"
+            slotMaxTime="23:59:00"
+            slotDuration="01:00:00"
+            slotLabelInterval="01:00:00"
+            slotLabelFormat={{
+              hour: "2-digit",
+              minute: "2-digit"
+            }}
+            slotLabelContent={arg => <SlotLabel item={arg} />}
+            //EVENT
+
+            events={events}
+            eventTimeFormat={{
+              hour: "2-digit",
+              minute: "2-digit",
+              meridiem: "short"
+            }}
+            eventContent={arg => <EventItem item={arg} onSelect={setSelectedBooking} />}
+            eventDrop={info => handleDrag(info)}
+            eventResize={info => handleResize(info)}
+            eventResizableFromStart
+            datesSet={arg => {
+              setCurrentDate(arg.start);
+            }}
+            editable
+            dayCellContent={arg => <DayItem item={arg} />}
+            dayHeaderContent={arg => <CustomDayHeader item={arg} />}
+            allDaySlot={false}
+          />
+
+          {selectDate && <BookingAddPopup start={selectDate.start} end={selectDate.end} onClose={() => setSelectDate(null)} onSaved={() => refetchBookings()} />}
+          {selectedBooking && <BookingEditPopup booking={selectedBooking} onClose={() => setSelectedBooking(null)} onSaved={() => refetchBookings()} />}
+        </div>
       </div>
     );
   }
@@ -313,7 +390,7 @@ function EventItem({ item, onSelect }: { readonly item: EventContentArg; readonl
   );
 }
 
-export function CalendarSidebar({ selectedRooms, toggleRoom }: { readonly selectedRooms: Set<string>; readonly toggleRoom: (roomId: string) => void }) {
+function CalendarSidebarContent({ selectedRooms, toggleRoom }: { readonly selectedRooms: Set<string>; readonly toggleRoom: (roomId: string) => void }) {
   const [page, setpage] = useState(1);
   const { data: rooms, isLoading } = useQuery({
     queryKey: [`list rooms ${page}`],
@@ -326,30 +403,37 @@ export function CalendarSidebar({ selectedRooms, toggleRoom }: { readonly select
   if (isLoading) return <span>Carregando...</span>;
 
   return (
+    <div>
+      <div className="flex flex-col gap-2 mt-4">
+        {rooms?.data?.map(room => {
+          const color = getColorFromRoomName(room.name);
+          const isChecked = selectedRooms?.size === 0 || selectedRooms.has(room.id);
+          return (
+            <button key={room.id} className="border-1 rounded-md p-2 transition-all" style={{ borderColor: isChecked ? "#d7d7d7" : "#fff", backgroundColor: isChecked ? "#fff" : "#FFF" }} onClick={() => toggleRoom(room.id)}>
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <Checkbox style={{ backgroundColor: color, border: "none", color: "#000" }} checked={isChecked} onCheckedChange={() => toggleRoom(room.id)} />
+                <span className="flex items-center gap-2">
+                  <span className="text-sm">{room.name}</span>
+                </span>
+              </label>
+            </button>
+          );
+        })}
+      </div>
+      <Pagination page={page} setpage={setpage} data={rooms} hideText={true}/>
+    </div>
+  );
+}
+
+export function CalendarSidebar({ selectedRooms, toggleRoom }: { readonly selectedRooms: Set<string>; readonly toggleRoom: (roomId: string) => void }) {
+  return (
     <Sidebar>
       <SidebarContent className="bg-background ">
         <SidebarGroup>
           <div className="px-2 py-10">
             <Title className="text-2xl">Salas</Title>
-
-            <div className="flex flex-col gap-2 mt-4">
-              {rooms?.data?.map(room => {
-                const color = getColorFromRoomName(room.name);
-                const isChecked = selectedRooms?.size === 0 || selectedRooms.has(room.id);
-                return (
-                  <button key={room.id} className="border-1 rounded-md p-2 transition-all" style={{ borderColor: isChecked ? "#d7d7d7" : "#fff", backgroundColor: isChecked ? "#fff" : "#FFF" }} onClick={() => toggleRoom(room.id)}>
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <Checkbox style={{ backgroundColor: color, border: "none", color: "#000" }} checked={isChecked} onCheckedChange={() => toggleRoom(room.id)} />
-                      <span className="flex items-center gap-2">
-                        <span className="text-sm">{room.name}</span>
-                      </span>
-                    </label>
-                  </button>
-                );
-              })}
-            </div>
-            <Pagination page={page} setpage={setpage} data={rooms} hideText={true}/>
-            </div>
+            <CalendarSidebarContent selectedRooms={selectedRooms} toggleRoom={toggleRoom} />
+          </div>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

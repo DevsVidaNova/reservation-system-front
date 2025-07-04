@@ -22,7 +22,7 @@ import {
 import { SingleScale } from '../../app/__api/types';
 import { ScaleAdd } from './scale-add';
 import { ScaleEdit } from './scale-edit';
-import { deleteScale } from '../../app/__api/scale';
+import { deleteScale } from '@/services/scale.service';
 
 export function ScaleList({ data, refetch, handleNext, handlePrevious, page }: { data: SingleScale[], refetch: () => void, handleNext: () => void, handlePrevious: () => void, page: number }) {
   return (

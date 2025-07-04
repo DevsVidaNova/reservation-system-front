@@ -10,6 +10,16 @@ export type CreateBooking = {
     day_repeat?: number | string | undefined | null,
 }
 
+export type EditBooking = {
+    description: string,
+    room_id: number,
+    date?: string | undefined | null | Date,
+    start_time: string,
+    end_time: string,
+    repeat?: string | undefined | null,
+    day_repeat?: number | string | undefined | null,
+}
+
 export type ListBooking = {
     id: number,
     description: string,

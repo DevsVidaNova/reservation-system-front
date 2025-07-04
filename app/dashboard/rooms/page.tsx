@@ -7,8 +7,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { EllipsisVertical, Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { ListRoom, Room } from "@/app/__api/types";
-import { deleteRoom, listRooms } from "@/app/__api/rooms";
+import { ListRoom, Room } from "@/types";
+import { deleteRoom, listRooms } from "@/services/rooms.service";
 import { RoomAddForm } from "@/components/room/room-add";
 import { RoomEditForm } from "@/components/room/room-edit";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";

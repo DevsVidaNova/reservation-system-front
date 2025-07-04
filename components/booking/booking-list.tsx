@@ -1,6 +1,6 @@
 
 'use client'
-import { BookDashed, Clock, MapPin, Phone, User } from 'lucide-react';
+import { BookDashed, Clock, MapPin, Phone, User, Plus } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -17,40 +17,56 @@ import {
 } from "@/components/ui"
 
 import Link from "next/link"
-
 import { useQuery } from '@tanstack/react-query'
-
-import { BookingForm } from './booking-add';
-import { ListBooking } from "@/app/__api/types";
-import { listBookings, listBookingsWeek, listBookingsMy, listBookingsToday, listBookingsMonth } from '@/app/__api/booking';
-
+import { ListBooking } from "@/types";
+import { listBookings, listBookingsWeek, listBookingsMy, listBookingsToday, listBookingsMonth } from '@/services/booking.service';
 import { getUser } from '@/hooks/user';
+import { useBookingState, BookingAddPopup, BookingEditPopup } from './index';
 
 export function BookingList() {
-    const { data: user, error: usererror, isLoading: userloading, } = useQuery({
+    const {
+        isAddModalOpen,
+        isEditModalOpen,
+        selectedBooking,
+        openAddModal,
+        closeAddModal,
+        openEditModal,
+        closeEditModal,
+    } = useBookingState();
+
+    const { data: user } = useQuery({
         queryKey: ['user'],
         queryFn: getUser
     });
-    const { data: bookings, error, isLoading, refetch } = useQuery<ListBooking[]>({
+    
+    const { data: bookings, refetch } = useQuery<ListBooking[]>({
         queryKey: ['bookings list'],
         queryFn: listBookings,
     });
-    const { data: mybookings, error: mybookingserror, isLoading: mybookingsloading, } = useQuery<ListBooking[]>({
+    
+    const { data: mybookings } = useQuery<ListBooking[]>({
         queryKey: ['my bookings'],
         queryFn: listBookingsMy,
     });
-    const { data: month, error: monthbookingserror, isLoading: monthbookingsloading, } = useQuery<ListBooking[]>({
+    
+    const { data: month } = useQuery<ListBooking[]>({
         queryKey: ['month bookings'],
         queryFn: listBookingsMonth,
     });
-    const { data: weekbookings, error: weekbookingserror, isLoading: weekbookingsloading, } = useQuery<ListBooking[]>({
+    
+    const { data: weekbookings, isLoading: weekbookingsloading } = useQuery<ListBooking[]>({
         queryKey: ['week bookings'],
         queryFn: listBookingsWeek,
     });
-    const { data: todaybookings, error: todaybookingserror, isLoading: todaybookingsloading, } = useQuery<ListBooking[]>({
+    
+    const { data: todaybookings } = useQuery<ListBooking[]>({
         queryKey: ['today bookings'],
         queryFn: listBookingsToday,
     });
+
+    const handleEdit = (booking: ListBooking) => {
+        openEditModal(booking);
+    };
 
     return (
         <div className='z-10 mx-auto'>
@@ -66,43 +82,63 @@ export function BookingList() {
                     </div>
                     <div className='md:block hidden '>
                         {user ?
-                            <BookingForm refetch={refetch} /> :
+                            <Button onClick={(e: React.MouseEvent<HTMLButtonElement>) => openAddModal()}>
+                                <Plus className="h-4 w-4 mr-2" />
+                                Fazer Reserva
+                            </Button> :
                             <Link href="/auth/login">
-                                <Button  >Fazer Reserva</Button>
+                                <Button>Fazer Reserva</Button>
                             </Link>
                         }
                     </div>
                 </div>
                 <TabsContent value="hoje">
-                    <BookingItem data={todaybookings || []} />
+                    <BookingItem data={todaybookings || []} onEdit={handleEdit} />
                 </TabsContent>
                 <TabsContent value="semana">
-                    {weekbookingsloading ? <SkeletonBookings /> : <BookingItem data={weekbookings || []} />}
+                    {weekbookingsloading ? <SkeletonBookings /> : <BookingItem data={weekbookings || []} onEdit={handleEdit} />}
                 </TabsContent>
                 <TabsContent value="mes">
-                    <BookingItem data={month || []} />
+                    <BookingItem data={month || []} onEdit={handleEdit} />
                 </TabsContent>
                 <TabsContent value="tudo">
-                    <BookingItem data={bookings || []} />
+                    <BookingItem data={bookings || []} onEdit={handleEdit} />
                 </TabsContent>
                 <TabsContent value="my">
-                    <BookingItem data={mybookings || []} />
+                    <BookingItem data={mybookings || []} onEdit={handleEdit} />
                 </TabsContent>
             </Tabs>
             <div style={{ height: 150, }}></div>
             <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
                 {user ?
-                    <BookingForm refetch={refetch} /> :
+                    <Button onClick={(e: React.MouseEvent<HTMLButtonElement>) => openAddModal()} size="lg">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Fazer Reserva
+                    </Button> :
                     <Link href="/auth/login">
                         <Button>Fazer Reserva</Button>
                     </Link>
                 }
             </div>
+
+            {/* Modais */}
+            <BookingAddPopup
+                isOpen={isAddModalOpen}
+                onClose={closeAddModal}
+                refetch={refetch}
+            />
+
+            <BookingEditPopup
+                isOpen={isEditModalOpen}
+                onClose={closeEditModal}
+                refetch={refetch}
+                booking={selectedBooking}
+            />
         </div>
     )
 }
 
-const BookingItem = ({ data }: { data: ListBooking[], }) => {
+const BookingItem = ({ data, onEdit }: { data: ListBooking[], onEdit: (booking: ListBooking) => void }) => {
     if (data?.length === 0) return <div className='flex flex-col items-center border p-6 rounded-xl my-6 self-center'>
         <div className='flex flex-col justify-center items-center gap-2'>
             <BookDashed size={64} />
@@ -113,7 +149,7 @@ const BookingItem = ({ data }: { data: ListBooking[], }) => {
     return (
         <div className='gap-8 z-0'>
             {data?.map((booking: ListBooking) => {
-                const { end_time, start_time, room, user, date, id, description, repeat, day_repeat, day_of_week, month } = booking;
+                const { end_time, start_time, room, user, date, id, description, repeat, day_of_week, month } = booking;
                 const repeats = [{ id: 'day', name: 'DIA' }, { id: 'week', name: 'SEM' }, { id: 'month', name: 'MÊS' }];
                 const repeatName = repeats.find((r) => r.id === repeat)?.name;
 
@@ -121,7 +157,7 @@ const BookingItem = ({ data }: { data: ListBooking[], }) => {
                     <div key={id} className="border rounded-lg flex-row flex justify-between w-full my-4">
                         <div className='flex flex-row w-[100%]'>
                             <div className='flex-col w-[80px] h-full py-3 flex md:px-6 md:py-2 justify-center items-center border-r'>
-                                <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{day_of_week || day_repeat}</span>
+                                <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{day_of_week}</span>
                                 <span className='md:text-[36px] md:leading-[32px] text-[24px] leading-[26px] font-bold uppercase'>{date ? date?.slice(0, 2) : '↻'}</span>
                                 <span className='md:text-[16px] md:leading-[24px] text-[14px] leading-[14px] uppercase'>{month ? month : repeatName}</span>
                             </div>
@@ -147,13 +183,18 @@ const BookingItem = ({ data }: { data: ListBooking[], }) => {
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="outline" className="h-12 w-12">
-                                            <Phone className="h-16 w-16" />
+                                            <Phone className="h-4 w-4" />
                                             <span className="sr-only">Abrir menu</span>
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuLabel>Contato</DropdownMenuLabel>
+                                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
                                         <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => onEdit(booking)}>
+                                            Editar Reserva
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuLabel>Contato</DropdownMenuLabel>
                                         <DropdownMenuItem>
                                             <a
                                                 href={`https://wa.me/55${user?.phone?.replace(/[()\s-]/g, '')}`}

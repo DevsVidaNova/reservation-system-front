@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/"
 
 import { Pencil } from "lucide-react"
-import { editUserById, } from "@/app/__api/admin"
+import { editUser } from "@/services/admin.service"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -58,7 +58,7 @@ export function UserEditForm({ id, refetch, defaultValue }: { id: string, refetc
         seterror('')
         setsuccess('')
         try {
-            const response = await editUserById(id, values)
+            const response = await editUser(id, values)
             if (response) {
                 setsuccess('Usuário editado com sucesso!')
                 refetch()

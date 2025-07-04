@@ -1,5 +1,5 @@
 import { fetchApi, fetchWithAuth } from "@/hooks/api";
-import { ListBooking, CreateBooking } from "./types";
+import { ListBooking, CreateBooking, EditBooking } from "@/types";
 
 export const listBookings = async (): Promise<ListBooking[]> => {
   try {
@@ -69,9 +69,9 @@ export async function addBooking(data: CreateBooking) {
   }
 }
 
-export const editBooking = async (id: string, data: CreateBooking): Promise<CreateBooking> => {
+export const editBooking = async (id: string, data: EditBooking): Promise<ListBooking> => {
   try {
-    return await fetchWithAuth<CreateBooking>(`/booking/${id}`, {
+    return await fetchWithAuth<ListBooking>(`/booking/${id}`, {
       method: "PUT",
       data: data
     });
