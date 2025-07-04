@@ -4,8 +4,7 @@ import { Pagination } from '@/app/__api/types';
 
 export const listScales = async (page: number): Promise<{scales: SingleScale[]; pagination: Pagination }> => {
     try {
-        const res = await fetchWithAuth<{ scales: SingleScale[]; pagination: Pagination }>(`/scale?page=${page}`, { method: "GET" });
-        return res;
+        return await fetchWithAuth<{ scales: SingleScale[]; pagination: Pagination }>(`/scale?page=${page}`, { method: "GET" });
     } catch (error) {
         console.log(error)
         if (error instanceof Error) {
@@ -18,8 +17,7 @@ export const listScales = async (page: number): Promise<{scales: SingleScale[]; 
 
 export const singleScale = async (id: string): Promise<SingleScale> => {
     try {
-        const res = await fetchWithAuth<SingleScale>("/scale/" + id, { method: "GET", });
-        return res;
+        return await fetchWithAuth<SingleScale>("/scale/" + id, { method: "GET", });
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -31,8 +29,7 @@ export const singleScale = async (id: string): Promise<SingleScale> => {
 
 export const duplicateScale = async (id: string): Promise<SingleScale> => {
     try {
-        const res = await fetchWithAuth<SingleScale>("/scale/duplicate/" + id, { method: "POST", });
-        return res;
+        return await fetchWithAuth<SingleScale>("/scale/duplicate/" + id, { method: "POST", });
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -44,8 +41,7 @@ export const duplicateScale = async (id: string): Promise<SingleScale> => {
 
 export const addScale = async (data: CreateScale): Promise<CreateScale> => {
     try {
-        const res = await fetchWithAuth<CreateScale>("/scale", { method: "POST", data: data });
-        return res;
+        return await fetchWithAuth<CreateScale>("/scale", { method: "POST", data: data });
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -57,8 +53,7 @@ export const addScale = async (data: CreateScale): Promise<CreateScale> => {
 
 export const editScale = async (id: string, data: CreateScale): Promise<CreateScale> => {
     try {
-        const res = await fetchWithAuth<CreateScale>(`/scale/${id}`, { method: "PUT", data: data });
-        return res;
+        return await fetchWithAuth<CreateScale>(`/scale/${id}`, { method: "PUT", data: data });
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -70,8 +65,7 @@ export const editScale = async (id: string, data: CreateScale): Promise<CreateSc
 
 export const deleteScale = async (id: string) => {
     try {
-        const res = await fetchWithAuth(`/scale/${id}`, { method: "DELETE" });
-        return res;
+        return await fetchWithAuth(`/scale/${id}`, { method: "DELETE" });
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -83,12 +77,11 @@ export const deleteScale = async (id: string) => {
 
 export const confirmScale = async (id: string, confirmed: boolean) => {
     try {
-        const res = await fetchWithAuth("/scale/confirm", {
+        return await fetchWithAuth("/scale/confirm", {
             method: "POST", data: {
                 scaleId: id,
                 confirmed: confirmed
         } });
-        return res;
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
@@ -100,13 +93,12 @@ export const confirmScale = async (id: string, confirmed: boolean) => {
 
 export const searchScale = async (name: string): Promise<ListScale> => {
     try {
-        const res = await fetchWithAuth<ListScale>("/scale/search", {
+        return await fetchWithAuth<ListScale>("/scale/search", {
             method: "POST",
             data: {
                 name: name
             }
         });
-        return res;
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);

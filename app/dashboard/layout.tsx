@@ -12,7 +12,7 @@ import {
 import { AlignJustify } from "lucide-react";
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { AppSidebar } from '@/components/ui/sidebar';
+import BottomMenu from '@/components/menus/bottom_menu';
 
 export default function DashLayout({ children }: { children: ReactNode }) {
   const router = useRouter()
@@ -45,10 +45,10 @@ export default function DashLayout({ children }: { children: ReactNode }) {
               </DrawerTrigger>
             </div>
             <DrawerContent >
-              <AppSidebar />
+              <BottomMenu />
               <DrawerFooter className="px-6 border-t pt-4 mt-4">
                 <DrawerClose>
-                  <Button variant="secondary" className="w-full">Fechar</Button>
+                  <Button variant="secondary" className="w-full ">Fechar</Button>
                 </DrawerClose>
               </DrawerFooter>
             </DrawerContent>

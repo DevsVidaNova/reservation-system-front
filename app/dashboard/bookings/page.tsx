@@ -16,43 +16,63 @@ import {
     TabsTrigger,
 } from "@/components/ui"
 import { useQuery } from '@tanstack/react-query'
-import { BookingForm } from '@/components/booking/booking-add';
+import { BookingAdd } from '@/components/booking/booking-add';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { BookingEditForm } from "@/components/booking/booking-edit";
-import { getUser } from "@/hooks/user";
+import { BookingEdit } from "@/components/booking/booking-edit";
 
-import { ListBooking } from "@/app/__api/types";
-import { listBookings, listBookingsWeek, listBookingsMy, listBookingsToday, listBookingsMonth, deleteBooking } from '@/app/__api/booking';
+import { ListBooking } from "@/types";
+import { listBookings, listBookingsWeek, listBookingsMy, listBookingsToday, listBookingsMonth, deleteBooking } from '@/services/booking.service';
 
 export default function BookingsPage() {
-    const { data: user, error: usererror, isLoading: userloading, } = useQuery({
-        queryKey: ['user'],
-        queryFn: getUser
+    const {
+        data: allBookingsData,
+        isLoading: isLoadingAll,
+        error: errorAll,
+        refetch: refetchAll
+    } = useQuery({
+        queryKey: ['all-bookings'],
+        queryFn: async () => {
+            try {
+                const [all, my, monthly, weekly, today] = await Promise.all([
+                    listBookings(),
+                    listBookingsMy(),
+                    listBookingsMonth(),
+                    listBookingsWeek(), 
+                    listBookingsToday()
+                ]);
+                
+                return {
+                    bookings: all,
+                    mybookings: my,
+                    month: monthly,
+                    weekbookings: weekly,
+                    todaybookings: today
+                };
+            } catch (error) {
+                console.error('Error fetching bookings:', error);
+                throw error;
+            }
+        }
     });
-    const { data: bookings, error, isLoading, refetch } = useQuery<ListBooking[]>({
-        queryKey: ['bookings list'],
-        queryFn: listBookings,
-    });
-    const { data: mybookings, error: mybookingserror, isLoading: mybookingsloading, refetch: myrefetch } = useQuery<ListBooking[]>({
-        queryKey: ['my bookings'],
-        queryFn: listBookingsMy,
-    });
-    const { data: month, error: monthbookingserror, isLoading: monthbookingsloading, refetch: monthrefetch } = useQuery<ListBooking[]>({
-        queryKey: ['month bookings'],
-        queryFn: listBookingsMonth,
-    });
-    const { data: weekbookings, error: weekbookingserror, isLoading: weekbookingsloading, refetch: weekrefetch } = useQuery<ListBooking[]>({
-        queryKey: ['week bookings'],
-        queryFn: listBookingsWeek,
-    });
-    const { data: todaybookings, error: todaybookingserror, isLoading: todaybookingsloading, refetch: todayrefetch } = useQuery<ListBooking[]>({
-        queryKey: ['today bookings'],
-        queryFn: listBookingsToday,
-    });
+
+    const {
+        bookings = [],
+        mybookings = [],
+        month = [],
+        weekbookings = [],
+        todaybookings = []
+    } = allBookingsData || {};
+
+    const refetch = () => refetchAll();
+    const myrefetch = refetch;
+    const monthrefetch = refetch;
+    const weekrefetch = refetch;
+    const todayrefetch = refetch;
+
 
     return (
         <div className="z-0 mx-auto py-6 container">
@@ -67,34 +87,34 @@ export default function BookingsPage() {
                         </TabsList>
                     </div>
                     <div className="md:block hidden">
-                        <BookingForm refetch={refetch} />
+                        <BookingAdd refetch={refetch} />
                     </div>
                 </div>
                 <TabsContent value="hoje">
-                    <BookingItem refetch={todayrefetch} data={todaybookings || []} />
+                    <BookingList refetch={todayrefetch} data={todaybookings || []} />
                 </TabsContent>
                 <TabsContent value="semana">
-                    {weekbookingsloading ? <SkeletonBookings /> : <BookingItem refetch={weekrefetch} data={weekbookings || []} />}
+                    {isLoadingAll ? <SkeletonBookings /> : <BookingList refetch={weekrefetch} data={weekbookings || []} />}
                 </TabsContent>
                 <TabsContent value="mes">
-                    <BookingItem refetch={monthrefetch} data={month || []} />
+                    <BookingList refetch={monthrefetch} data={month || []} />
                 </TabsContent>
                 <TabsContent value="tudo">
-                    <BookingItem refetch={refetch} data={bookings || []} />
+                    <BookingList refetch={refetch} data={bookings || []} />
                 </TabsContent>
                 <TabsContent value="my">
-                    <BookingItem refetch={myrefetch} data={mybookings || []} />
+                    <BookingList refetch={myrefetch} data={mybookings || []} />
                 </TabsContent>
             </Tabs>
             <div style={{ height: 150, }}></div>
             <div style={{ position: 'fixed', bottom: 50, left: '50%', transform: 'translateX(-50%)' }} className='justify-center items-center md:hidden'>
-                <BookingForm refetch={refetch} />
+                <BookingAdd refetch={refetch} />
             </div>
         </div>
     )
 }
 
-const BookingItem = ({ data, refetch, }: { data: ListBooking[], refetch: () => void, }) => {
+const BookingList = ({ data, refetch, }: { data: ListBooking[], refetch: () => void, }) => {
     if (data?.length === 0) return <div className='flex flex-row items-center gap-6 border p-6 justify-center rounded-xl my-6'>
         <div className='flex flex-col justify-center items-center gap-2'>
             <BookDashed size={64} />
@@ -114,7 +134,7 @@ const BookingItem = ({ data, refetch, }: { data: ListBooking[], refetch: () => v
     return (
         <div className='gap-8'>
             {data?.map((booking: ListBooking) => {
-                const { end_time, start_time, room, user, date, id, description, repeat, day_repeat, day_of_week, month } = booking;
+                const { end_time, start_time, room, user, date, id, description, repeat,  day_of_week, month } = booking;
                 const repeats = [{ id: 'day', name: 'DIA' }, { id: 'week', name: 'SEM' }, { id: 'month', name: 'MÊS' }];
                 const repeatName = repeats.find((r) => r.id === repeat)?.name;
 
@@ -122,7 +142,7 @@ const BookingItem = ({ data, refetch, }: { data: ListBooking[], refetch: () => v
                     <Card key={id} className="md:p-2 p-0 flex-row flex align-center justify-between items-center w-full my-4">
                         <div className='flex flex-row items-center gap-2'>
                             <div className='flex-col w-[80px] h-full py-3 flex md:px-6 md:py-2 justify-center items-center border-r'>
-                                <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{day_of_week || day_repeat}</span>
+                                <span className='md:text-[20px] md:leading-[24px] text-[16px] leading-[16px] font-medium uppercase'>{day_of_week}</span>
                                 <span className='md:text-[36px] md:leading-[32px] text-[24px] leading-[26px] font-bold uppercase'>{date ? date?.slice(0, 2) : '↻'}</span>
                                 <span className='md:text-[16px] md:leading-[24px] text-[14px] leading-[14px] uppercase'>{month ? month : repeatName}</span>
                             </div>
@@ -175,7 +195,7 @@ const BookingItem = ({ data, refetch, }: { data: ListBooking[], refetch: () => v
                             <Button variant="outline" className="h-12 w-12 mx-2" onClick={() => handleExclude(id)}>
                                 <Trash className="h-16 w-16" />
                             </Button>
-                            <BookingEditForm id={id} refetch={refetch} defaultValues={booking} />
+                            <BookingEdit refetch={refetch} booking={booking} />
                         </div>
 
                         <div className='md:hidden border w-[46px] mr-2 h-[46px] rounded-lg items-center justify-center flex'>
@@ -215,7 +235,7 @@ const BookingItem = ({ data, refetch, }: { data: ListBooking[], refetch: () => v
                                         <Button variant="outline" className="h-12 w-12" onClick={() => handleExclude(id)}>
                                             <Trash className="h-16 w-16" />
                                         </Button>
-                                        <BookingEditForm id={id} refetch={refetch} defaultValues={booking} />
+                                        <BookingEdit refetch={refetch} booking={booking} />
                                     </div>
                                 </PopoverContent>
                             </Popover>
@@ -228,6 +248,7 @@ const BookingItem = ({ data, refetch, }: { data: ListBooking[], refetch: () => v
 
     )
 }
+
 const SkeletonBookings = () => {
     return (
         <div className='gap-8 z-0'>

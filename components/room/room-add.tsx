@@ -19,7 +19,7 @@ import {
     Button
 } from "@/components/ui/"
 
-import { addRoom } from "@/app/__api/rooms"
+import { addRoom } from "@/services/rooms.service"
 import { Checkbox } from "@/components/ui/checkbox"
 
 const formSchema = z.object({

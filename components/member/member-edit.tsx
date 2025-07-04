@@ -28,7 +28,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/";
-import { editMember } from "../../app/__api/members";
+import { editMember } from "@/services/members.service";
 import { Check, Pencil } from "lucide-react";
 
 const formSchema = z.object({

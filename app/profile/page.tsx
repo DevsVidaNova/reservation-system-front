@@ -1,14 +1,14 @@
 "use client"
 import { useEffect, useState } from 'react' 
 import { useQuery } from '@tanstack/react-query'
-import { ListUser } from '@/app/__api/types'
+import { ListUser } from '@/types'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Message, Button, Input, } from "@/components/ui/"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { User } from 'lucide-react';
 
-import { editUser, profileUser, } from '@/app/__api/user';
+import { editUser, profileUser, } from '@/services/user.service';
 
 const formSchema = z.object({
   name: z.string().min(2, {

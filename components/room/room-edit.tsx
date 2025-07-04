@@ -19,7 +19,7 @@ import {
     Button
 } from "@/components/ui/"
 
-import { editRoom, } from "@/app/__api/rooms"
+import { editRoom } from "@/services/rooms.service"
 import { Pencil } from "lucide-react"
 
 const formSchema = z.object({
